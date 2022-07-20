@@ -1,0 +1,52 @@
+.btn {
+  background: transparent;
+  border: 2px solid var(--black);
+  color: var(--black);
+  font-weight: 700;
+  padding: var(--spacer-1) var(--spacer-2);
+}
+
+.signUp {
+  background-color: var(--white);
+}
+
+/*************************************************************************
+  Header
+*************************************************************************/
+
+.navbar {
+  display: flex;
+  align-items: center;
+}
+
+.navbar > a {
+  margin-right: var(--spacer-2);
+}
+
+.navbar > a:last-child {
+  margin-right: 0;
+}
+
+.navbar .logo {
+  margin-right: auto;
+}
+
+.logo > span {
+  font-weight: 700;
+}
+
+/*************************************************************************
+  Main
+*************************************************************************/
+
+.main {
+  margin-top: var(--spacer-6);
+}
+
+.hero h1 {
+  font-size: var(--large);
+}
+
+.hero p {
+  margin-top: var(--spacer-2);
+}

@@ -17,7 +17,7 @@ review and conversation tools that enable easy and seamless collaboration betwee
           crossOrigin="crossorigin"
         />
         <link
-          href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;700&family=Work+Sans:wght@700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700&display=swap"
           rel="stylesheet"
         />
       </Head>
