@@ -1,10 +1,10 @@
 import styles from "./Home.module.css";
-import landingIllustration from "@/public/pair-programming.svg";
 
-import type { NextPage } from "next";
+import { cn } from "@/utils";
 import Head from "next/head";
 import Link from "next/link";
-import Image from "next/image";
+
+import type { NextPage } from "next";
 
 const Home: NextPage = () => {
   return (
@@ -15,29 +15,28 @@ const Home: NextPage = () => {
         </title>
       </Head>
 
-      <header>
-        <nav>
+      <header className={styles.header}>
+        <nav className={styles.navbar}>
           <Link href="/">
-            <a>
+            <a className={styles.logo}>
               Revue<span>Hub</span>
             </a>
           </Link>
 
-          <div>
-            <Link href="/sign-in">
-              <a>Sign in</a>
-            </Link>
+          <Link href="/sign-in">
+            <a>Sign in</a>
+          </Link>
 
-            <Link href="/sign-up">
-              <a>Sign up</a>
-            </Link>
-          </div>
+          <Link href="/sign-up">
+            <a className={cn(styles, { btn: true, signUp: true })}>
+              Try for free
+            </a>
+          </Link>
         </nav>
       </header>
 
-      <main>
-        <section>
-          <Image src={landingIllustration} alt="" />
+      <main className={styles.main}>
+        <section className={styles.hero}>
           <h1>Review Github repositories without the need for pull requests</h1>
           <p>
             RevueHub provides line-by-line commenting, review and conversation
@@ -45,9 +44,11 @@ const Home: NextPage = () => {
             and repository owners.
           </p>
 
-          <Link href="/sign-up">
-            <a>Get started</a>
-          </Link>
+          <div className={cn(styles, { btn: true, signUp: true })}>
+            <Link href="/sign-up">
+              <a>Get started</a>
+            </Link>
+          </div>
         </section>
       </main>
     </div>

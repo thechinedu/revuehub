@@ -1,7 +1,7 @@
 :root {
   /* Typography */
 
-  --base-font-size: 1.125rem;
+  --base-font-size: 1rem;
   --typescale-ratio: 1.333;
 
   --small: calc(var(--base-font-size) / var(--typescale-ratio));
@@ -18,7 +18,7 @@
 
   --black: #262626;
   --white: #ffffff;
-  --violet: #49154b;
+  --powder: #f9f8f4;
   --linen: #f6efe8;
   --azure: #4285f4;
 
@@ -55,8 +55,9 @@ html,
 body {
   padding: 0;
   margin: 0;
-  font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+  font-family: "Sora", -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+    background: var(--powder);
 }
 
 a {
