@@ -35,6 +35,10 @@
   font-weight: 700;
 }
 
+.tryFree {
+  box-shadow: 5px 5px 0 var(--black);
+}
+
 /*************************************************************************
   Main
 *************************************************************************/
@@ -43,10 +47,76 @@
   margin-top: var(--spacer-6);
 }
 
+.hero {
+  @media (min-width: 768px) {
+    margin: 0 auto;
+    text-align: center;
+    width: 600px;
+  }
+}
+
 .hero h1 {
   font-size: var(--large);
+
+  @media (min-width: 768px) {
+    font-size: var(--larger);
+  }
 }
 
 .hero p {
   margin-top: var(--spacer-2);
+}
+
+.newAccountFlows {
+  margin-top: var(--spacer-4);
+
+  @media (min-width: 768px) {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+.newAccountFlows > * {
+  flex: 1;
+  transition-duration: 0.4s;
+}
+
+.newAccountFlows > *:hover {
+  box-shadow: 5px 5px 0 var(--black);
+}
+
+.heroCta {
+  display: block;
+  text-align: center;
+}
+
+.oauthBtn {
+  align-items: center;
+  background-color: var(--black);
+  color: var(--white);
+  display: flex;
+  justify-content: center;
+  margin-top: var(--spacer-2);
+
+  @media (min-width: 768px) {
+    margin-top: 0;
+    margin-left: var(--spacer-2);
+  }
+
+  &:hover {
+    background-color: var(--powder);
+    color: var(--black);
+
+    > .githubIcon {
+      fill: var(--black);
+    }
+  }
+}
+
+.githubIcon {
+  fill: var(--white);
+  width: 20px;
+  margin-right: var(--spacer-1);
+  transition-duration: 0.4s;
 }
