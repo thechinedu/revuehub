@@ -1,7 +1,11 @@
 import styles from "./Home.module.css";
 
+import { GithubIcon } from "@/components/Icons";
+
 import { cn } from "@/utils";
+
 import Head from "next/head";
+import Image from "next/image";
 import Link from "next/link";
 
 import type { NextPage } from "next";
@@ -28,7 +32,9 @@ const Home: NextPage = () => {
           </Link>
 
           <Link href="/sign-up">
-            <a className={cn(styles, { btn: true, signUp: true })}>
+            <a
+              className={cn(styles, { btn: true, signUp: true, tryFree: true })}
+            >
               Try for free
             </a>
           </Link>
@@ -44,9 +50,31 @@ const Home: NextPage = () => {
             and repository owners.
           </p>
 
-          <div className={cn(styles, { btn: true, signUp: true })}>
+          <div className={styles.newAccountFlows}>
             <Link href="/sign-up">
-              <a>Get started</a>
+              <a
+                className={cn(styles, {
+                  btn: true,
+                  signUp: true,
+                  heroCta: true,
+                })}
+              >
+                Get started
+              </a>
+            </Link>
+
+            <Link href="/sign-up">
+              <a
+                className={cn(styles, {
+                  btn: true,
+                  signUp: true,
+                  heroCta: true,
+                  oauthBtn: true,
+                })}
+              >
+                <GithubIcon className={styles.githubIcon} />
+                Sign up with Github
+              </a>
             </Link>
           </div>
         </section>
