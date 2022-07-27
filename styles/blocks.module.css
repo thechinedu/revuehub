@@ -1,0 +1,31 @@
+.btn {
+  background: transparent;
+  border: 2px solid var(--black);
+  color: var(--black);
+  font-weight: 700;
+  padding: var(--spacer-1) var(--spacer-2);
+}
+
+.page-intro {
+  margin-top: var(--spacer-6);
+}
+
+.page-intro {
+  @media (min-width: 768px) {
+    margin: 0 auto;
+    text-align: center;
+    width: 600px;
+  }
+}
+
+.page-intro > h1 {
+  font-size: var(--large);
+
+  @media (min-width: 768px) {
+    font-size: var(--larger);
+  }
+}
+
+.page-intro > p {
+  margin-top: var(--spacer-2);
+}

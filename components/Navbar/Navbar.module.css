@@ -1,0 +1,26 @@
+.navbar {
+  display: flex;
+  align-items: center;
+}
+
+.navbar > a {
+  margin-right: var(--spacer-2);
+}
+
+.navbar > a:last-child {
+  margin-right: 0;
+}
+
+.navbar .logo {
+  margin-right: auto;
+}
+
+.logo > span {
+  font-weight: 700;
+}
+
+.tryFree {
+  composes: btn from '@/styles/blocks.module.css';
+  background-color: var(--white);
+  box-shadow: 5px 5px 0 var(--black);
+}

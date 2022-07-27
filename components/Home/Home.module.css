@@ -1,70 +1,5 @@
-.btn {
-  background: transparent;
-  border: 2px solid var(--black);
-  color: var(--black);
-  font-weight: 700;
-  padding: var(--spacer-1) var(--spacer-2);
-}
-
-.signUp {
-  background-color: var(--white);
-}
-
-/*************************************************************************
-  Header
-*************************************************************************/
-
-.navbar {
-  display: flex;
-  align-items: center;
-}
-
-.navbar > a {
-  margin-right: var(--spacer-2);
-}
-
-.navbar > a:last-child {
-  margin-right: 0;
-}
-
-.navbar .logo {
-  margin-right: auto;
-}
-
-.logo > span {
-  font-weight: 700;
-}
-
-.tryFree {
-  box-shadow: 5px 5px 0 var(--black);
-}
-
-/*************************************************************************
-  Main
-*************************************************************************/
-
 .main {
-  margin-top: var(--spacer-6);
-}
-
-.hero {
-  @media (min-width: 768px) {
-    margin: 0 auto;
-    text-align: center;
-    width: 600px;
-  }
-}
-
-.hero h1 {
-  font-size: var(--large);
-
-  @media (min-width: 768px) {
-    font-size: var(--larger);
-  }
-}
-
-.hero p {
-  margin-top: var(--spacer-2);
+  composes: page-intro from "@/styles/blocks.module.css";
 }
 
 .newAccountFlows {
@@ -87,8 +22,13 @@
 }
 
 .heroCta {
+  composes: btn from '@/styles/blocks.module.css';
   display: block;
   text-align: center;
+}
+
+.signUp {
+  background-color: var(--white);
 }
 
 .oauthBtn {
