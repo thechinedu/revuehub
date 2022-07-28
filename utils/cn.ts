@@ -12,7 +12,7 @@ export const cn: ClassNamesFn = (styles, styleConfig) => {
   let res = "";
 
   for (const [property, value] of Object.entries(styleConfig)) {
-    if (value) res += `${styles[property]} `;
+    if (value && styles[property]) res += `${styles[property]} `;
   }
 
   return res.trimEnd();
