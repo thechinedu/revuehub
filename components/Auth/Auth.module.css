@@ -1,6 +1,13 @@
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
 .main {
   composes: page-intro from "@/styles/blocks.module.css";
   background-color: var(--white);
+  border: 2px solid var(--black);
+  margin: auto;
   padding: var(--spacer-3);
 }
 
@@ -45,9 +52,37 @@
 
 .submitBtn {
   composes: btn from "@/styles/blocks.module.css";
-  box-shadow: 5px 5px 0 var(--black);
   cursor: pointer;
   background-color: var(--white);
   margin-top: var(--spacer-4);
+  transition-duration: 0.4s;
   width: 100%;
+
+  &:hover {
+    box-shadow: 5px 5px 0 var(--black);
+  }
+}
+
+.divider {
+  border: 1px solid var(--black);
+  margin-top: var(--spacer-4);
+  opacity: 0.3;
+}
+
+.oauthBtn {
+  composes: btn from "@/styles/blocks.module.css";
+  composes: oauthBtn from "@/components/Home/Home.module.css";
+  margin: var(--spacer-4) 0 var(--spacer-2);
+  transition-duration: 0.4s;
+  width: 100%;
+
+  &:hover {
+    box-shadow: 5px 5px 0 var(--black);
+  }
+}
+
+.githubIcon {
+  composes: githubIcon from "@/components/Home/Home.module.css";
+  fill: var(--white);
+  position: static;
 }
