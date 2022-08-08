@@ -50,6 +50,15 @@
   font-weight: 400;
 }
 
+.group .resetPassword {
+  font-size: var(--small);
+  font-weight: 700;
+  position: absolute;
+  right: 0;
+  text-decoration: underline;
+  top: -18px;
+}
+
 .submitBtn {
   composes: btn from "@/styles/blocks.module.css";
   cursor: pointer;
@@ -85,4 +94,17 @@
   composes: githubIcon from "@/components/Home/Home.module.css";
   fill: var(--white);
   position: static;
+}
+
+.authPage {
+  text-decoration: underline;
+}
+
+.accountReset .submitBtn {
+  margin-top: var(--spacer-2);
+}
+
+.accountReset .authPage {
+  display: inline-block;
+  margin-top: var(--spacer-2);
 }

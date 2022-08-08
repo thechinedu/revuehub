@@ -14,9 +14,7 @@ import { cn } from "@/utils";
 import Head from "next/head";
 import Link from "next/link";
 
-import type { NextPage } from "next";
-
-const Auth: NextPage = () => {
+const Signup = (): JSX.Element => {
   return (
     <>
       <Head>
@@ -33,7 +31,12 @@ const Auth: NextPage = () => {
             <div className={styles.group}>
               <label htmlFor="email">Email:</label>
               <EnvelopeIcon className={styles.icon} />
-              <input type="email" id="email" placeholder="memuna@example.com" />
+              <input
+                type="email"
+                id="email"
+                placeholder="memuna@example.com"
+                autoFocus
+              />
             </div>
 
             <div className={styles.group}>
@@ -63,10 +66,17 @@ const Auth: NextPage = () => {
               Sign up with Github
             </a>
           </Link>
+
+          <p>
+            Already have an account?{" "}
+            <Link href="/sign-in">
+              <a className={styles.authPage}>Sign in</a>
+            </Link>
+          </p>
         </main>
       </Container>
     </>
   );
 };
 
-export default Auth;
+export default Signup;
