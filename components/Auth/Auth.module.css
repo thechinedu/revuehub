@@ -46,6 +46,18 @@
   width: 100%;
 }
 
+.group input.isInvalid {
+  border-color: var(--atomic-tangerine);
+  outline: 1px solid var(--atomic-tangerine);
+}
+
+.group .errorMessage {
+  color: var(--atomic-tangerine);
+  display: block;
+  font-size: var(--small);
+  text-align: left;
+}
+
 .group input::placeholder {
   font-weight: 400;
 }
@@ -69,6 +81,12 @@
 
   &:hover {
     box-shadow: 5px 5px 0 var(--black);
+  }
+
+  &:disabled {
+    box-shadow: none;
+    cursor: not-allowed;
+    opacity: 0.5;
   }
 }
 

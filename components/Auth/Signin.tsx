@@ -2,12 +2,7 @@ import styles from "./Auth.module.css";
 
 import Container from "@/components/Container";
 import { Navbar } from "@/components/Navbar";
-import {
-  AccountIcon,
-  EnvelopeIcon,
-  GithubIcon,
-  PasswordIcon,
-} from "@/components/Icons";
+import { AccountIcon, GithubIcon, PasswordIcon } from "@/components/Icons";
 
 import { cn } from "@/utils";
 
