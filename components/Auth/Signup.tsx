@@ -16,14 +16,21 @@ import Joi from "joi";
 import Head from "next/head";
 import Link from "next/link";
 import { ChangeEvent, FormEvent, useState } from "react";
+import zxcvbn from "zxcvbn";
+
+enum Attributes {
+  EMAIL = "email",
+  USERNAME = "username",
+  PASSWORD = "password",
+}
 
 type UserAttributes = {
-  email: string;
-  username: string;
-  password: string;
+  [Attributes.EMAIL]: string;
+  [Attributes.USERNAME]: string;
+  [Attributes.PASSWORD]: string;
 };
 
-type UserAttributeKey = keyof UserAttributes;
+const VALID_PASSWORD_SCORE = 4;
 
 const { object, string } = Joi.types();
 
@@ -49,10 +56,13 @@ const Signup = (): JSX.Element => {
     abortEarly: false,
   });
   const formHasError = Boolean(validationResult.error);
+  const passwordStrength = zxcvbn(password, [email, username, "revuehub"]);
 
-  console.log({ deets: validationResult.error?.details });
+  const isInvalidAttribute = (attr: Attributes) => {
+    if (isDirty[attr] && attr === Attributes.PASSWORD) {
+      return passwordStrength.score < VALID_PASSWORD_SCORE;
+    }
 
-  const isInvalidAttribute = (attr: UserAttributeKey) => {
     if (!validationResult.error || !isDirty[attr]) return false;
 
     for (const detail of validationResult.error.details) {
@@ -63,7 +73,7 @@ const Signup = (): JSX.Element => {
   };
 
   const handleChange =
-    (attr: UserAttributeKey) => (evt: ChangeEvent<HTMLInputElement>) => {
+    (attr: Attributes) => (evt: ChangeEvent<HTMLInputElement>) => {
       setIsDirty({ ...isDirty, [attr]: true });
       const { value } = evt.target;
 
@@ -98,13 +108,13 @@ const Signup = (): JSX.Element => {
                 id="email"
                 placeholder="memuna@example.com"
                 value={email}
-                onChange={handleChange("email")}
+                onChange={handleChange(Attributes.EMAIL)}
                 className={cn(styles, {
-                  isInvalid: isInvalidAttribute("email"),
+                  isInvalid: isInvalidAttribute(Attributes.EMAIL),
                 })}
                 autoFocus
               />
-              {isInvalidAttribute("email") && (
+              {isInvalidAttribute(Attributes.EMAIL) && (
                 <span className={styles.errorMessage}>
                   Email is invalid or is already in use
                 </span>
@@ -119,12 +129,12 @@ const Signup = (): JSX.Element => {
                 id="username"
                 placeholder="memuna"
                 value={username}
-                onChange={handleChange("username")}
+                onChange={handleChange(Attributes.USERNAME)}
                 className={cn(styles, {
-                  isInvalid: isInvalidAttribute("username"),
+                  isInvalid: isInvalidAttribute(Attributes.USERNAME),
                 })}
               />
-              {isInvalidAttribute("username") && (
+              {isInvalidAttribute(Attributes.USERNAME) && (
                 <span className={styles.errorMessage}>
                   Username can only contain alphanumeric characters or single
                   hyphens, and cannot begin or end with a hyphen.
@@ -140,8 +150,18 @@ const Signup = (): JSX.Element => {
                 id="password"
                 placeholder="********"
                 value={password}
-                onChange={handleChange("password")}
+                onChange={handleChange(Attributes.PASSWORD)}
               />
+              <span>
+                {isDirty[Attributes.PASSWORD] &&
+                  `Password score: ${passwordStrength.score}`}
+              </span>
+              {isInvalidAttribute(Attributes.PASSWORD) && (
+                <span className={styles.errorMessage}>
+                  Password should be a minimum of 8 characters including
+                  uppercase and lowercase letters, numbers and symbols.
+                </span>
+              )}
             </div>
 
             <button

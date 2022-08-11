@@ -46,6 +46,11 @@
   width: 100%;
 }
 
+.group input:focus {
+  border-color: transparent;
+  outline: 2px solid var(--yale-blue);
+}
+
 .group input.isInvalid {
   border-color: var(--atomic-tangerine);
   outline: 1px solid var(--atomic-tangerine);
@@ -55,6 +60,7 @@
   color: var(--atomic-tangerine);
   display: block;
   font-size: var(--small);
+  margin-top: var(--spacer-1);
   text-align: left;
 }
 
