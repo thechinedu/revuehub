@@ -1,5 +1,6 @@
 .main {
   composes: page-intro from "@/styles/blocks.module.css";
+  margin-top: var(--spacer-12);
 }
 
 .newAccountFlows {
