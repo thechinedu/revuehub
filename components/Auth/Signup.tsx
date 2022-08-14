@@ -1,13 +1,14 @@
 import styles from "./Auth.module.css";
 
 import Container from "@/components/Container";
-import { Navbar } from "@/components/Navbar";
 import {
   AtIcon,
   EnvelopeIcon,
   GithubIcon,
   PasswordIcon,
 } from "@/components/Icons";
+import { Navbar } from "@/components/Navbar";
+import ProgressBar from "@/components/Progress";
 
 import { cn } from "@/utils";
 
@@ -40,7 +41,7 @@ const userSchema = object.keys({
   password: string.min(8).required(),
 });
 
-const Signup = (): JSX.Element => {
+export const Signup = (): JSX.Element => {
   const [userAttributes, setUserAttributes] = useState<UserAttributes>({
     email: "",
     username: "",
@@ -55,8 +56,10 @@ const Signup = (): JSX.Element => {
   const validationResult = userSchema.validate(userAttributes, {
     abortEarly: false,
   });
-  const formHasError = Boolean(validationResult.error);
   const passwordStrength = zxcvbn(password, [email, username, "revuehub"]);
+  const formHasError =
+    Boolean(validationResult.error) ||
+    passwordStrength.score < VALID_PASSWORD_SCORE;
 
   const isInvalidAttribute = (attr: Attributes) => {
     if (isDirty[attr] && attr === Attributes.PASSWORD) {
@@ -153,8 +156,9 @@ const Signup = (): JSX.Element => {
                 onChange={handleChange(Attributes.PASSWORD)}
               />
               <span>
-                {isDirty[Attributes.PASSWORD] &&
-                  `Password score: ${passwordStrength.score}`}
+                {isDirty[Attributes.PASSWORD] && (
+                  <ProgressBar label="Excellent" value={25} />
+                )}
               </span>
               {isInvalidAttribute(Attributes.PASSWORD) && (
                 <span className={styles.errorMessage}>
@@ -195,5 +199,3 @@ const Signup = (): JSX.Element => {
     </>
   );
 };
-
-export default Signup;

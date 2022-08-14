@@ -3,10 +3,7 @@ import styles from "./Auth.module.css";
 import Container from "@/components/Container";
 import { Navbar } from "@/components/Navbar";
 import {
-  AtIcon,
   EnvelopeIcon,
-  GithubIcon,
-  PasswordIcon,
 } from "@/components/Icons";
 
 import { cn } from "@/utils";
@@ -14,7 +11,7 @@ import { cn } from "@/utils";
 import Head from "next/head";
 import Link from "next/link";
 
-const ResetPassword = (): JSX.Element => {
+export const ResetPassword = (): JSX.Element => {
   return (
     <>
       <Head>
@@ -52,5 +49,3 @@ const ResetPassword = (): JSX.Element => {
     </>
   );
 };
-
-export default ResetPassword;

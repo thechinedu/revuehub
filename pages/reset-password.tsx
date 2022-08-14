@@ -1,1 +1,1 @@
-export { default } from "@/components/Auth/ResetPassword";
+export { ResetPassword as default } from "@/components/Auth";

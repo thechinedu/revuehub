@@ -1,0 +1,18 @@
+.container {
+  display: flex;
+  height: 10px;
+  margin-top: var(--spacer-2);
+  width: 100%;
+}
+
+.progressBarWrapper {
+  background-color: var(--atomic-tangerine);
+  border: 1px solid var(--powder);
+  border-radius: 8px;
+  height: 10px;
+  width: 25%;
+}
+
+.progressBarWrapper:nth-of-type(n+2) {
+  background-color: gray
+}

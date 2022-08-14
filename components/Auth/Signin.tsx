@@ -9,7 +9,7 @@ import { cn } from "@/utils";
 import Head from "next/head";
 import Link from "next/link";
 
-const Signin = (): JSX.Element => {
+export const Signin = (): JSX.Element => {
   return (
     <>
       <Head>
@@ -65,5 +65,3 @@ const Signin = (): JSX.Element => {
     </>
   );
 };
-
-export default Signin;
