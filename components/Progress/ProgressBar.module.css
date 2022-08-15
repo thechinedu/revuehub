@@ -1,18 +1,40 @@
 .container {
   display: flex;
-  height: 10px;
+  flex-wrap: wrap;
   margin-top: var(--spacer-2);
   width: 100%;
 }
 
 .progressBarWrapper {
-  background-color: var(--atomic-tangerine);
+  background-color: var(--gray);
   border: 1px solid var(--powder);
   border-radius: 8px;
   height: 10px;
   width: 25%;
 }
 
-.progressBarWrapper:nth-of-type(n+2) {
-  background-color: gray
+.progressBar {
+  border-radius: inherit;
+  height: 100%;
+}
+
+.redBar {
+  background-color: var(--vivid-burgundy);
+}
+
+.orangeBar {
+  background-color: var(--atomic-tangerine);
+}
+
+.blueBar {
+  background-color: var(--yale-blue);
+}
+
+.greenBar {
+  background-color: var(--dartmouth-green);
+}
+
+.label {
+  flex-basis: 100%;
+  font-size: var(--small);
 }

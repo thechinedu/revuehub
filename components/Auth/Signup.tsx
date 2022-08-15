@@ -155,11 +155,10 @@ export const Signup = (): JSX.Element => {
                 value={password}
                 onChange={handleChange(Attributes.PASSWORD)}
               />
-              <span>
-                {isDirty[Attributes.PASSWORD] && (
-                  <ProgressBar label="Excellent" value={25} />
-                )}
-              </span>
+
+              {isDirty[Attributes.PASSWORD] && (
+                <ProgressBar label="Excellent" value={50} />
+              )}
               {isInvalidAttribute(Attributes.PASSWORD) && (
                 <span className={styles.errorMessage}>
                   Password should be a minimum of 8 characters including
