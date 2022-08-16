@@ -157,7 +157,13 @@ export const Signup = (): JSX.Element => {
               />
 
               {isDirty[Attributes.PASSWORD] && (
-                <ProgressBar label="Excellent" value={50} />
+                <ProgressBar
+                  label={
+                    passwordStrength.feedback.suggestions.join(", ") ||
+                    passwordStrength.feedback.warning
+                  }
+                  value={passwordStrength.score * 25}
+                />
               )}
               {isInvalidAttribute(Attributes.PASSWORD) && (
                 <span className={styles.errorMessage}>

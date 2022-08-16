@@ -57,11 +57,19 @@
 }
 
 .group .errorMessage {
+  background-color: var(--powder);
   color: var(--atomic-tangerine);
   display: block;
   font-size: var(--small);
   margin-top: var(--spacer-1);
+  padding: var(--spacer-1);
   text-align: left;
+  top: 0;
+  z-index: 1;
+}
+
+.group .isInvalid:focus + .errorMessage {
+  visibility: visible;
 }
 
 .group input::placeholder {

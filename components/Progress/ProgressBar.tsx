@@ -7,28 +7,22 @@ type ProgressBarProps = {
   barAmount?: number;
 };
 
-// Create function that takes a value e.g 50 and returns
-// four values representing equal shares that could be divvied between
-// the four progress bars e.g [25, 25, 0, 0]
-
-// Use value to set the width of the progress bar (maybe via a css variable)
-
-// The background color of all progress bars will be determined by the value
-//  value between 0 - 25 -> red like color
-//  value between 26 - 50 -> orange like color
-//  value between 51 - 75 -> blue like color
-//  value between 76 - 100 -> green like color
-
 const PROGRESS_BAR_AMOUNT = 4; // This can be made a prop for the component if needed
 
 const splitProgressValue = (value: number, barAmount: number): number[] => {
   const total = 100;
   const res = new Array(barAmount).fill(0);
   const subtractor = total / barAmount;
+
+  if (value <= subtractor) {
+    res[0] = value * barAmount;
+    return res;
+  }
+
   let ptr = 0;
 
   while (value > 0) {
-    res[ptr] = value;
+    res[ptr] = value <= subtractor ? value * barAmount : subtractor * barAmount;
 
     value -= subtractor;
     ptr += 1;
