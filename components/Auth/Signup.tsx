@@ -4,6 +4,8 @@ import Container from "@/components/Container";
 import {
   AtIcon,
   EnvelopeIcon,
+  EyeIcon,
+  EyeSlashIcon,
   GithubIcon,
   PasswordIcon,
 } from "@/components/Icons";
@@ -52,6 +54,7 @@ export const Signup = (): JSX.Element => {
     username: false,
     password: false,
   });
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const { email, username, password } = userAttributes;
   const validationResult = userSchema.validate(userAttributes, {
     abortEarly: false,
@@ -73,6 +76,27 @@ export const Signup = (): JSX.Element => {
     }
 
     return false;
+  };
+
+  const genPasswordMessage = (): string => {
+    const {
+      feedback: { warning, suggestions },
+      score,
+    } = passwordStrength;
+    let msg = "";
+
+    if (score === VALID_PASSWORD_SCORE) return "Password is strong.";
+    if (passwordStrength.score === VALID_PASSWORD_SCORE - 1)
+      msg += "Almost there. Add a few more number and letters.";
+
+    if (warning) msg += `${warning}. `;
+    if (suggestions.length) msg += `${suggestions.join(", ")}.`;
+
+    return msg;
+  };
+
+  const handleTogglePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible);
   };
 
   const handleChange =
@@ -148,8 +172,28 @@ export const Signup = (): JSX.Element => {
             <div className={styles.group}>
               <label htmlFor="password">Password:</label>
               <PasswordIcon className={styles.icon} />
+              <div
+                onClick={handleTogglePasswordVisibility}
+                className={styles.togglePasswordVisibilityIconWrapper}
+              >
+                {isPasswordVisible ? (
+                  <EyeSlashIcon
+                    className={cn(styles, {
+                      icon: true,
+                      togglePasswordVisibilityIcon: true,
+                    })}
+                  />
+                ) : (
+                  <EyeIcon
+                    className={cn(styles, {
+                      icon: true,
+                      togglePasswordVisibilityIcon: true,
+                    })}
+                  />
+                )}
+              </div>
               <input
-                type="password"
+                type={isPasswordVisible ? "text" : "password"}
                 id="password"
                 placeholder="********"
                 value={password}
@@ -158,17 +202,14 @@ export const Signup = (): JSX.Element => {
 
               {isDirty[Attributes.PASSWORD] && (
                 <ProgressBar
-                  label={
-                    passwordStrength.feedback.suggestions.join(", ") ||
-                    passwordStrength.feedback.warning
-                  }
+                  label={genPasswordMessage()}
                   value={passwordStrength.score * 25}
                 />
               )}
               {isInvalidAttribute(Attributes.PASSWORD) && (
                 <span className={styles.errorMessage}>
-                  Password should be a minimum of 8 characters including
-                  uppercase and lowercase letters, numbers and symbols.
+                  Password should be a minimum of 8 characters. Passphrases are
+                  recommended.
                 </span>
               )}
             </div>

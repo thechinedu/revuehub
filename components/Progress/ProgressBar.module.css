@@ -38,4 +38,5 @@
 .label {
   flex-basis: 100%;
   font-size: var(--small);
+  text-align: left;
 }
