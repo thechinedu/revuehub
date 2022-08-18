@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@tanstack/react-query": "^4.2.1",
     "joi": "^17.6.0",
     "modern-css-reset": "^1.4.0",
     "next": "12.2.4",
