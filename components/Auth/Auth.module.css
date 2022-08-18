@@ -36,6 +36,17 @@
   width: 20px;
 }
 
+.togglePasswordVisibilityIconWrapper {
+  position: absolute;
+  right: 0;
+}
+
+.togglePasswordVisibilityIcon {
+  cursor: pointer;
+  left: unset;
+  right: 10px;
+}
+
 .group input {
   background: var(--powder);
   border: 2px solid var(--black);
@@ -57,12 +68,10 @@
 }
 
 .group .errorMessage {
-  background-color: var(--powder);
   color: var(--atomic-tangerine);
   display: block;
   font-size: var(--small);
   margin-top: var(--spacer-1);
-  padding: var(--spacer-1);
   text-align: left;
   top: 0;
   z-index: 1;
