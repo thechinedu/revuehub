@@ -2,7 +2,10 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL as string;
 
 export const get = (path: string) => {};
 
-export const post = <T = unknown>(path: string, body: T) =>
+export const post = <T = unknown, U = unknown>(
+  path: string,
+  body: T
+): Promise<U> =>
   new Promise(async (resolve, reject) => {
     const res = await fetch(`${API_URL}${path}`, {
       method: "POST",
@@ -13,7 +16,7 @@ export const post = <T = unknown>(path: string, body: T) =>
       },
     });
 
-    if (res.status < 400) resolve(await res.json());
+    if (res.status < 400) return resolve(await res.json());
 
-    reject(await res.json());
+    return reject(await res.json());
   });
