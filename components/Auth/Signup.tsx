@@ -12,14 +12,15 @@ import {
 import { Navbar } from "@/components/Navbar";
 import ProgressBar from "@/components/Progress";
 
-import { cn } from "@/utils";
+import { cn, post } from "@/utils";
 
 import Joi from "joi";
 
 import Head from "next/head";
 import Link from "next/link";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import zxcvbn from "zxcvbn";
+import { useMutation } from "@tanstack/react-query";
 
 enum Attributes {
   EMAIL = "email",
@@ -43,6 +44,10 @@ const userSchema = object.keys({
   password: string.min(8).required(),
 });
 
+// TODO: Add proper type annotation for this function's return object
+const createUser = (userAttributes: UserAttributes) =>
+  post<UserAttributes>("/users", userAttributes);
+
 export const Signup = (): JSX.Element => {
   const [userAttributes, setUserAttributes] = useState<UserAttributes>({
     email: "",
@@ -55,6 +60,16 @@ export const Signup = (): JSX.Element => {
     password: false,
   });
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  // TODO: When request is in progress, disable the signup button
+  const mutation = useMutation(() => createUser(userAttributes), {
+    // TODO: App proper type annotation for the err object
+    // Show http error message beneath sign up button or beneath form title
+    onError: (err: any) => {},
+    // TODO: redirect user to dashboard (yet to be created. Redirect to homepage in the mean time)
+    onSuccess: (data, _, ctx) => {
+      console.log("createMutation succeeded", data, ctx);
+    },
+  });
   const { email, username, password } = userAttributes;
   const validationResult = userSchema.validate(userAttributes, {
     abortEarly: false,
@@ -109,9 +124,7 @@ export const Signup = (): JSX.Element => {
 
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
-    // TODO: Submit form attributes to server
-    // If the server returns an error, display the error message underneath the relevant input
-    // otherwise, redirect user to dashboard (yet to be created. Redirect to homepage in the mean time)
+    mutation.mutate();
   };
 
   return (
