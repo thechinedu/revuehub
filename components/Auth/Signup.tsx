@@ -12,15 +12,18 @@ import {
 import { Navbar } from "@/components/Navbar";
 import ProgressBar from "@/components/Progress";
 
+import { CreateUserErrorResponse, CreateUserSuccessResponse } from "@/types";
+
 import { cn, post } from "@/utils";
 
 import Joi from "joi";
 
 import Head from "next/head";
 import Link from "next/link";
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import zxcvbn from "zxcvbn";
 import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/router";
 
 enum Attributes {
   EMAIL = "email",
@@ -44,9 +47,11 @@ const userSchema = object.keys({
   password: string.min(8).required(),
 });
 
-// TODO: Add proper type annotation for this function's return object
 const createUser = (userAttributes: UserAttributes) =>
-  post<UserAttributes>("/users", userAttributes);
+  post<UserAttributes, CreateUserErrorResponse | CreateUserSuccessResponse>(
+    "/users",
+    userAttributes
+  );
 
 export const Signup = (): JSX.Element => {
   const [userAttributes, setUserAttributes] = useState<UserAttributes>({
@@ -60,15 +65,22 @@ export const Signup = (): JSX.Element => {
     password: false,
   });
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  // TODO: When request is in progress, disable the signup button
+  const [serverError, setServerError] = useState<
+    CreateUserErrorResponse["data"] | null
+  >(null);
+  const [isMutationActive, setIsMutationActive] = useState(false);
+  const router = useRouter();
   const mutation = useMutation(() => createUser(userAttributes), {
-    // TODO: App proper type annotation for the err object
-    // Show http error message beneath sign up button or beneath form title
-    onError: (err: any) => {},
-    // TODO: redirect user to dashboard (yet to be created. Redirect to homepage in the mean time)
-    onSuccess: (data, _, ctx) => {
-      console.log("createMutation succeeded", data, ctx);
+    onMutate: () => setIsMutationActive(true),
+    onError: (err: CreateUserErrorResponse) => {
+      setServerError(err.data);
     },
+    // TODO: redirect user to dashboard (yet to be created. Redirect to homepage in the mean time)
+    onSuccess: () => {
+      router.push("/");
+    },
+
+    onSettled: () => setIsMutationActive(false),
   });
   const { email, username, password } = userAttributes;
   const validationResult = userSchema.validate(userAttributes, {
@@ -78,8 +90,11 @@ export const Signup = (): JSX.Element => {
   const formHasError =
     Boolean(validationResult.error) ||
     passwordStrength.score < VALID_PASSWORD_SCORE;
+  const isDisabled = formHasError || isMutationActive;
 
   const isInvalidAttribute = (attr: Attributes) => {
+    if (serverError && serverError[attr]) return true;
+
     if (isDirty[attr] && attr === Attributes.PASSWORD) {
       return passwordStrength.score < VALID_PASSWORD_SCORE;
     }
@@ -156,7 +171,7 @@ export const Signup = (): JSX.Element => {
               />
               {isInvalidAttribute(Attributes.EMAIL) && (
                 <span className={styles.errorMessage}>
-                  Email is invalid or is already in use
+                  {serverError?.[Attributes.EMAIL] || "Email is invalid"}
                 </span>
               )}
             </div>
@@ -176,8 +191,8 @@ export const Signup = (): JSX.Element => {
               />
               {isInvalidAttribute(Attributes.USERNAME) && (
                 <span className={styles.errorMessage}>
-                  Username can only contain alphanumeric characters or single
-                  hyphens, and cannot begin or end with a hyphen.
+                  {serverError?.[Attributes.USERNAME] ||
+                    "Username can only contain alphanumeric characters or single hyphens, and cannot begin or end with a hyphen."}
                 </span>
               )}
             </div>
@@ -221,8 +236,8 @@ export const Signup = (): JSX.Element => {
               )}
               {isInvalidAttribute(Attributes.PASSWORD) && (
                 <span className={styles.errorMessage}>
-                  Password should be a minimum of 8 characters. Passphrases are
-                  recommended.
+                  {serverError?.[Attributes.PASSWORD] ||
+                    "Password should be a minimum of 8 characters. Passphrases are recommended."}
                 </span>
               )}
             </div>
@@ -230,7 +245,7 @@ export const Signup = (): JSX.Element => {
             <button
               type="submit"
               className={styles.submitBtn}
-              disabled={formHasError}
+              disabled={isDisabled}
             >
               Sign up for RevueHub
             </button>
