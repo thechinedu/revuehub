@@ -13,8 +13,15 @@ type User = {
   profile_image_url: string;
 };
 
+type OauthState = {
+  state: string;
+};
+
 export type CreateUserSuccessResponse = Response<User>;
 
 export type CreateUserErrorResponse = Response<
   Pick<User, "email" | "username"> & { password: string }
 >;
+
+export type CreateOauthStateSuccessResponse = Response<OauthState>;
+export type CreateOauthStateErrorResponse = Response<OauthState>;
