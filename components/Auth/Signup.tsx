@@ -114,6 +114,7 @@ export const Signup = (): JSX.Element => {
       onSuccess: ({ data: { state } }: CreateOauthStateSuccessResponse) => {
         location.href = `${GITHUB_AUTH_ENDPOINT}?client_id=${GITHUB_OAUTH_CLIENT_ID}&state=${state}`;
       },
+      onSettled: () => setIsMutationActive(false),
     }
   );
   const { email, username, password } = userAttributes;
