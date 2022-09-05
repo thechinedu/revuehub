@@ -36,6 +36,7 @@
   align-items: center;
   background-color: var(--black);
   color: var(--white);
+  cursor: pointer;
   display: flex;
   justify-content: center;
   margin-top: var(--spacer-2);

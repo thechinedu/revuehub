@@ -4,10 +4,14 @@ import Container from "@/components/Container";
 import { GithubIcon } from "@/components/Icons";
 import { Navbar } from "@/components/Navbar";
 
+import { GITHUB_AUTH_ENDPOINT, GITHUB_OAUTH_CLIENT_ID } from "@/types";
+
 import { cn } from "@/utils";
 
 import Head from "next/head";
 import Link from "next/link";
+
+import { OAuthButton } from "../Auth/OAuthButton";
 
 import type { NextPage } from "next";
 
@@ -42,17 +46,18 @@ const Home: NextPage = () => {
               </a>
             </Link>
 
-            <Link href="/sign-up">
-              <a
-                className={cn(styles, {
-                  heroCta: true,
-                  oauthBtn: true,
-                })}
-              >
-                <GithubIcon className={styles.githubIcon} />
-                Sign up with Github
-              </a>
-            </Link>
+            <OAuthButton
+              className={cn(styles, {
+                heroCta: true,
+                oauthBtn: true,
+              })}
+              authEndpoint={GITHUB_AUTH_ENDPOINT}
+              clientID={GITHUB_OAUTH_CLIENT_ID}
+              provider="github"
+            >
+              <GithubIcon className={styles.githubIcon} />
+              Sign up with Github
+            </OAuthButton>
           </div>
         </main>
       </Container>
