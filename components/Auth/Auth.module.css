@@ -122,6 +122,7 @@
 .oauthBtn {
   composes: btn from "@/styles/blocks.module.css";
   composes: oauthBtn from "@/components/Home/Home.module.css";
+  cursor: pointer;
   margin: var(--spacer-4) 0 var(--spacer-2);
   transition-duration: 0.4s;
   width: 100%;

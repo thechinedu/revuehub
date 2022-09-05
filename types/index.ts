@@ -25,3 +25,8 @@ export type CreateUserErrorResponse = Response<
 
 export type CreateOauthStateSuccessResponse = Response<OauthState>;
 export type CreateOauthStateErrorResponse = Response<OauthState>;
+
+export const GITHUB_AUTH_ENDPOINT = process.env
+  .NEXT_PUBLIC_GITHUB_AUTH_ENDPOINT as string;
+export const GITHUB_OAUTH_CLIENT_ID = process.env
+  .NEXT_PUBLIC_GITHUB_OAUTH_CLIENT_ID as string;
