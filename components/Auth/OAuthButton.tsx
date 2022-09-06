@@ -1,5 +1,3 @@
-import styles from "./Auth.module.css";
-
 import {
   CreateOauthStateErrorResponse,
   CreateOauthStateSuccessResponse,
@@ -9,7 +7,7 @@ import { post } from "@/utils";
 
 import { useMutation } from "@tanstack/react-query";
 
-import { MouseEvent, ReactElement, ReactNode, useState } from "react";
+import { MouseEvent, ReactNode, useState } from "react";
 
 type OAuthStateAttributes = {
   provider: string;
