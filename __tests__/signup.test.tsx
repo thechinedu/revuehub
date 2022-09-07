@@ -1,10 +1,8 @@
 import Signup from "@/pages/sign-up";
 import { render, screen } from "@/utils/test-utils";
 
-const useRouter = jest.spyOn(require("next/router"), "useRouter");
-
-useRouter.mockImplementation(() => ({
-  pathname: "/sign-up",
+jest.mock("next/router", () => ({
+  useRouter: jest.fn().mockReturnValue({ pathname: "/sign-up" }),
 }));
 
 describe("Signup flow", () => {
@@ -13,7 +11,9 @@ describe("Signup flow", () => {
   });
 
   test("signup page is rendered correctly", () => {
-    const heading = screen.getByText("Create your account");
+    const heading = screen.getByRole("heading", {
+      name: /create your account/i,
+    });
     expect(heading).toBeInTheDocument();
   });
 });
