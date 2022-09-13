@@ -1,8 +1,6 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL as string;
 const API_VERSION = "v1";
 
-console.log({ API_URL, API_VERSION });
-
 export const get = (path: string) => {};
 
 export const post = <T = unknown, U = unknown>(

@@ -43,7 +43,69 @@ describe("Signup flow", () => {
 
       await user.click(signupBtn);
       expect(router.push).toHaveBeenCalledTimes(1);
-      // expect(routerPushMock).toHaveBeenCalledWith("/");
+      expect(router.push).toHaveBeenCalledWith("/");
+    });
+  });
+
+  describe("when the provided credentials are incorrect", () => {
+    // TODO: Add test case for when email is already in use by another user
+    test("user signup is disallowed when email is invalid", async () => {
+      await user.type(emailInput, "test");
+
+      expect(
+        screen.getByRole("alert", { name: /email is invalid/i })
+      ).toBeInTheDocument();
+
+      await user.clear(emailInput);
+      await user.type(emailInput, "test@example.com");
+
+      expect(
+        screen.queryByRole("alert", { name: /email is invalid/i })
+      ).not.toBeInTheDocument();
+    });
+
+    // TODO: Add test cases for different type of input cases. Use jest.each
+    test("user signup is disallowed when username is invalid", async () => {
+      await user.type(usernameInput, "--");
+
+      expect(
+        screen.getByRole("alert", {
+          name: /username can only contain/i,
+          exact: false,
+        })
+      ).toBeInTheDocument();
+
+      await user.clear(usernameInput);
+      await user.type(usernameInput, "testy");
+
+      expect(
+        screen.queryByRole("alert", {
+          name: /username can only contain/i,
+          exact: false,
+        })
+      ).not.toBeInTheDocument();
+    });
+
+    // TODO: Add test case for different type of input cases. Use jest.each
+    test("user signup is disallowed when password is invalid", async () => {
+      await user.type(passwordInput, "1234567");
+
+      expect(
+        screen.getByRole("alert", {
+          name: /password should be/i,
+          exact: false,
+        })
+      ).toBeInTheDocument();
+
+      await user.clear(passwordInput);
+      await user.type(passwordInput, "mein passwort ist super");
+
+      expect(
+        screen.queryByRole("alert", {
+          name: /password should be/i,
+          exact: false,
+        })
+      ).not.toBeInTheDocument();
     });
   });
 });
