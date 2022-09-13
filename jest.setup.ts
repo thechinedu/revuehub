@@ -6,7 +6,7 @@ import fetch from "node-fetch";
 const projectDir = process.cwd();
 loadEnvConfig(projectDir);
 
-globalThis.fetch = fetch as any; // TODO: fix type annotation
+globalThis.fetch = fetch as unknown as typeof globalThis.fetch;
 
 beforeAll(() => server.listen());
 

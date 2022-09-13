@@ -98,6 +98,14 @@ export const Signup = (): JSX.Element => {
     Boolean(validationResult.error) ||
     passwordStrength.score < VALID_PASSWORD_SCORE;
   const isDisabled = formHasError || isMutationActive;
+  const emailErrorMessage =
+    createUserServerError?.[Attributes.EMAIL] || "Email is invalid";
+  const usernameErrorMessage =
+    createUserServerError?.[Attributes.USERNAME] ||
+    "Username can only contain alphanumeric characters or single hyphens, and cannot begin or end with a hyphen.";
+  const passwordErrorMessage =
+    createUserServerError?.[Attributes.PASSWORD] ||
+    "Password should be a minimum of 8 characters. Passphrases are recommended.";
 
   const isInvalidAttribute = (attr: Attributes) => {
     if (createUserServerError && createUserServerError[attr]) return true;
@@ -174,12 +182,19 @@ export const Signup = (): JSX.Element => {
                 className={cn(styles, {
                   isInvalid: isInvalidAttribute(Attributes.EMAIL),
                 })}
+                aria-invalid={isInvalidAttribute(Attributes.EMAIL)}
+                aria-errormessage="email-err"
                 autoFocus
               />
               {isInvalidAttribute(Attributes.EMAIL) && (
-                <span className={styles.errorMessage}>
-                  {createUserServerError?.[Attributes.EMAIL] ||
-                    "Email is invalid"}
+                <span
+                  className={styles.errorMessage}
+                  id="email-err"
+                  aria-live="assertive"
+                  role="alert"
+                  aria-label={emailErrorMessage}
+                >
+                  {emailErrorMessage}
                 </span>
               )}
             </div>
@@ -196,11 +211,18 @@ export const Signup = (): JSX.Element => {
                 className={cn(styles, {
                   isInvalid: isInvalidAttribute(Attributes.USERNAME),
                 })}
+                aria-invalid={isInvalidAttribute(Attributes.USERNAME)}
+                aria-errormessage="username-err"
               />
               {isInvalidAttribute(Attributes.USERNAME) && (
-                <span className={styles.errorMessage}>
-                  {createUserServerError?.[Attributes.USERNAME] ||
-                    "Username can only contain alphanumeric characters or single hyphens, and cannot begin or end with a hyphen."}
+                <span
+                  className={styles.errorMessage}
+                  id="username-err"
+                  aria-live="assertive"
+                  role="alert"
+                  aria-label={usernameErrorMessage}
+                >
+                  {usernameErrorMessage}
                 </span>
               )}
             </div>
@@ -234,6 +256,8 @@ export const Signup = (): JSX.Element => {
                 placeholder="********"
                 value={password}
                 onChange={handleChange(Attributes.PASSWORD)}
+                aria-invalid={isInvalidAttribute(Attributes.PASSWORD)}
+                aria-errormessage="password-err"
               />
 
               {isDirty[Attributes.PASSWORD] && (
@@ -243,9 +267,14 @@ export const Signup = (): JSX.Element => {
                 />
               )}
               {isInvalidAttribute(Attributes.PASSWORD) && (
-                <span className={styles.errorMessage}>
-                  {createUserServerError?.[Attributes.PASSWORD] ||
-                    "Password should be a minimum of 8 characters. Passphrases are recommended."}
+                <span
+                  className={styles.errorMessage}
+                  id="password-err"
+                  aria-live="assertive"
+                  role="alert"
+                  aria-label={passwordErrorMessage}
+                >
+                  {passwordErrorMessage}
                 </span>
               )}
             </div>
