@@ -1,6 +1,7 @@
 import styles from "./Dashboard.module.css";
 
 import Container from "@/components/Container";
+import { GithubIcon } from "@/components/Icons";
 import { Navbar, SubNav } from "@/components/Navbar";
 
 import Head from "next/head";
@@ -28,9 +29,20 @@ const Dashboard: NextPage = () => {
         </SubNav>
 
         <main className={styles.main}>
-          <a href="">
+          <section>
+            <h3>Welcome to RevueHub</h3>
+            <p>
+              Repositories you have added will show up here. After a repository
+              is added, you can request reviews from other RevueHub users
+            </p>
+            <button>Add a new repository</button>
+          </section>
+          {/* <a href="">
             <section className={styles.repoSummary}>
-              <h3 className={styles.heading}>revuehub-api</h3>
+              <h3 className={styles.heading}>
+                <GithubIcon className={styles.githubIcon} />{" "}
+                thechinedu/revuehub-api
+              </h3>
 
               <p className={styles.description}>
                 API for the revuehub platform - Review github repositories
@@ -38,11 +50,10 @@ const Dashboard: NextPage = () => {
               </p>
 
               <div className={styles.meta}>
-                <p>Typescript</p>
                 <p>Updated 7 hours ago</p>
               </div>
             </section>
-          </a>
+          </a> */}
         </main>
       </Container>
     </>
