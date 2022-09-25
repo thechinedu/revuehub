@@ -37,7 +37,14 @@
 }
 
 .repoSummary .heading {
+  align-items: center;
+  display: flex;
   font-size: var(--base-font-size);
+}
+
+.githubIcon {
+  composes: githubIcon from "@/components/Home/Home.module.css";
+  fill: var(--black);
 }
 
 .repoSummary .description,
