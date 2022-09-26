@@ -29,13 +29,15 @@ const Dashboard: NextPage = () => {
         </SubNav>
 
         <main className={styles.main}>
-          <section>
-            <h3>Welcome to RevueHub</h3>
-            <p>
+          <section className={styles.welcome}>
+            <h3 className={styles.heading}>Welcome to RevueHub</h3>
+            <p className={styles.message}>
               Repositories you have added will show up here. After a repository
-              is added, you can request reviews from other RevueHub users
+              is added, you can request reviews from other RevueHub users.
             </p>
-            <button>Add a new repository</button>
+            <Link href="#">
+              <a className={styles.addRepo}>Add a new repository</a>
+            </Link>
           </section>
           {/* <a href="">
             <section className={styles.repoSummary}>

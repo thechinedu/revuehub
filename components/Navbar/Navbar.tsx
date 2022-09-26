@@ -1,5 +1,6 @@
 import styles from "./Navbar.module.css";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ComponentPropsWithoutRef } from "react";
@@ -42,6 +43,13 @@ export const Navbar: NextPage = () => {
             </Link>
           </>
         )}
+
+        <Image
+          src="https://placebeard.it/32/32/notag"
+          alt=""
+          width={32}
+          height={32}
+        />
       </nav>
     </header>
   );

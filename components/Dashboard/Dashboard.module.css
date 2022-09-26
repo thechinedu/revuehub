@@ -30,10 +30,37 @@
   margin-top: var(--spacer-4);
 }
 
+.welcome, 
 .repoSummary {
   background-color: var(--white);
   border: 2px solid var(--black);
   padding: var(--spacer-2);
+}
+
+.welcome {
+  margin: 0 auto;
+  max-width: 500px;
+  padding: var(--spacer-4) var(--spacer-2);
+  text-align: center;
+
+  @media (min-width: 551px) {
+    padding: var(--spacer-4);
+  }
+}
+
+.welcome p {
+  margin-top: var(--spacer-2);
+}
+
+.addRepo {
+  composes: btn from "@/styles/blocks.module.css";
+  background-color: var(--white);
+  box-shadow: 5px 5px 0 var(--black);
+  color: var(--black);
+  display: inline-block;
+  margin-top: var(--spacer-2);
+  transition-duration: 0.4s;
+  width: 100%;
 }
 
 .repoSummary .heading {
