@@ -2,6 +2,7 @@
   background: transparent;
   border: 2px solid var(--black);
   color: var(--black);
+  cursor: pointer;
   font-weight: 700;
   padding: var(--spacer-1) var(--spacer-2);
 }

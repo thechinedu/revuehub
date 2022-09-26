@@ -5,7 +5,7 @@
   margin: 0 auto;
   padding: var(--spacer-2);
 
-  @media (min-width: 768px) {
+  @media (min-width: 551px) {
     padding: var(--spacer-4);
   }
 }

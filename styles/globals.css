@@ -45,6 +45,12 @@
   --spacer-11: calc(var(--space-scale) * 11);
   --spacer-12: calc(var(--space-scale) * 12);
 
+  /* Screen sizes */
+  /* 0-550px — Mobile */
+  /* 551-1100px — Tablet */
+  /* 1101-1500px — Laptop */
+  /* 1501+px — Desktop */
+
   font-size: var(--base-font-size);
 }
 
