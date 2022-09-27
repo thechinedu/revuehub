@@ -1,5 +1,6 @@
 import styles from "./Dashboard.module.css";
 
+import { OAuthButton } from "@/components/Auth/OAuthButton";
 import Container from "@/components/Container";
 import { GithubIcon } from "@/components/Icons";
 import { Navbar, SubNav } from "@/components/Navbar";
@@ -29,33 +30,67 @@ const Dashboard: NextPage = () => {
         </SubNav>
 
         <main className={styles.main}>
-          <section className={styles.welcome}>
+          {/* <section className={styles.welcome}>
             <h3 className={styles.heading}>Welcome to RevueHub</h3>
             <p className={styles.message}>
-              Repositories you have added will show up here. After a repository
-              is added, you can request reviews from other RevueHub users.
+              Repositories that you add will show up here. After a repository is
+              added, you can request reviews from other RevueHub users.
             </p>
+            <OAuthButton
+              className={styles.addRepo}
+              provider="github"
+              scope="repo"
+            >
+              Add a new repository
+            </OAuthButton>
+          </section> */}
+          <div className={styles.pageActionContainer}>
+            <input
+              type="search"
+              placeholder="Search repositories"
+              className={styles.search}
+              aria-label="Search repositories"
+            />
             <Link href="#">
-              <a className={styles.addRepo}>Add a new repository</a>
+              <a className={styles.addRepo}>Add new repository</a>
+            </Link>
+          </div>
+
+          <section className={styles.repoSummary}>
+            <Link href="#">
+              <a className={styles.container}>
+                <h3 className={styles.heading}>
+                  <GithubIcon className={styles.githubIcon} />{" "}
+                  thechinedu/revuehub-api
+                </h3>
+
+                <p className={styles.description}>
+                  API for the revuehub platform - Review github repositories
+                  without the need for pull requests
+                </p>
+
+                <div className={styles.meta}>
+                  <p>Updated 7 hours ago</p>
+                </div>
+              </a>
             </Link>
           </section>
-          {/* <a href="">
-            <section className={styles.repoSummary}>
-              <h3 className={styles.heading}>
-                <GithubIcon className={styles.githubIcon} />{" "}
-                thechinedu/revuehub-api
-              </h3>
+          <section className={styles.repoSummary}>
+            <Link href="#">
+              <a className={styles.container}>
+                <h3 className={styles.heading}>
+                  <GithubIcon className={styles.githubIcon} />{" "}
+                  thechinedu/dialogcore
+                </h3>
 
-              <p className={styles.description}>
-                API for the revuehub platform - Review github repositories
-                without the need for pull requests
-              </p>
+                <p className={styles.description}>Source code for DialogCore</p>
 
-              <div className={styles.meta}>
-                <p>Updated 7 hours ago</p>
-              </div>
-            </section>
-          </a> */}
+                <div className={styles.meta}>
+                  <p>Updated 7 hours ago</p>
+                </div>
+              </a>
+            </Link>
+          </section>
         </main>
       </Container>
     </>

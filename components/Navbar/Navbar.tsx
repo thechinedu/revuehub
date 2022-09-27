@@ -44,12 +44,15 @@ export const Navbar: NextPage = () => {
           </>
         )}
 
-        <Image
-          src="https://placebeard.it/32/32/notag"
-          alt=""
-          width={32}
-          height={32}
-        />
+        {/* TODO: show this routes based on whether a user is logged in or not */}
+        {router.pathname.includes("dashboard") && (
+          <Image
+            src="https://placebeard.it/32/32/notag"
+            alt=""
+            width={32}
+            height={32}
+          />
+        )}
       </nav>
     </header>
   );

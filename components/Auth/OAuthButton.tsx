@@ -1,6 +1,8 @@
 import {
   CreateOauthStateErrorResponse,
   CreateOauthStateSuccessResponse,
+  GITHUB_AUTH_ENDPOINT,
+  GITHUB_OAUTH_CLIENT_ID,
 } from "@/types";
 
 import { post } from "@/utils";
@@ -14,14 +16,16 @@ type OAuthStateAttributes = {
 };
 
 type OAuthButtonProps = {
-  authEndpoint: string;
-  className: string;
-  clientID: string;
+  className?: string;
   provider: string;
+  scope: string;
   children: ReactNode;
 };
 
 type CreateOauthStateServerError = CreateOauthStateErrorResponse["data"];
+
+const authEndpoint = GITHUB_AUTH_ENDPOINT;
+const clientID = GITHUB_OAUTH_CLIENT_ID;
 
 const createOauthState = (oauthStateAttributes: OAuthStateAttributes) =>
   post<
@@ -30,10 +34,9 @@ const createOauthState = (oauthStateAttributes: OAuthStateAttributes) =>
   >("/users/oauth/state", oauthStateAttributes);
 
 export const OAuthButton = ({
-  authEndpoint,
-  className,
-  clientID,
+  className = "",
   provider,
+  scope,
   children,
 }: OAuthButtonProps): JSX.Element => {
   const [isMutationActive, setIsMutationActive] = useState(false);
@@ -48,13 +51,13 @@ export const OAuthButton = ({
       },
       onSuccess: ({ data: { state } }: CreateOauthStateSuccessResponse) => {
         // TODO: receive scope, client_id & auth_endpoint
-        location.href = `${authEndpoint}?client_id=${clientID}&state=${state}&scope=user`;
+        location.href = `${authEndpoint}?client_id=${clientID}&state=${state}&scope=${scope}`;
       },
       onSettled: () => setIsMutationActive(false),
     }
   );
 
-  const handleOAuthSignup =
+  const handleOAuthIntegration =
     (provider: string) => async (evt: MouseEvent<HTMLAnchorElement>) => {
       evt.preventDefault();
 
@@ -66,7 +69,7 @@ export const OAuthButton = ({
 
   return (
     <>
-      <a className={className} onClick={handleOAuthSignup(provider)}>
+      <a className={className} onClick={handleOAuthIntegration(provider)}>
         {children}
       </a>
       {error?.state && <span>{error.state}</span>}

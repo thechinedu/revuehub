@@ -39,7 +39,7 @@
 
 .welcome {
   margin: 0 auto;
-  max-width: 500px;
+  max-width: 600px;
   padding: var(--spacer-4) var(--spacer-2);
   text-align: center;
 
@@ -63,10 +63,72 @@
   width: 100%;
 }
 
+.pageActionContainer {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+
+  @media (min-width: 551px) {
+    flex-wrap: nowrap;
+    gap: var(--spacer-2);
+  }
+}
+
+.pageActionContainer .search {
+  border: 2px solid var(--black);
+  border-radius: 4px;
+  padding: var(--spacer-1) var(--spacer-2);
+  width: 100%;
+
+  @media (min-width: 551px) {
+    flex: 3;
+  }
+}
+
+.pageActionContainer .addRepo {
+  background-color: var(--black);
+  color: var(--white);
+  border-radius: 4px;
+  box-shadow: none;
+  margin-top: var(--spacer-1);
+  text-align: center;
+  transition: none;
+
+  @media (min-width: 551px) {
+    flex: 1.09;
+    margin: 0;
+  }
+
+  @media (min-width: 1101px) {
+    flex: 0.6;
+  }
+}
+
+.repoSummary {
+  box-shadow: 5px 5px 0 var(--black);
+  margin-top: var(--spacer-4);
+
+  &:not(:first-of-type) {
+    margin-top: var(--spacer-2);
+  }
+}
+
+.repoSummary .container {
+  @media (min-width: 551px) {
+    align-items: center;
+    display: flex;
+    gap: var(--spacer-2);
+  }
+}
+
 .repoSummary .heading {
   align-items: center;
   display: flex;
   font-size: var(--base-font-size);
+
+  @media (min-width: 551px) {
+    flex: 2;
+  }
 }
 
 .githubIcon {
@@ -77,12 +139,16 @@
 .repoSummary .description,
 .repoSummary .meta {
   font-size: var(--small);
-}
-
-.repoSummary .description {
   margin-top: var(--spacer-2);
+
+  @media (min-width: 551px) {
+    margin: 0;
+    flex: 1;
+  }
 }
 
 .repoSummary .meta {
-  margin-top: var(--spacer-1);
+  @media (min-width: 551px) {
+    text-align: right;
+  }
 }
