@@ -292,9 +292,8 @@ export const Signup = (): JSX.Element => {
 
           <OAuthButton
             className={styles.oauthBtn}
-            authEndpoint={GITHUB_AUTH_ENDPOINT}
-            clientID={GITHUB_OAUTH_CLIENT_ID}
             provider="github"
+            scope="user"
           >
             <GithubIcon
               className={cn(styles, { icon: true, githubIcon: true })}

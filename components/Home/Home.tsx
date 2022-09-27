@@ -51,9 +51,8 @@ const Home: NextPage = () => {
                 heroCta: true,
                 oauthBtn: true,
               })}
-              authEndpoint={GITHUB_AUTH_ENDPOINT}
-              clientID={GITHUB_OAUTH_CLIENT_ID}
               provider="github"
+              scope="user"
             >
               <GithubIcon className={styles.githubIcon} />
               Sign up with Github
