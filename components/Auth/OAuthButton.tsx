@@ -31,7 +31,7 @@ const createOauthState = (oauthStateAttributes: OAuthStateAttributes) =>
   post<
     OAuthStateAttributes,
     CreateOauthStateErrorResponse | CreateOauthStateSuccessResponse
-  >("/users/oauth/state", oauthStateAttributes);
+  >("/auth/oauth/state", oauthStateAttributes);
 
 export const OAuthButton = ({
   className = "",
