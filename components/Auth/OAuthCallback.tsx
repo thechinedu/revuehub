@@ -2,16 +2,12 @@ import styles from "./Auth.module.css";
 
 import Container from "@/components/Container";
 import { Navbar } from "@/components/Navbar";
-// import { AccountIcon, GithubIcon, PasswordIcon } from "@/components/Icons";
-
-// import { cn } from "@/utils";
 
 import Head from "next/head";
 import { useMutation } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { post } from "@/utils";
-// import Link from "next/link";
 
 type OAuthCallbackAttributes = {
   code: string;
@@ -47,8 +43,8 @@ export const OAuthCallback = (): JSX.Element => {
   );
 
   useEffect(() => {
-    if (code && state) mutation.mutate();
-  }, [code, state]);
+    mutation.mutate();
+  }, []);
 
   return (
     <>
