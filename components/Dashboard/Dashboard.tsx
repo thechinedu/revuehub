@@ -51,9 +51,13 @@ const Dashboard: NextPage = () => {
               className={styles.search}
               aria-label="Search repositories"
             />
-            <Link href="#">
-              <a className={styles.addRepo}>Add new repository</a>
-            </Link>
+            <OAuthButton
+              className={styles.addRepo}
+              provider="github"
+              scope="repo"
+            >
+              Add new repository
+            </OAuthButton>
           </div>
 
           <section className={styles.repoSummary}>
