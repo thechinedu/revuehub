@@ -30,3 +30,44 @@
 .page-intro > p {
   margin-top: var(--spacer-2);
 }
+
+.panel-container {
+  background-color: var(--white);
+  border: 2px solid var(--black);
+  box-shadow: 5px 5px 0 var(--black);
+  padding: var(--spacer-2);
+}
+
+.panel-content-wrapper {
+  @media (min-width: 551px) {
+    align-items: center;
+    display: flex;
+    gap: var(--spacer-2);
+  }
+}
+
+.panel-heading {
+  align-items: center;
+  display: flex;
+  font-size: var(--base-font-size);
+
+  @media (min-width: 551px) {
+    flex: 2;
+  }
+}
+
+.panel-content {
+  font-size: var(--small);
+  margin-top: var(--spacer-2);
+
+  @media (min-width: 551px) {
+    margin: 0;
+    flex: 1;
+  }
+}
+
+.panel-action {
+  @media (min-width: 551px) {
+    text-align: right;
+  }
+}

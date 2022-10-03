@@ -19,6 +19,8 @@ export const SubNav = ({
     </nav>
   );
 };
+// TODO: Remove
+const privateRoutes: string[] = ["/dashboard", "/repos/new"];
 
 export const Navbar: NextPage = () => {
   const router = useRouter();
@@ -44,8 +46,8 @@ export const Navbar: NextPage = () => {
           </>
         )}
 
-        {/* TODO: show this routes based on whether a user is logged in or not */}
-        {router.pathname.includes("dashboard") && (
+        {/* TODO: show these routes based on whether a user is logged in or not */}
+        {privateRoutes.includes(router.pathname) && (
           <Image
             src="https://placebeard.it/32/32/notag"
             alt=""
