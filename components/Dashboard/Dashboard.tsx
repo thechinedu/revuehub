@@ -27,6 +27,9 @@ const Dashboard: NextPage = () => {
           <Link href="/">
             <a>Review requested (10)</a>
           </Link>
+          <Link href="/">
+            <a>Settings</a>
+          </Link>
         </SubNav>
 
         <main className={styles.main}>

@@ -147,6 +147,12 @@
   }
 }
 
+.repoSummary .description {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .repoSummary .meta {
   @media (min-width: 551px) {
     text-align: right;

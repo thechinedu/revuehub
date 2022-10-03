@@ -1,0 +1,47 @@
+.welcome {
+  margin: var(--spacer-4) 0;
+}
+
+.repoSummary {
+  composes: panel-container from '@/styles/blocks.module.css';
+  margin-top: var(--spacer-2);
+}
+
+.container {
+  composes: panel-content-wrapper from '@/styles/blocks.module.css';
+}
+
+.heading {
+  composes: panel-heading from '@/styles/blocks.module.css';
+}
+
+.githubIcon {
+  composes: githubIcon from "@/components/Home/Home.module.css";
+  fill: var(--black);
+}
+
+.description,
+.action {
+  composes: panel-content from '@/styles/blocks.module.css';
+}
+
+.description {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.action {
+  composes: panel-action from '@/styles/blocks.module.css';
+  border: 2px solid var(--black);
+  color: var(--black);
+  display: inline-block;
+  margin-top: var(--spacer-2);
+  max-width: 100px;
+  padding: var(--spacer-1) var(--spacer-2);
+  text-align: center;
+
+  @media (min-width: 551px) {
+    margin-top: 0;
+  }
+}
