@@ -12,19 +12,25 @@ type User = {
   full_name: string;
   profile_image_url: string;
 };
-
-type OauthState = {
-  state: string;
-};
-
 export type CreateUserSuccessResponse = Response<User>;
-
 export type CreateUserErrorResponse = Response<
   Pick<User, "email" | "username"> & { password: string }
 >;
 
-export type CreateOauthStateSuccessResponse = Response<OauthState>;
-export type CreateOauthStateErrorResponse = Response<OauthState>;
+type OAuthState = {
+  state: string;
+};
+export type CreateOAuthStateSuccessResponse = Response<OAuthState>;
+export type CreateOAuthStateErrorResponse = Response<OAuthState>;
+
+type Repo = {
+  id: number;
+  name: string;
+  description: string;
+  lastUpdated: string;
+};
+export type FetchOwnActiveReposSuccessResponse = Response<Repo[]>;
+export type FetchOwnActiveReposErrorResponse = Response<null>;
 
 export const GITHUB_AUTH_ENDPOINT = process.env
   .NEXT_PUBLIC_GITHUB_AUTH_ENDPOINT as string;
