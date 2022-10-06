@@ -5,12 +5,47 @@ import Container from "@/components/Container";
 import { GithubIcon } from "@/components/Icons";
 import { Navbar, SubNav } from "@/components/Navbar";
 
+import {
+  FetchOwnActiveReposErrorResponse,
+  FetchOwnActiveReposSuccessResponse,
+} from "@/types";
+
+import { get } from "@/utils";
+
 import Head from "next/head";
 import Link from "next/link";
 
 import type { NextPage } from "next";
+import { useMutation } from "@tanstack/react-query";
+import { useEffect } from "react";
+
+type FetchOwnActiveReposResponse =
+  | FetchOwnActiveReposSuccessResponse
+  | FetchOwnActiveReposErrorResponse;
+
+const fetchOwnActiveRepos = () =>
+  get<FetchOwnActiveReposSuccessResponse | FetchOwnActiveReposErrorResponse>(
+    "/repositories?active=true"
+  );
 
 const Dashboard: NextPage = () => {
+  const fetchOwnActiveReposMutation = useMutation(() => fetchOwnActiveRepos(), {
+    // onMutate: () => setIsMutationActive(true),
+    onError: (err: FetchOwnActiveReposErrorResponse) => {
+      console.log(err);
+      // setError(err.data);
+    },
+    onSuccess: (data) => {
+      const res = data as FetchOwnActiveReposSuccessResponse;
+      console.log(res);
+    },
+    // onSettled: () => setIsMutationActive(false),
+  });
+
+  useEffect(() => {
+    fetchOwnActiveReposMutation.mutate();
+  }, []);
+
   return (
     <>
       <Head>
@@ -54,13 +89,9 @@ const Dashboard: NextPage = () => {
               className={styles.search}
               aria-label="Search repositories"
             />
-            <OAuthButton
-              className={styles.addRepo}
-              provider="github"
-              scope="repo"
-            >
-              Add new repository
-            </OAuthButton>
+            <Link href="/repos/new">
+              <a className={styles.addRepo}>Add new repository</a>
+            </Link>
           </div>
 
           <section className={styles.repoSummary}>

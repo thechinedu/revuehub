@@ -5,7 +5,7 @@ import { Navbar } from "@/components/Navbar";
 
 import Head from "next/head";
 import { useMutation } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import { post } from "@/utils";
 
@@ -22,28 +22,33 @@ export const OAuthCallback = (): JSX.Element => {
     query: { code, state },
     push,
   } = useRouter();
+  const redirectPath = useRef<{ error: string; success: string }>();
 
   const mutation = useMutation(
     () => createUserViaOauth({ code, state } as OAuthCallbackAttributes),
     {
       onError: (err) => {
         console.log("error", err);
-        // TODO: redirect to sign up or sign in page depending on where the action was initially triggered
-        // (server will inform client of what part of the page to redirect user to).
-        // show error indicating that oauth signup failed. (pass data from this page to sign up/ sign in page)
-        push("/sign-up");
+        push(redirectPath.current?.error || "/signup");
       },
       onSuccess: (data) => {
         console.log("success::OAUTH", data);
-        // TODO: User created
-        // Redirect user to dashboard
-        push("/");
+        push(redirectPath.current?.success || "/");
+      },
+      onSettled: () => {
+        localStorage.removeItem("oauth-redirect-path");
       },
     }
   );
 
   useEffect(() => {
-    mutation.mutate();
+    if (code && state) mutation.mutate();
+  }, [code, state]);
+
+  useEffect(() => {
+    redirectPath.current = JSON.parse(
+      localStorage.getItem("oauth-redirect-path") ?? "{}"
+    );
   }, []);
 
   return (
