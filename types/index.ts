@@ -23,11 +23,11 @@ type OAuthState = {
 export type CreateOAuthStateSuccessResponse = Response<OAuthState>;
 export type CreateOAuthStateErrorResponse = Response<OAuthState>;
 
-type Repo = {
+export type Repo = {
   id: number;
   name: string;
   description: string;
-  lastUpdated: string;
+  last_updated: string;
 };
 export type FetchOwnActiveReposSuccessResponse = Response<Repo[]>;
 export type FetchOwnActiveReposErrorResponse = Response<null>;
