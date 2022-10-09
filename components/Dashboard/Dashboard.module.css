@@ -26,8 +26,19 @@
   font-weight: 700;
 }
 
-.main {
+.main,
+.pending,
+.error {
   margin-top: var(--spacer-4);
+}
+
+.pending,
+.error {
+  background-color: var(--white);
+  border: 2px solid var(--black);
+  display: block;
+  padding: var(--spacer-2);
+  text-align: center;
 }
 
 .welcome, 
