@@ -105,7 +105,9 @@ const Dashboard: NextPage = () => {
         <SubNav className={styles.subNav}>
           {/* TODO: set active style only when page is the active view */}
           <Link href="/">
-            <a className={styles.active}>My repositories (66)</a>
+            <a className={styles.active}>
+              My repositories {repos.length ? `(${repos.length})` : ""}
+            </a>
           </Link>
           <Link href="/">
             <a>Review requested (10)</a>
