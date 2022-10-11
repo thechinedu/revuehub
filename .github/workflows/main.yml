@@ -30,3 +30,9 @@ jobs:
         yarn build
         yarn lint
         yarn test
+    # Temporarily disabled. Enable after auth integration is complete. Manual checks will be done for now
+    # - name: Run Lighthouse CI (Performance, accessibility, best practises and SEO testing)
+    #   env:
+    #     LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+    #   run: |
+    #     yarn lhci:autorun
