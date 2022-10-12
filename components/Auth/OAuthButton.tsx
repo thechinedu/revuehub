@@ -98,7 +98,11 @@ export const OAuthButton = ({
 
   return (
     <>
-      <a className={className} onClick={handleOAuthIntegration(provider)}>
+      <a
+        className={className}
+        onClick={handleOAuthIntegration(provider)}
+        href="#"
+      >
         {children}
       </a>
       {/* TODO: Remove this and Show toast message on redirected page instead */}
