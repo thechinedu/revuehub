@@ -43,7 +43,7 @@ describe("Signup flow", () => {
 
       await user.click(signupBtn);
       expect(router.push).toHaveBeenCalledTimes(1);
-      expect(router.push).toHaveBeenCalledWith("/");
+      expect(router.push).toHaveBeenCalledWith("/dashboard");
     });
   });
 

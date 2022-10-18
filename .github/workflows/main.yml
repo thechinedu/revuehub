@@ -14,8 +14,40 @@ jobs:
       matrix:
         node-version: [16.x]
     
+    # Temporarily disabled. e2e tests fail on github actions. 
+    # services:
+    #   redis:
+    #     image: redis
+    #     options: >-
+    #       --health-cmd "redis-cli ping"
+    #       --health-interval 10s
+    #       --health-timeout 5s
+    #       --health-retries 5
+    #     ports:
+    #       - 6379:6379
+    #   postgres:
+    #     image: postgres
+    #     env:
+    #       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+    #     options: >-
+    #       --health-cmd pg_isready
+    #       --health-interval 10s
+    #       --health-timeout 5s
+    #       --health-retries 5
+    #     ports:
+    #       - 5432:5432
+
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        path: revuehub
+
+    - name: Checkout revueHub-api repository
+      uses: actions/checkout@v3
+      with:
+        repository: thechinedu/revuehub-api
+        path: revuehub-api
 
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
@@ -23,8 +55,9 @@ jobs:
         node-version: ${{ matrix.node-version }}
 
     - name: Install, build, lint and test
+      working-directory: ./revuehub
       env:
-        NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+        NEXT_PUBLIC_API_URL: 'http://localhost:7008'
       run: |
         yarn install
         yarn build
@@ -36,3 +69,31 @@ jobs:
     #     LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
     #   run: |
     #     yarn lhci:autorun
+
+    # Temporarily disabled. For some reason the e2e test fails on github actions.
+    # Cypress doesn't provide a way to inspect the network requests on test failures
+    # One potential approach would be to intercept all network requests, allow it continue but log the results of
+    # the network call. For now, e2e tests will be run locally only
+#     - name: Install and build for RevueHub API repository
+#       working-directory: ./revuehub-api
+#       env:
+#         NODE_ENV: test
+#       run: |
+#         yarn install
+#         yarn build
+#     # - name: Start API server
+#     #   working-directory: ./revuehub-api
+#     #   run: |
+#     #     yarn start:test-server & sleep 10
+#     - name: Run E2E tests
+#       working-directory: ./revuehub
+#       env:
+#         APP_ENV: ${{ secrets.APP_ENV }}
+#         DATABASE_URL: ${{ secrets.DATABASE_URL }}
+#         NEXT_PUBLIC_API_URL: 'http://localhost:7008'
+#         PORT: 7008
+#       run: |
+# # PORT=7008 yarn cy:start:api-server & sleep 15
+#         PORT=3000 yarn start & sleep 10
+#         yarn cy:run --record --key ${{ secrets.CYPRESS_RECORD_KEY }}
+
