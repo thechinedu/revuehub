@@ -83,9 +83,8 @@ export const Signup = (): JSX.Element => {
     onError: (err: CreateUserErrorResponse) => {
       setCreateUserServerError(err.data);
     },
-    // TODO: redirect user to dashboard (yet to be created. Redirect to homepage in the mean time)
-    onSuccess: (data) => {
-      router.push("/");
+    onSuccess: () => {
+      router.push("/dashboard");
     },
     onSettled: () => setIsMutationActive(false),
   });

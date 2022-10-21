@@ -8,9 +8,13 @@
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
+    "cy:run": "cypress run",
+    "cy:open": "cypress open",
+    "cy:start:api-server": "yarn --cwd ../revuehub-api start:test-server",
+    "db:migrate": "yarn --cwd ../revuehub-api migrate:latest:test",
+    "db:rollback": "yarn --cwd ../revuehub-api migrate:rollback:test",
     "lhci:autorun": "lhci autorun",
-    "lhci:serve": "NODE_ENV=production yarn start",
-    "db:migrate": "yarn --cwd ../revuehub-api migrate:latest:test"
+    "lhci:serve": "NODE_ENV=production yarn start"
   },
   "dependencies": {
     "@tanstack/react-query": "^4.12.0",
