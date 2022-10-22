@@ -57,7 +57,7 @@ jobs:
     - name: Install, build, lint and test
       working-directory: ./revuehub
       env:
-        NEXT_PUBLIC_API_URL: 'http://localhost:7008'
+        NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
       run: |
         yarn install
         yarn build
