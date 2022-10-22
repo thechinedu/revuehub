@@ -147,6 +147,20 @@ const Dashboard: NextPage = () => {
               </section>
             )}
 
+            {repos.length && (
+              <div className={styles.pageActionContainer}>
+                <input
+                  type="search"
+                  placeholder="Search repositories"
+                  className={styles.search}
+                  aria-label="Search repositories"
+                />
+                <Link href="#">
+                  <a className={styles.addRepo}>Add new repository</a>
+                </Link>
+              </div>
+            )}
+
             {/* TODO: remove alias for last_updated once BE is updated to return the keys in camelCase */}
             {repos.map(
               ({ id, name, description, last_updated: lastUpdated }) => (
