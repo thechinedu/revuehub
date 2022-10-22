@@ -19,7 +19,7 @@ type OAuthStateAttributes = {
 type OAuthButtonProps = {
   className?: string;
   provider: string;
-  scope: string;
+  scope?: string;
   children: ReactNode;
 };
 
@@ -80,7 +80,9 @@ export const OAuthButton = ({
           )
         );
         // TODO: receive scope, client_id & auth_endpoint
-        location.href = `${authEndpoint}?client_id=${clientID}&state=${state}&scope=${scope}`;
+        location.href = `${authEndpoint}?client_id=${clientID}&state=${state}${
+          scope ? `&scope=${scope}` : ""
+        }`;
       },
       onSettled: () => setIsMutationActive(false),
     }
