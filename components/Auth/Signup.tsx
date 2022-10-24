@@ -13,36 +13,27 @@ import { Navbar } from "@/components/Navbar";
 import ProgressBar from "@/components/Progress";
 
 import {
+  Attributes,
   CreateUserErrorResponse,
   CreateUserSuccessResponse,
-  GITHUB_AUTH_ENDPOINT,
-  GITHUB_OAUTH_CLIENT_ID,
+  UserAttributes,
 } from "@/types";
 
 import { cn, post } from "@/utils";
+
+import { useMutation } from "@tanstack/react-query";
 
 import Joi from "joi";
 
 import Head from "next/head";
 import Link from "next/link";
-import React, { ChangeEvent, FormEvent, useState } from "react";
-import zxcvbn from "zxcvbn";
-import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 
+import React, { ChangeEvent, FormEvent, useState } from "react";
+
+import zxcvbn from "zxcvbn";
+
 import { OAuthButton } from "./OAuthButton";
-
-enum Attributes {
-  EMAIL = "email",
-  USERNAME = "username",
-  PASSWORD = "password",
-}
-
-type UserAttributes = {
-  [Attributes.EMAIL]: string;
-  [Attributes.USERNAME]: string;
-  [Attributes.PASSWORD]: string;
-};
 
 type CreateUserServerError = CreateUserErrorResponse["data"];
 

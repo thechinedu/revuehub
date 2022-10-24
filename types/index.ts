@@ -16,6 +16,17 @@ export type CreateUserSuccessResponse = Response<User>;
 export type CreateUserErrorResponse = Response<
   Pick<User, "email" | "username"> & { password: string }
 >;
+export enum Attributes {
+  EMAIL = "email",
+  USERNAME = "username",
+  PASSWORD = "password",
+}
+
+export type UserAttributes = {
+  [Attributes.EMAIL]: string;
+  [Attributes.USERNAME]: string;
+  [Attributes.PASSWORD]: string;
+};
 
 type OAuthState = {
   state: string;

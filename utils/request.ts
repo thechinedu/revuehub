@@ -29,7 +29,10 @@ export const post = <T = unknown, U = unknown>(
           "Content-Type": "application/json",
           Accept: "application/json",
         },
+        credentials: "include",
       });
+
+      if (res.status === 204) return resolve(null as U);
 
       if (res.status < 400) return resolve(await res.json());
 
