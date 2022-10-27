@@ -13,14 +13,16 @@ import {
 
 import { get } from "@/utils";
 
+import { useQuery } from "@tanstack/react-query";
+
 import { formatDistanceToNow } from "date-fns";
 
 import Head from "next/head";
 import Link from "next/link";
 
-import type { NextPage } from "next";
-import { useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+
+import type { NextPage } from "next";
 
 type FetchOwnActiveReposResponse =
   | FetchOwnActiveReposSuccessResponse
@@ -71,28 +73,27 @@ const RepoSummary = ({
 };
 
 const Dashboard: NextPage = () => {
-  const [mutationStatus, setMutationStatus] = useState(Status.IDLE);
   const [_, setError] = useState("");
   const [repos, setRepos] = useState<Repo[]>([]);
 
-  const fetchOwnActiveReposMutation = useMutation(() => fetchOwnActiveRepos(), {
-    onMutate: () => setMutationStatus(Status.PENDING),
-    onError: (err) => {
-      const errRes = err as FetchOwnActiveReposErrorResponse;
-      setMutationStatus(Status.ERROR);
-      setError(errRes.message as string);
-    },
-    onSuccess: (data) => {
-      const res = data as FetchOwnActiveReposSuccessResponse;
-      console.log(res);
-      setMutationStatus(Status.SUCCESS);
-      setRepos(res.data);
-    },
-  });
-
-  useEffect(() => {
-    fetchOwnActiveReposMutation.mutate();
-  }, []);
+  const { isLoading, isError, isSuccess } = useQuery(
+    ["ownActiveRepos"],
+    fetchOwnActiveRepos,
+    {
+      onError: (err) => {
+        // TODO: remove onError lifecycle method if error message is not going to be shown to user.
+        const errRes = err as FetchOwnActiveReposErrorResponse;
+        console.log({ errRes });
+        setError(errRes.message as string);
+      },
+      onSuccess: (data) => {
+        const res = data as FetchOwnActiveReposSuccessResponse;
+        console.log(res);
+        setRepos(res.data);
+      },
+      retry: false, // TODO: temporarily disabled. Enable after implementing refresh token logic
+    }
+  );
 
   return (
     <>
@@ -117,17 +118,15 @@ const Dashboard: NextPage = () => {
           </Link>
         </SubNav>
 
-        {mutationStatus === Status.PENDING && (
-          <span className={styles.pending}>Loading...</span>
-        )}
+        {isLoading && <span className={styles.pending}>Loading...</span>}
 
-        {mutationStatus === Status.ERROR && (
+        {isError && (
           <span className={styles.error}>
             An error occured. Please reload the page
           </span>
         )}
 
-        {mutationStatus === Status.SUCCESS && (
+        {isSuccess && (
           <main className={styles.main}>
             {repos.length === 0 && (
               <section className={styles.welcome}>
