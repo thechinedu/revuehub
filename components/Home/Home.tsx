@@ -4,18 +4,28 @@ import Container from "@/components/Container";
 import { GithubIcon } from "@/components/Icons";
 import { Navbar } from "@/components/Navbar";
 
-import { GITHUB_AUTH_ENDPOINT, GITHUB_OAUTH_CLIENT_ID } from "@/types";
+import { useAuth } from "@/providers/AuthProvider";
 
 import { cn } from "@/utils";
 
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
+
+import { useEffect } from "react";
 
 import { OAuthButton } from "../Auth/OAuthButton";
 
 import type { NextPage } from "next";
 
 const Home: NextPage = () => {
+  const { isSignedIn } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isSignedIn) router.push("/dashboard");
+  }, [isSignedIn]);
+
   return (
     <>
       <Head>

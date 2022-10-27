@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import { ComponentPropsWithoutRef } from "react";
 
 import type { NextPage } from "next";
+import { useAuth } from "@/providers/AuthProvider";
 
 type SubNavProps = ComponentPropsWithoutRef<"nav">;
 
@@ -19,10 +20,9 @@ export const SubNav = ({
     </nav>
   );
 };
-// TODO: Remove
-const privateRoutes: string[] = ["/dashboard", "/repos/new"];
 
 export const Navbar: NextPage = () => {
+  const { isSignedIn } = useAuth();
   const router = useRouter();
 
   return (
@@ -46,8 +46,7 @@ export const Navbar: NextPage = () => {
           </>
         )}
 
-        {/* TODO: show these routes based on whether a user is logged in or not */}
-        {privateRoutes.includes(router.pathname) && (
+        {isSignedIn && (
           <Image
             src="https://placebeard.it/32/32/notag"
             alt=""

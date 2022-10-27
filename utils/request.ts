@@ -7,12 +7,10 @@ export const get = async <T = unknown>(path: string): Promise<T> => {
       headers: {
         Accept: "application/json",
       },
+      credentials: "include",
     });
 
     if (res.status < 400) return Promise.resolve(await res.json());
-
-    // if status is 401
-    // try refresh endpoint
 
     return Promise.reject(await res.json());
   } catch (err) {
@@ -43,13 +41,4 @@ export const post = async <T = unknown, U = unknown>(
   } catch (err) {
     return Promise.reject(err); // TODO: integrate with error monitoring service
   }
-};
-
-const tryRefreshAuthTokens = async () => {
-  try {
-    const res = await fetch(new URL(`${API_VERSION}/auth/refresh`, API_URL), {
-      method: "POST",
-      credentials: "include",
-    });
-  } catch (err) {}
 };

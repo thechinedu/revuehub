@@ -5,6 +5,8 @@ import Container from "@/components/Container";
 import { GithubIcon } from "@/components/Icons";
 import { Navbar, SubNav } from "@/components/Navbar";
 
+import { useAuth } from "@/providers/AuthProvider";
+
 import {
   FetchOwnActiveReposErrorResponse,
   FetchOwnActiveReposSuccessResponse,
@@ -19,6 +21,7 @@ import { formatDistanceToNow } from "date-fns";
 
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import { useEffect, useState } from "react";
 
@@ -30,13 +33,6 @@ type FetchOwnActiveReposResponse =
 
 const fetchOwnActiveRepos = () =>
   get<FetchOwnActiveReposResponse>("/repositories?status=active");
-
-enum Status {
-  IDLE,
-  PENDING,
-  ERROR,
-  SUCCESS,
-}
 
 type RepoSummaryProps = {
   name: string;
@@ -75,6 +71,8 @@ const RepoSummary = ({
 const Dashboard: NextPage = () => {
   const [_, setError] = useState("");
   const [repos, setRepos] = useState<Repo[]>([]);
+  const { isSignedIn } = useAuth();
+  const router = useRouter();
 
   const { isLoading, isError, isSuccess } = useQuery(
     ["ownActiveRepos"],
@@ -83,17 +81,22 @@ const Dashboard: NextPage = () => {
       onError: (err) => {
         // TODO: remove onError lifecycle method if error message is not going to be shown to user.
         const errRes = err as FetchOwnActiveReposErrorResponse;
-        console.log({ errRes });
         setError(errRes.message as string);
       },
       onSuccess: (data) => {
         const res = data as FetchOwnActiveReposSuccessResponse;
-        console.log(res);
         setRepos(res.data);
       },
       retry: false, // TODO: temporarily disabled. Enable after implementing refresh token logic
+      enabled: isSignedIn,
     }
   );
+
+  useEffect(() => {
+    if (!isSignedIn) {
+      router.push("/sign-in");
+    }
+  }, [isSignedIn]);
 
   return (
     <>
@@ -146,7 +149,7 @@ const Dashboard: NextPage = () => {
               </section>
             )}
 
-            {repos.length && (
+            {repos.length > 0 && (
               <div className={styles.pageActionContainer}>
                 <input
                   type="search"

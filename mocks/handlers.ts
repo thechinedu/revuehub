@@ -24,4 +24,20 @@ export const handlers = [
       })
     );
   }),
+  rest.get(`${API_URL}/v1/auth/me`, (req, res, ctx) => {
+    return res(
+      ctx.status(401),
+      ctx.json({
+        status: "fail",
+      })
+    );
+  }),
+  rest.post(`${API_URL}/v1/auth/refresh`, (req, res, ctx) => {
+    return res(
+      ctx.status(401),
+      ctx.json({
+        status: "fail",
+      })
+    );
+  }),
 ];

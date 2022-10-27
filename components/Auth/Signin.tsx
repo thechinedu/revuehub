@@ -4,6 +4,8 @@ import Container from "@/components/Container";
 import { Navbar } from "@/components/Navbar";
 import { AccountIcon, GithubIcon, PasswordIcon } from "@/components/Icons";
 
+import { useAuth } from "@/providers/AuthProvider";
+
 import { cn, post } from "@/utils";
 
 import { Attributes, UserAttributes } from "@/types";
@@ -16,7 +18,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 
 type UserCredentials = Pick<
   UserAttributes,
@@ -34,6 +36,7 @@ const signinUser = (userCredentials: UserCredentials) =>
   post("/auth/login", userCredentials);
 
 export const Signin = (): JSX.Element => {
+  const { isSignedIn } = useAuth();
   const router = useRouter();
   const [userCredentials, setUserCredentials] = useState<UserCredentials>({
     email: "",
@@ -67,6 +70,10 @@ export const Signin = (): JSX.Element => {
     evt.preventDefault();
     signinUserMutation.mutate();
   };
+
+  useEffect(() => {
+    if (isSignedIn) router.push("/dashboard");
+  }, [isSignedIn]);
 
   return (
     <>
