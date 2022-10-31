@@ -1,7 +1,5 @@
 import styles from "./Navbar.module.css";
 
-import { AuthStatus, useAuth } from "@/providers/AuthProvider";
-
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -21,16 +19,16 @@ export const SubNav = ({
     </nav>
   );
 };
+// TODO: Remove
+const privateRoutes: string[] = ["/dashboard", "/repos/new"];
 
 export const Navbar: NextPage = () => {
-  const { authStatus } = useAuth();
-  const isSignedIn = authStatus === AuthStatus.SIGNED_IN;
   const router = useRouter();
 
   return (
     <header>
       <nav className={styles.navbar} aria-label="Main navigation">
-        <Link href={isSignedIn ? "/dashboard" : "/"}>
+        <Link href="/">
           <a className={styles.logo}>
             Revue<span>Hub</span>
           </a>
@@ -48,7 +46,8 @@ export const Navbar: NextPage = () => {
           </>
         )}
 
-        {isSignedIn && (
+        {/* TODO: show these routes based on whether a user is logged in or not */}
+        {privateRoutes.includes(router.pathname) && (
           <Image
             src="https://placebeard.it/32/32/notag"
             alt=""

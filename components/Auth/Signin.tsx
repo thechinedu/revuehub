@@ -4,8 +4,6 @@ import Container from "@/components/Container";
 import { Navbar } from "@/components/Navbar";
 import { AccountIcon, GithubIcon, PasswordIcon } from "@/components/Icons";
 
-import { AuthStatus, useAuth } from "@/providers/AuthProvider";
-
 import { cn, post } from "@/utils";
 
 import { Attributes, UserAttributes } from "@/types";
@@ -18,7 +16,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 
 type UserCredentials = Pick<
   UserAttributes,
@@ -36,7 +34,6 @@ const signinUser = (userCredentials: UserCredentials) =>
   post("/auth/login", userCredentials);
 
 export const Signin = (): JSX.Element => {
-  const { authStatus, setAuthStatus } = useAuth();
   const router = useRouter();
   const [userCredentials, setUserCredentials] = useState<UserCredentials>({
     email: "",
@@ -50,7 +47,7 @@ export const Signin = (): JSX.Element => {
       setHasInvalidCredentials(true);
     },
     onSuccess: () => {
-      setAuthStatus(AuthStatus.SIGNED_IN);
+      router.push("/dashboard");
     },
     onSettled: () => setIsMutationActive(false),
   });
@@ -59,7 +56,6 @@ export const Signin = (): JSX.Element => {
   });
   const formHasError = Boolean(validationResult.error) || isMutationActive;
   const isDisabled = formHasError;
-  const isSignedIn = authStatus === AuthStatus.SIGNED_IN;
 
   const handleChange =
     (attr: Attributes) => (evt: ChangeEvent<HTMLInputElement>) => {
@@ -71,12 +67,6 @@ export const Signin = (): JSX.Element => {
     evt.preventDefault();
     signinUserMutation.mutate();
   };
-
-  useEffect(() => {
-    if (isSignedIn) {
-      router.push("/dashboard");
-    }
-  }, [isSignedIn]);
 
   return (
     <>
