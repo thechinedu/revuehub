@@ -4,7 +4,7 @@ import Container from "@/components/Container";
 import { Navbar } from "@/components/Navbar";
 import { AccountIcon, GithubIcon, PasswordIcon } from "@/components/Icons";
 
-import { useAuth } from "@/providers/AuthProvider";
+import { AuthStatus, useAuth } from "@/providers/AuthProvider";
 
 import { cn, post } from "@/utils";
 
@@ -36,7 +36,7 @@ const signinUser = (userCredentials: UserCredentials) =>
   post("/auth/login", userCredentials);
 
 export const Signin = (): JSX.Element => {
-  const { isSignedIn } = useAuth();
+  const { authStatus, setAuthStatus } = useAuth();
   const router = useRouter();
   const [userCredentials, setUserCredentials] = useState<UserCredentials>({
     email: "",
@@ -50,7 +50,7 @@ export const Signin = (): JSX.Element => {
       setHasInvalidCredentials(true);
     },
     onSuccess: () => {
-      router.push("/dashboard");
+      setAuthStatus(AuthStatus.SIGNED_IN);
     },
     onSettled: () => setIsMutationActive(false),
   });
@@ -59,6 +59,7 @@ export const Signin = (): JSX.Element => {
   });
   const formHasError = Boolean(validationResult.error) || isMutationActive;
   const isDisabled = formHasError;
+  const isSignedIn = authStatus === AuthStatus.SIGNED_IN;
 
   const handleChange =
     (attr: Attributes) => (evt: ChangeEvent<HTMLInputElement>) => {
@@ -72,7 +73,9 @@ export const Signin = (): JSX.Element => {
   };
 
   useEffect(() => {
-    if (isSignedIn) router.push("/dashboard");
+    if (isSignedIn) {
+      router.push("/dashboard");
+    }
   }, [isSignedIn]);
 
   return (

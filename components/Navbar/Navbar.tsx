@@ -1,12 +1,13 @@
 import styles from "./Navbar.module.css";
 
+import { AuthStatus, useAuth } from "@/providers/AuthProvider";
+
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ComponentPropsWithoutRef } from "react";
 
 import type { NextPage } from "next";
-import { useAuth } from "@/providers/AuthProvider";
 
 type SubNavProps = ComponentPropsWithoutRef<"nav">;
 
@@ -22,13 +23,14 @@ export const SubNav = ({
 };
 
 export const Navbar: NextPage = () => {
-  const { isSignedIn } = useAuth();
+  const { authStatus } = useAuth();
+  const isSignedIn = authStatus === AuthStatus.SIGNED_IN;
   const router = useRouter();
 
   return (
     <header>
       <nav className={styles.navbar} aria-label="Main navigation">
-        <Link href="/">
+        <Link href={isSignedIn ? "/dashboard" : "/"}>
           <a className={styles.logo}>
             Revue<span>Hub</span>
           </a>

@@ -56,7 +56,6 @@ const createUser = (userAttributes: UserAttributes) =>
   );
 
 export const Signup = (): JSX.Element => {
-  const { isSignedIn } = useAuth();
   const router = useRouter();
   const [userAttributes, setUserAttributes] = useState<UserAttributes>({
     email: "",
@@ -149,10 +148,6 @@ export const Signup = (): JSX.Element => {
     evt.preventDefault();
     createUserMutation.mutate();
   };
-
-  useEffect(() => {
-    if (isSignedIn) router.push("/dashboard");
-  }, [isSignedIn]);
 
   return (
     <>

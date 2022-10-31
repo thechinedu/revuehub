@@ -1,10 +1,11 @@
 import "modern-css-reset";
 import "@/styles/globals.css";
 
+import { AuthProvider } from "@/providers/AuthProvider";
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import type { AppProps } from "next/app";
-import { AuthProvider } from "@/providers/AuthProvider";
 
 const queryClient = new QueryClient();
 

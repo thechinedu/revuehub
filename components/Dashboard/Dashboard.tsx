@@ -5,8 +5,6 @@ import Container from "@/components/Container";
 import { GithubIcon } from "@/components/Icons";
 import { Navbar, SubNav } from "@/components/Navbar";
 
-import { useAuth } from "@/providers/AuthProvider";
-
 import {
   FetchOwnActiveReposErrorResponse,
   FetchOwnActiveReposSuccessResponse,
@@ -21,9 +19,8 @@ import { formatDistanceToNow } from "date-fns";
 
 import Head from "next/head";
 import Link from "next/link";
-import { useRouter } from "next/router";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import type { NextPage } from "next";
 
@@ -71,8 +68,6 @@ const RepoSummary = ({
 const Dashboard: NextPage = () => {
   const [_, setError] = useState("");
   const [repos, setRepos] = useState<Repo[]>([]);
-  const { isSignedIn } = useAuth();
-  const router = useRouter();
 
   const { isLoading, isError, isSuccess } = useQuery(
     ["ownActiveRepos"],
@@ -88,15 +83,11 @@ const Dashboard: NextPage = () => {
         setRepos(res.data);
       },
       retry: false, // TODO: temporarily disabled. Enable after implementing refresh token logic
-      enabled: isSignedIn,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
     }
   );
-
-  useEffect(() => {
-    if (!isSignedIn) {
-      router.push("/sign-in");
-    }
-  }, [isSignedIn]);
 
   return (
     <>

@@ -1,10 +1,28 @@
-import { get, post } from "@/utils";
+import { get } from "@/utils";
 import { useQuery } from "@tanstack/react-query";
 
-import { createContext, FC, ReactNode, useContext, useState } from "react";
+import { useRouter } from "next/router";
+
+import {
+  createContext,
+  Dispatch,
+  FC,
+  ReactNode,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+
+export enum AuthStatus {
+  UNKNOWN = "unknown",
+  SIGNED_IN = "signed-in",
+  SIGNED_OUT = "signed-out",
+}
 
 type AuthContextProps = {
-  isSignedIn: boolean;
+  authStatus: AuthStatus;
+  setAuthStatus: Dispatch<SetStateAction<AuthStatus>>;
 };
 
 const AuthContext = createContext<AuthContextProps | null>(null);
@@ -13,40 +31,25 @@ const { Provider } = AuthContext;
 
 const fetchCurrentUser = () => get("/auth/me");
 
-const refreshAuthToken = () => post("/auth/refresh", {});
-
 type AuthProviderProps = {
   children: ReactNode;
 };
 
+const publicOnlyPages = ["/", "/sign-in", "/sign-up", "/oauth-callback"];
+
 export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
-  const [isSignedIn, setIsSignedIn] = useState(false);
-  const { isLoading: isLoadingCurrentUser, isError: isErrorCurrentUser } =
-    useQuery(["currentUser"], fetchCurrentUser, {
-      onError: () => {
-        console.log("failed to fetch current user, refreshing auth token...");
-      },
-      onSuccess: () => {
-        console.log("successfully fetched current user");
-        setIsSignedIn(true);
-      },
-      retry: false,
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    });
-  const { isFetching: isFetchingRefreshToken } = useQuery(
-    ["refreshToken"],
-    refreshAuthToken,
+  const [authStatus, setAuthStatus] = useState(AuthStatus.UNKNOWN);
+  const router = useRouter();
+  const { isFetching: isFetchingCurrentUser } = useQuery(
+    ["currentUser"],
+    fetchCurrentUser,
     {
       onError: () => {
-        console.log("refreshToken failed. user is logged out");
-        setIsSignedIn(false);
+        setAuthStatus(AuthStatus.SIGNED_OUT);
       },
       onSuccess: () => {
-        setIsSignedIn(true);
+        setAuthStatus(AuthStatus.SIGNED_IN);
       },
-      enabled: isErrorCurrentUser,
       retry: false,
       refetchOnMount: false,
       refetchOnWindowFocus: false,
@@ -54,18 +57,25 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     }
   );
 
-  let PageComponent;
+  useEffect(() => {
+    if (authStatus === AuthStatus.UNKNOWN || isFetchingCurrentUser) {
+      return;
+    }
 
-  if (isLoadingCurrentUser || isFetchingRefreshToken) {
-    PageComponent = <>Loading...</>; // TODO: Make this a proper reusable component
-  } else {
-    PageComponent = children;
-  }
-  console.log({ PageComponent, isLoadingCurrentUser, isFetchingRefreshToken });
+    const isSignedIn = authStatus === AuthStatus.SIGNED_IN;
 
-  // TODO: Handle page redirects from here
+    if (isSignedIn && publicOnlyPages.includes(router.pathname)) {
+      router.replace("/dashboard");
+      return;
+    }
 
-  return <Provider value={{ isSignedIn }}>{PageComponent}</Provider>;
+    if (!isSignedIn && !publicOnlyPages.includes(router.pathname)) {
+      router.replace("/sign-in");
+      return;
+    }
+  }, [isFetchingCurrentUser, authStatus, router.pathname]);
+
+  return <Provider value={{ authStatus, setAuthStatus }}>{children}</Provider>;
 };
 
 export const useAuth = () => {
