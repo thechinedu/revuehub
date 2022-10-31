@@ -1,3 +1,4 @@
+import { AuthProvider } from "@/providers/AuthProvider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, RenderOptions } from "@testing-library/react";
 import { ReactElement, ReactNode } from "react";
@@ -9,7 +10,9 @@ type MainAppProps = {
 const queryClient = new QueryClient();
 
 const Providers = ({ children }: MainAppProps): JSX.Element => (
-  <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  <QueryClientProvider client={queryClient}>
+    <AuthProvider>{children}</AuthProvider>
+  </QueryClientProvider>
 );
 
 const customRender = (

@@ -12,6 +12,8 @@ import {
 import { Navbar } from "@/components/Navbar";
 import ProgressBar from "@/components/Progress";
 
+import { useAuth } from "@/providers/AuthProvider";
+
 import {
   Attributes,
   CreateUserErrorResponse,
@@ -29,7 +31,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 
 import zxcvbn from "zxcvbn";
 
@@ -54,6 +56,7 @@ const createUser = (userAttributes: UserAttributes) =>
   );
 
 export const Signup = (): JSX.Element => {
+  const router = useRouter();
   const [userAttributes, setUserAttributes] = useState<UserAttributes>({
     email: "",
     username: "",
@@ -68,7 +71,6 @@ export const Signup = (): JSX.Element => {
   const [createUserServerError, setCreateUserServerError] =
     useState<CreateUserServerError | null>(null);
   const [isMutationActive, setIsMutationActive] = useState(false);
-  const router = useRouter();
   const createUserMutation = useMutation(() => createUser(userAttributes), {
     onMutate: () => setIsMutationActive(true),
     onError: (err: CreateUserErrorResponse) => {

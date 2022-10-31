@@ -4,8 +4,6 @@ import Container from "@/components/Container";
 import { GithubIcon } from "@/components/Icons";
 import { Navbar } from "@/components/Navbar";
 
-import { GITHUB_AUTH_ENDPOINT, GITHUB_OAUTH_CLIENT_ID } from "@/types";
-
 import { cn } from "@/utils";
 
 import Head from "next/head";

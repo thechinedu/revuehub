@@ -20,7 +20,7 @@ import { formatDistanceToNow } from "date-fns";
 import Head from "next/head";
 import Link from "next/link";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import type { NextPage } from "next";
 
@@ -30,13 +30,6 @@ type FetchOwnActiveReposResponse =
 
 const fetchOwnActiveRepos = () =>
   get<FetchOwnActiveReposResponse>("/repositories?status=active");
-
-enum Status {
-  IDLE,
-  PENDING,
-  ERROR,
-  SUCCESS,
-}
 
 type RepoSummaryProps = {
   name: string;
@@ -83,15 +76,16 @@ const Dashboard: NextPage = () => {
       onError: (err) => {
         // TODO: remove onError lifecycle method if error message is not going to be shown to user.
         const errRes = err as FetchOwnActiveReposErrorResponse;
-        console.log({ errRes });
         setError(errRes.message as string);
       },
       onSuccess: (data) => {
         const res = data as FetchOwnActiveReposSuccessResponse;
-        console.log(res);
         setRepos(res.data);
       },
       retry: false, // TODO: temporarily disabled. Enable after implementing refresh token logic
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
     }
   );
 
@@ -146,7 +140,7 @@ const Dashboard: NextPage = () => {
               </section>
             )}
 
-            {repos.length && (
+            {repos.length > 0 && (
               <div className={styles.pageActionContainer}>
                 <input
                   type="search"
