@@ -8,6 +8,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import { post } from "@/utils";
+import { AuthStatus, useAuth } from "@/providers/AuthProvider";
 
 type OAuthCallbackAttributes = {
   code: string;
@@ -23,17 +24,33 @@ export const OAuthCallback = (): JSX.Element => {
     push,
   } = useRouter();
   const redirectPath = useRef<{ error: string; success: string }>();
+  const { setAuthStatus } = useAuth();
 
   const mutation = useMutation(
     () => createUserViaOauth({ code, state } as OAuthCallbackAttributes),
     {
       onError: (err) => {
-        console.log("error", err);
-        push(redirectPath.current?.error || "/signup");
+        const path = redirectPath.current?.error;
+
+        if (path) {
+          console.log("error", err);
+          push(path);
+          return;
+        }
+
+        push("/sign-up");
       },
       onSuccess: (data) => {
-        console.log("success::OAUTH", data);
-        push(redirectPath.current?.success || "/");
+        const path = redirectPath.current?.success;
+
+        if (path) {
+          if (path === "/dashboard") setAuthStatus(AuthStatus.SIGNED_IN);
+          console.log("success::OAUTH", data);
+          push(path);
+          return;
+        }
+
+        push("/");
       },
       onSettled: () => {
         localStorage.removeItem("oauth-redirect-path");

@@ -154,7 +154,7 @@ const Dashboard: NextPage = () => {
               </div>
             )}
 
-            {/* TODO: remove alias for last_updated once BE is updated to return the keys in camelCase */}
+            {/* TODO: remove alias for last_updated once BE has been updated to return the keys in camelCase */}
             {repos.map(
               ({ id, name, description, last_updated: lastUpdated }) => (
                 <RepoSummary

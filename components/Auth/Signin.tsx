@@ -20,6 +20,8 @@ import { useRouter } from "next/router";
 
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 
+import { OAuthButton } from "./OAuthButton";
+
 type UserCredentials = Pick<
   UserAttributes,
   Attributes.EMAIL | Attributes.PASSWORD
@@ -138,14 +140,12 @@ export const Signin = (): JSX.Element => {
 
           <hr className={styles.divider} />
 
-          <Link href="/sign-up">
-            <a className={styles.oauthBtn}>
-              <GithubIcon
-                className={cn(styles, { icon: true, githubIcon: true })}
-              />
-              Continue with Github
-            </a>
-          </Link>
+          <OAuthButton className={styles.oauthBtn} provider="github">
+            <GithubIcon
+              className={cn(styles, { icon: true, githubIcon: true })}
+            />
+            Continue with Github
+          </OAuthButton>
 
           <p>
             Don&apos;t have an account?{" "}
