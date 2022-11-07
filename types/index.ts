@@ -4,6 +4,11 @@ export type Response<T = unknown> = {
   message?: string;
 };
 
+// TODO: Make success and error response consistent
+// e.g CreateOAuthStateSuccessResponse/FetchReposSuccessResponse
+// & CreateOAuthStateErrorResponse/FetchReposErrorResponse
+// should just be CreateOAuthStateResponse/FetchReposResponse
+
 type User = {
   email: string;
   username: string;
@@ -39,9 +44,10 @@ export type Repo = {
   name: string;
   description: string;
   last_updated: string;
+  has_pulled_content: boolean;
 };
-export type FetchOwnActiveReposSuccessResponse = Response<Repo[]>;
-export type FetchOwnActiveReposErrorResponse = Response<null>;
+export type FetchReposSuccessResponse = Response<Repo[]>;
+export type FetchReposErrorResponse = Response<null>;
 
 export const GITHUB_AUTH_ENDPOINT = process.env
   .NEXT_PUBLIC_GITHUB_AUTH_ENDPOINT as string;

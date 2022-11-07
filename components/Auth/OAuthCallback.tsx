@@ -24,7 +24,7 @@ export const OAuthCallback = (): JSX.Element => {
     push,
   } = useRouter();
   const redirectPath = useRef<{ error: string; success: string }>();
-  const { setAuthStatus } = useAuth();
+  const { authStatus, setAuthStatus } = useAuth();
 
   const mutation = useMutation(
     () => createUserViaOauth({ code, state } as OAuthCallbackAttributes),
@@ -44,7 +44,9 @@ export const OAuthCallback = (): JSX.Element => {
         const path = redirectPath.current?.success;
 
         if (path) {
-          if (path === "/dashboard") setAuthStatus(AuthStatus.SIGNED_IN);
+          if (authStatus !== AuthStatus.SIGNED_IN && path === "/dashboard") {
+            setAuthStatus(AuthStatus.SIGNED_IN);
+          }
           console.log("success::OAUTH", data);
           push(path);
           return;

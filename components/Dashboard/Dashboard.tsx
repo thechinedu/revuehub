@@ -6,8 +6,8 @@ import { GithubIcon } from "@/components/Icons";
 import { Navbar, SubNav } from "@/components/Navbar";
 
 import {
-  FetchOwnActiveReposErrorResponse,
-  FetchOwnActiveReposSuccessResponse,
+  FetchReposErrorResponse,
+  FetchReposSuccessResponse,
   Repo,
 } from "@/types";
 
@@ -25,8 +25,8 @@ import { useState } from "react";
 import type { NextPage } from "next";
 
 type FetchOwnActiveReposResponse =
-  | FetchOwnActiveReposSuccessResponse
-  | FetchOwnActiveReposErrorResponse;
+  | FetchReposSuccessResponse
+  | FetchReposErrorResponse;
 
 const fetchOwnActiveRepos = () =>
   get<FetchOwnActiveReposResponse>("/repositories?status=active");
@@ -75,14 +75,14 @@ const Dashboard: NextPage = () => {
     {
       onError: (err) => {
         // TODO: remove onError lifecycle method if error message is not going to be shown to user.
-        const errRes = err as FetchOwnActiveReposErrorResponse;
+        const errRes = err as FetchReposErrorResponse;
         setError(errRes.message as string);
       },
       onSuccess: (data) => {
-        const res = data as FetchOwnActiveReposSuccessResponse;
+        const res = data as FetchReposSuccessResponse;
         setRepos(res.data);
       },
-      retry: false, // TODO: temporarily disabled. Enable after implementing refresh token logic
+      retry: false,
       refetchOnMount: false,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
@@ -99,15 +99,15 @@ const Dashboard: NextPage = () => {
 
         <SubNav className={styles.subNav}>
           {/* TODO: set active style only when page is the active view */}
-          <Link href="/">
+          <Link href="/dashboard">
             <a className={styles.active}>
               My repositories {repos.length ? `(${repos.length})` : ""}
             </a>
           </Link>
-          <Link href="/">
+          <Link href="#">
             <a>Review requested (10)</a>
           </Link>
-          <Link href="/">
+          <Link href="#">
             <a>Settings</a>
           </Link>
         </SubNav>
