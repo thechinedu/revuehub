@@ -4,19 +4,24 @@ import Container from "@/components/Container";
 import { GithubIcon } from "@/components/Icons";
 import { Navbar } from "@/components/Navbar";
 
-import { get } from "@/utils";
-
-import Head from "next/head";
-import Link from "next/link";
-
-import type { NextPage } from "next";
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
 import {
   FetchReposErrorResponse,
   FetchReposSuccessResponse,
   Repo,
 } from "@/types";
+
+import { get } from "@/utils";
+
+import { useQuery } from "@tanstack/react-query";
+
+import Head from "next/head";
+import Link from "next/link";
+
+import { MouseEvent, useState } from "react";
+
+import type { NextPage } from "next";
+
+import { AddRepoDialog } from "./AddRepoDialog";
 
 const fetchReposFromProvider = () =>
   get<FetchReposSuccessResponse | FetchReposErrorResponse>("/repositories");
@@ -25,12 +30,14 @@ type RepoSummaryProps = {
   name: string;
   description: string;
   hasPulledContent: boolean;
+  onActionClick: (evt: MouseEvent<HTMLAnchorElement>) => void;
 };
 
 const RepoSummary = ({
   name,
   description,
   hasPulledContent,
+  onActionClick,
 }: RepoSummaryProps): JSX.Element => {
   return (
     <section className={styles.repoSummary}>
@@ -42,7 +49,7 @@ const RepoSummary = ({
         <p className={styles.description}>{description}</p>
 
         <Link href="#">
-          <a className={styles.action}>
+          <a className={styles.action} onClick={onActionClick}>
             {hasPulledContent ? "Re-sync" : "Add Repo"}
           </a>
         </Link>
@@ -53,6 +60,7 @@ const RepoSummary = ({
 
 const Repos: NextPage = () => {
   const [repos, setRepos] = useState<Repo[]>([]);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   const { isLoading, isSuccess } = useQuery(
     ["ownProviderRepos"],
@@ -110,9 +118,12 @@ const Repos: NextPage = () => {
                     name={name}
                     description={description}
                     hasPulledContent={hasPulledContent}
+                    onActionClick={() => setIsAddDialogOpen(true)}
                   />
                 )
               )}
+
+              <AddRepoDialog isOpen={isAddDialogOpen} />
             </>
           )}
         </main>
