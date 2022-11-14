@@ -12,8 +12,6 @@ import {
 import { Navbar } from "@/components/Navbar";
 import ProgressBar from "@/components/Progress";
 
-import { useAuth } from "@/providers/AuthProvider";
-
 import {
   Attributes,
   CreateUserErrorResponse,
