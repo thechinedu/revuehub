@@ -1,0 +1,73 @@
+.overlay {
+  background-color: rgba(0,0,0,.5);
+  bottom: 0;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 100%;
+}
+
+.contentWrapper {
+  align-items: center;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  margin: auto;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+.content {
+  background-color: var(--white);
+  border: 2px solid var(--black);
+  padding: var(--spacer-4);
+}
+
+.title {
+  font-size: var(--large);
+}
+
+.description {
+  margin-top: var(--spacer-1);
+}
+
+.form {
+  margin-top: var(--spacer-2);
+}
+
+.group {
+  margin-top: var(--spacer-4);
+  position: relative;
+}
+
+.label {
+  font-size: var(--small);
+  font-weight: 700;
+  position: absolute;
+  top: -18px;
+}
+
+.input {
+  background: var(--powder);
+  border: 2px solid var(--black);
+  color: var(--black);
+  font-weight: 700;
+  padding: var(--spacer-1) var(--spacer-2);
+  width: 100%;
+}
+
+.actions {
+  display: flex;
+  margin-top: var(--spacer-2);
+  justify-content: flex-end;
+}
+
+.btn {
+  composes: btn from '@/styles/blocks.module.css';
+}
+
+.btn:last-of-type {
+  margin-left: var(--spacer-1);
+}

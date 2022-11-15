@@ -1,4 +1,4 @@
-import styles from "./Repos.module.css";
+import styles from "./AddRepoDialog.module.css";
 
 import {
   Content,
@@ -21,7 +21,8 @@ export const AddRepoDialog = ({
   const [isOpen, setIsOpen] = useState(readOnlyIsOpen);
 
   const handleOpen = (open: boolean) => {
-    console.log({ open });
+    // console.log({ open });
+    // setIsOpen(open);
   };
 
   useEffect(() => {
@@ -29,21 +30,38 @@ export const AddRepoDialog = ({
   }, [readOnlyIsOpen]);
 
   return (
-    <Root onOpenChange={handleOpen} open={isOpen}>
+    <Root open>
       <Portal>
         <Overlay className={styles.overlay} />
-        <Content>
-          <Title>Almost there. Add thechinedu/revuehub</Title>
-          <Description>Import repository and invite reviewers</Description>
+        <Content className={styles.contentWrapper}>
+          <section className={styles.content}>
+            <Title className={styles.title}>Add thechinedu/revuehub</Title>
+            <Description className={styles.description}>
+              Import repository and invite reviewers
+            </Description>
 
-          <form>
-            <label>
-              Branch
-              <input type="text" placeholder="main" disabled />
-            </label>
+            <form className={styles.form}>
+              <div className={styles.group}>
+                <label htmlFor="branch" className={styles.label}>
+                  Branch:
+                </label>
+                <input
+                  type="text"
+                  placeholder="main"
+                  id="branch"
+                  className={styles.input}
+                  disabled
+                />
+              </div>
 
-            <button type="submit">Add</button>
-          </form>
+              <div className={styles.actions}>
+                <button type="submit" className={styles.btn}>
+                  Add
+                </button>
+                <button className={styles.btn}>Cancel</button>
+              </div>
+            </form>
+          </section>
         </Content>
       </Portal>
     </Root>
