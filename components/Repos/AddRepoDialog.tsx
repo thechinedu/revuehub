@@ -54,11 +54,30 @@ export const AddRepoDialog = ({
                 />
               </div>
 
+              <div className={styles.group}>
+                <label htmlFor="reviewer" className={styles.label}>
+                  Search and add reviewers:
+                </label>
+                <input
+                  type="text"
+                  placeholder="Search by username or email"
+                  id="reviewer"
+                  className={styles.input}
+                />
+
+                <div className={styles.reviewers}>
+                  <p>
+                    No reviewers selected yet. Reviewers can also be added after
+                    importing your repository
+                  </p>
+                </div>
+              </div>
+
               <div className={styles.actions}>
                 <button type="submit" className={styles.btn}>
-                  Add
+                  Import repo
+                  {/* and invite reviewers */}
                 </button>
-                <button className={styles.btn}>Cancel</button>
               </div>
             </form>
           </section>
