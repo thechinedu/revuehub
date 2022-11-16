@@ -22,15 +22,9 @@
 .content {
   background-color: var(--white);
   border: 2px solid var(--black);
+  border-radius: 8px;
+  max-width: 500px;
   padding: var(--spacer-4);
-}
-
-.title {
-  font-size: var(--large);
-}
-
-.description {
-  margin-top: var(--spacer-1);
 }
 
 .form {
@@ -58,16 +52,18 @@
   width: 100%;
 }
 
+.reviewers p {
+  font-size: var(--small);
+}
+
 .actions {
   display: flex;
   margin-top: var(--spacer-2);
-  justify-content: flex-end;
 }
 
 .btn {
   composes: btn from '@/styles/blocks.module.css';
-}
-
-.btn:last-of-type {
-  margin-left: var(--spacer-1);
+  background-color: var(--black);
+  color: var(--white);
+  width: 100%;
 }
