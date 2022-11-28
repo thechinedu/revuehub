@@ -80,6 +80,11 @@ const Repos: NextPage = () => {
       refetchOnReconnect: false,
     }
   );
+
+  const handleCloseDialog = () => {
+    setIsAddDialogOpen(false);
+  };
+
   return (
     <>
       <Head>
@@ -123,7 +128,10 @@ const Repos: NextPage = () => {
                 )
               )}
 
-              <AddRepoDialog isOpen={isAddDialogOpen} />
+              <AddRepoDialog
+                isOpen={isAddDialogOpen}
+                onClose={handleCloseDialog}
+              />
             </>
           )}
         </main>
