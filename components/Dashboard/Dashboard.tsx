@@ -83,7 +83,6 @@ const Dashboard: NextPage = () => {
         setRepos(res.data);
       },
       retry: false,
-      refetchOnMount: false,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
     }
@@ -148,13 +147,12 @@ const Dashboard: NextPage = () => {
                   className={styles.search}
                   aria-label="Search repositories"
                 />
-                <Link href="#">
+                <Link href="/repos/new">
                   <a className={styles.addRepo}>Add new repository</a>
                 </Link>
               </div>
             )}
 
-            {/* TODO: remove alias for last_updated once BE has been updated to return the keys in camelCase */}
             {repos.map(
               ({ id, name, description, last_updated: lastUpdated }) => (
                 <RepoSummary

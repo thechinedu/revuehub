@@ -33,6 +33,12 @@ type RepoSummaryProps = {
   onActionClick: (evt: MouseEvent<HTMLAnchorElement>) => void;
 };
 
+type AddDialogAttrs = {
+  id: number;
+  name: string;
+  isOpen: boolean;
+};
+
 const RepoSummary = ({
   name,
   description,
@@ -60,7 +66,12 @@ const RepoSummary = ({
 
 const Repos: NextPage = () => {
   const [repos, setRepos] = useState<Repo[]>([]);
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [addDialogAttrs, setAddDialogAttr] = useState<AddDialogAttrs>({
+    id: 0,
+    name: "repository",
+    isOpen: false,
+  });
+  const { id, name, isOpen } = addDialogAttrs;
 
   const { isLoading, isSuccess } = useQuery(
     ["ownProviderRepos"],
@@ -75,15 +86,16 @@ const Repos: NextPage = () => {
         setRepos(res.data);
       },
       retry: false,
-      refetchOnMount: false,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
     }
   );
 
-  const handleCloseDialog = () => {
-    setIsAddDialogOpen(false);
-  };
+  const handleToggleDialog =
+    ({ isOpen, id, name }: AddDialogAttrs) =>
+    () => {
+      setAddDialogAttr({ isOpen, id, name });
+    };
 
   return (
     <>
@@ -123,14 +135,23 @@ const Repos: NextPage = () => {
                     name={name}
                     description={description}
                     hasPulledContent={hasPulledContent}
-                    onActionClick={() => setIsAddDialogOpen(true)}
+                    onActionClick={handleToggleDialog({
+                      isOpen: true,
+                      id,
+                      name,
+                    })}
                   />
                 )
               )}
 
               <AddRepoDialog
-                isOpen={isAddDialogOpen}
-                onClose={handleCloseDialog}
+                id={id}
+                name={name}
+                isOpen={isOpen}
+                onClose={handleToggleDialog({
+                  ...addDialogAttrs,
+                  isOpen: false,
+                })}
               />
             </>
           )}

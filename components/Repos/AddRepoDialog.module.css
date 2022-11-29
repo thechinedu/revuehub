@@ -85,3 +85,14 @@
   color: var(--white);
   width: 100%;
 }
+
+.btn[disabled] {
+  cursor: not-allowed;
+  opacity: 0.75;
+}
+
+.error {
+  color: var(--vivid-burgundy);
+  font-size: var(--small);
+  margin-top: var(--spacer-2);
+}
