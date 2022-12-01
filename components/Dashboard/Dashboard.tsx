@@ -42,9 +42,10 @@ const RepoSummary = ({
   description,
   lastUpdated,
 }: RepoSummaryProps): JSX.Element => {
+  const [owner, repoName] = name.split("/");
   return (
     <section className={styles.repoSummary}>
-      <Link href="#">
+      <Link href={`/${owner}/${repoName}`}>
         <a className={styles.container}>
           <h3 className={styles.heading}>
             <GithubIcon className={styles.githubIcon} /> {name}
