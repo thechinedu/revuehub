@@ -1,3 +1,4 @@
+/* TODO: Move subNav styles to SubNav component css module file */
 .subNav {
   display: flex;
   gap: var(--spacer-2);
@@ -41,7 +42,7 @@
   text-align: center;
 }
 
-.welcome, 
+.welcome,
 .repoSummary {
   background-color: var(--white);
   border: 2px solid var(--black);
