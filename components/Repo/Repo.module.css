@@ -1,3 +1,7 @@
+.container.isFileTreeShowing {
+  background: rgba(0, 0, 0, 0.5);
+}
+
 /* TODO: Move subNav styles to SubNav component css module file */
 .subNav {
   display: flex;
@@ -31,18 +35,47 @@
   margin-top: var(--spacer-4);
 }
 
+.icon {
+  height: 20px;
+  margin-right: var(--spacer-1);
+  width: 20px;
+}
+
+.fileExplorerBtn {
+  composes: btn from "@/styles/blocks.module.css";
+  align-items: center;
+  box-shadow: 5px 5px var(--black);
+  display: flex;
+}
+
 .fileTree {
-  position: fixed;
-  left: 0;
+  background: var(--powder);
   border: 2px solid var(--black);
-  padding: var(--spacer-4);
-  top: 0;
   height: 100%;
+  left: -200px;
+  padding: var(--spacer-4);
   padding-top: var(--spacer-12);
+  position: fixed;
+  top: 0;
+  transition-duration: 0.4s;
+}
+
+.fileTree.isFileTreeShowing {
+  left: 0;
 }
 
 .directoryName,
 .directoryContent {
   cursor: pointer;
   padding-top: var(--spacer-1\/2);
+}
+
+.directoryName {
+  display: flex;
+  align-items: center;
+}
+
+.directoryName .icon {
+  height: 12px;
+  width: 12px;
 }
