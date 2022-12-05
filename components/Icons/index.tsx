@@ -1,4 +1,6 @@
 export { Account as AccountIcon } from "./Account";
+export { AngleDown as AngleDownIcon } from "./AngleDown";
+export { AngleRight as AngleRightIcon } from "./AngleRight";
 export { At as AtIcon } from "./At";
 export { Close as CloseIcon } from "./Close";
 export { Envelope as EnvelopeIcon } from "./Envelope";
