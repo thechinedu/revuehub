@@ -1,20 +1,33 @@
 import styles from "./Repo.module.css";
 
+import { FolderClosedIcon, FolderTreeIcon } from "@/components/Icons";
+import { cn } from "@/utils";
+
 import Container from "@/components/Container";
 import { Navbar, SubNav } from "@/components/Navbar";
 
 import { NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
+import { useState } from "react";
 
 const Repo: NextPage = () => {
+  const [isFileTreeShowing, setIsFileTreeShowing] = useState(false);
+
+  const handleDisplayFileTree = () => setIsFileTreeShowing(true);
+
   return (
     <>
       <Head>
         <title>RevueHub - the-afang-project</title>
       </Head>
 
-      <Container>
+      <Container
+        className={cn(styles, {
+          container: true,
+          isFileTreeShowing,
+        })}
+      >
         <Navbar />
         <SubNav className={styles.subNav}>
           <Link href="#">
@@ -28,14 +41,33 @@ const Repo: NextPage = () => {
           </Link>
         </SubNav>
 
-        <main className={styles.main}>hello repo page</main>
+        <main className={styles.main}>
+          <button
+            className={styles.fileExplorerBtn}
+            onClick={handleDisplayFileTree}
+          >
+            <FolderTreeIcon className={styles.icon} />
+            File explorer
+          </button>
+        </main>
 
-        <div className={styles.fileTree}>
+        <div
+          className={cn(styles, {
+            fileTree: true,
+            isFileTreeShowing,
+          })}
+        >
           <div className={styles.directory}>
-            <p className={styles.directoryName}>.github</p>
+            <p className={styles.directoryName}>
+              <FolderClosedIcon className={styles.icon} />
+              .github
+            </p>
 
             <div className={styles.directory}>
-              <p className={styles.directoryName}>workflows</p>
+              <p className={styles.directoryName}>
+                <FolderClosedIcon className={styles.icon} />
+                workflows
+              </p>
 
               <p className={styles.directoryContent}>main.yml</p>
             </div>
@@ -44,7 +76,10 @@ const Repo: NextPage = () => {
           </div>
 
           <div className={styles.directory}>
-            <p className={styles.directoryName}>__tests__</p>
+            <p className={styles.directoryName}>
+              <FolderClosedIcon className={styles.icon} />
+              __tests__
+            </p>
 
             <p className={styles.directoryContent}>signup.spec.ts</p>
           </div>
