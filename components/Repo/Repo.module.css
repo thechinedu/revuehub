@@ -50,12 +50,13 @@
 
 .fileTree {
   background: var(--powder);
-  border: 2px solid var(--black);
+  border: 8px solid var(--black);
   height: 100%;
   left: -250px;
   overflow: hidden;
   padding: var(--spacer-4);
-  padding-top: var(--spacer-12);
+  /* padding-top: var(--spacer-12); */
+  padding-top: 0;
   position: fixed;
   top: 0;
   transition-duration: 0.4s;
@@ -64,6 +65,25 @@
 
 .fileTree.isFileTreeShowing {
   left: 0;
+}
+
+.title {
+  align-items: flex-start;
+  background-color: var(--black);
+  color: var(--white);
+  display: flex;
+  flex-direction: column;
+  font-size: var(--base-font-size);
+  margin-bottom: var(--spacer-6);
+  margin-inline: calc(var(--spacer-4) * -1);
+  padding-block: var(--spacer-2);
+  padding-left: var(--spacer-4);
+}
+
+.title .icon {
+  fill: var(--powder);
+  height: 14px;
+  width: 14px;
 }
 
 .directory > .directory,

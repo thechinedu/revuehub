@@ -3,6 +3,7 @@ import styles from "./Repo.module.css";
 import {
   AngleDownIcon,
   AngleRightIcon,
+  BookmarkIcon,
   FolderClosedIcon,
   FolderOpenedIcon,
   FolderTreeIcon,
@@ -102,6 +103,14 @@ const Repo: NextPage = () => {
           })}
           onClick={handleToggleDirectoryStatus}
         >
+          <h3 className={styles.title}>
+            <span>
+              <BookmarkIcon className={styles.icon} />
+              the-afang-project
+            </span>
+
+            <span>main</span>
+          </h3>
           <div
             className={cn(styles, {
               directory: true,
