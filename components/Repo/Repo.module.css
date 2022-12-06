@@ -75,6 +75,10 @@
   display: none;
 }
 
+.directory.expanded > * {
+  display: block;
+}
+
 .directoryName,
 .directoryContent {
   cursor: pointer;
