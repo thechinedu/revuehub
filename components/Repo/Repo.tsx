@@ -1,8 +1,10 @@
 import styles from "./Repo.module.css";
 
 import {
+  AngleDownIcon,
   AngleRightIcon,
   FolderClosedIcon,
+  FolderOpenedIcon,
   FolderTreeIcon,
 } from "@/components/Icons";
 import { cn } from "@/utils";
@@ -14,9 +16,14 @@ import { NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { MouseEvent, useState } from "react";
+import { useRouter } from "next/router";
 
 const Repo: NextPage = () => {
+  const router = useRouter();
   const [isFileTreeShowing, setIsFileTreeShowing] = useState(false);
+  const [directoryStatusMap, setDirectoryStatusMap] = useState(
+    new Map<string, boolean>()
+  );
 
   const handleToggleFileTree =
     (action: "open" | "close") => (evt: MouseEvent) => {
@@ -30,10 +37,32 @@ const Repo: NextPage = () => {
       setIsFileTreeShowing(false);
     };
 
+  const handleToggleDirectoryStatus = (evt: MouseEvent) => {
+    evt.stopPropagation();
+
+    const directoryPath = (evt.target as HTMLDivElement).dataset.directoryPath;
+
+    console.log({ directoryPath, target: evt.target });
+
+    if (!directoryPath) return;
+
+    const directoryStatusMapAsArray = Array.from(directoryStatusMap);
+    const directoryStatusMapCopy = new Map(directoryStatusMapAsArray);
+
+    if (directoryStatusMapCopy.has(directoryPath)) {
+      const val = directoryStatusMapCopy.get(directoryPath);
+      directoryStatusMapCopy.set(directoryPath, !val);
+    } else {
+      directoryStatusMapCopy.set(directoryPath, true);
+    }
+
+    setDirectoryStatusMap(directoryStatusMapCopy);
+  };
+
   return (
     <>
       <Head>
-        <title>RevueHub - the-afang-project</title>
+        <title>RevueHub - {router.asPath.slice(1)}</title>
       </Head>
 
       <Container
@@ -62,7 +91,7 @@ const Repo: NextPage = () => {
             onClick={handleToggleFileTree("open")}
           >
             <FolderTreeIcon className={styles.icon} />
-            File explorer
+            Open file explorer
           </button>
         </main>
 
@@ -71,24 +100,56 @@ const Repo: NextPage = () => {
             fileTree: true,
             isFileTreeShowing,
           })}
-          onClick={handleToggleFileTree("open")}
+          onClick={handleToggleDirectoryStatus}
         >
-          <div className={styles.directory}>
-            <p className={styles.directoryName}>
-              <AngleRightIcon className={styles.icon} />
-              <FolderClosedIcon className={styles.icon} />
+          <div
+            className={cn(styles, {
+              directory: true,
+              expanded: !!directoryStatusMap.get(".github"),
+            })}
+          >
+            <p className={styles.directoryName} data-directory-path=".github">
+              {directoryStatusMap.get(".github") ? (
+                <>
+                  <AngleDownIcon className={styles.icon} />
+                  <FolderOpenedIcon className={styles.icon} />
+                </>
+              ) : (
+                <>
+                  <AngleRightIcon className={styles.icon} />
+                  <FolderClosedIcon className={styles.icon} />
+                </>
+              )}
               .github
             </p>
 
-            <div className={styles.directory}>
-              <p className={styles.directoryName}>
+            <div
+              className={cn(styles, {
+                directory: true,
+                expanded: !!directoryStatusMap.get(".github/workflows"),
+              })}
+            >
+              <p
+                className={styles.directoryName}
+                data-directory-path=".github/workflows"
+              >
                 <AngleRightIcon className={styles.icon} />
                 <FolderClosedIcon className={styles.icon} />
                 workflows
               </p>
 
-              <div className={styles.directory}>
-                <p className={styles.directoryName}>
+              <div
+                className={cn(styles, {
+                  directory: true,
+                  expanded: !!directoryStatusMap.get(
+                    ".github/workflows/secrets"
+                  ),
+                })}
+              >
+                <p
+                  className={styles.directoryName}
+                  data-directory-path=".github/workflows/secrets"
+                >
                   <AngleRightIcon className={styles.icon} />
                   <FolderClosedIcon className={styles.icon} />
                   secrets
@@ -103,8 +164,13 @@ const Repo: NextPage = () => {
             <p className={styles.directoryContent}>dependabot.yml</p>
           </div>
 
-          <div className={styles.directory}>
-            <p className={styles.directoryName}>
+          <div
+            className={cn(styles, {
+              directory: true,
+              expanded: !!directoryStatusMap.get("__tests__"),
+            })}
+          >
+            <p className={styles.directoryName} data-directory-path="__tests__">
               <AngleRightIcon className={styles.icon} />
               <FolderClosedIcon className={styles.icon} />
               __tests__
