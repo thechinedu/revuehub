@@ -4,6 +4,7 @@ import {
   AngleDownIcon,
   AngleRightIcon,
   BookmarkIcon,
+  CloseIcon,
   FolderClosedIcon,
   FolderOpenedIcon,
   FolderTreeIcon,
@@ -18,6 +19,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { MouseEvent, useState } from "react";
 import { useRouter } from "next/router";
+import { CodeBranch } from "../Icons/CodeBranch";
 
 const Repo: NextPage = () => {
   const router = useRouter();
@@ -86,16 +88,6 @@ const Repo: NextPage = () => {
           </Link>
         </SubNav>
 
-        <main className={styles.main}>
-          <button
-            className={styles.fileExplorerBtn}
-            onClick={handleToggleFileTree("open")}
-          >
-            <FolderTreeIcon className={styles.icon} />
-            Open file explorer
-          </button>
-        </main>
-
         <div
           className={cn(styles, {
             fileTree: true,
@@ -109,7 +101,14 @@ const Repo: NextPage = () => {
               the-afang-project
             </span>
 
-            <span>main</span>
+            <span className={styles.branchName}>
+              <CodeBranch className={styles.icon} /> main
+            </span>
+
+            <span className={styles.description}>
+              A computer science study tracker and plan to become a more
+              well-rounded software engineer.
+            </span>
           </h3>
           <div
             className={cn(styles, {
@@ -190,6 +189,16 @@ const Repo: NextPage = () => {
 
           <p className={styles.directoryContent}>README.md</p>
         </div>
+
+        <main className={styles.main}>
+          <button
+            className={styles.fileExplorerBtn}
+            onClick={handleToggleFileTree("open")}
+          >
+            <FolderTreeIcon className={styles.icon} />
+            Open file explorer
+          </button>
+        </main>
       </Container>
     </>
   );
