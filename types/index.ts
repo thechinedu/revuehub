@@ -45,9 +45,16 @@ export type Repo = {
   description: string;
   last_updated: string;
   has_pulled_content: boolean;
+  default_branch: string;
 };
 export type FetchReposSuccessResponse = Response<Repo[]>;
 export type FetchReposErrorResponse = Response<null>;
+
+export type FetchRepoSuccessResponse = Response<Repo>;
+export type FetchRepoErrorResponse = Response<null>;
+export type FetchRepoResponse =
+  | FetchRepoSuccessResponse
+  | FetchRepoErrorResponse;
 
 export const GITHUB_AUTH_ENDPOINT = process.env
   .NEXT_PUBLIC_GITHUB_AUTH_ENDPOINT as string;
