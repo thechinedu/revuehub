@@ -1,3 +1,9 @@
+.icon {
+  height: 20px;
+  margin-right: var(--spacer-1);
+  width: 20px;
+}
+
 .fileTree {
   background: var(--powder);
   border: 8px solid var(--black);
@@ -54,10 +60,18 @@
   margin-top: var(--spacer-1);
 }
 
+.directory {
+  font-size: 0.875rem; /* not part of the typography scale but looks the best for the folder tree */
+}
+
 .directory > .directory,
 .directoryContent {
   padding-left: var(--spacer-2);
 }
+
+/* .directory .directoryContent {
+  padding-left: var(--spacer-4);
+} */
 
 .directory > * {
   display: none;
@@ -70,7 +84,10 @@
 .directoryName,
 .directoryContent {
   cursor: pointer;
+  overflow: hidden;
   padding-top: var(--spacer-1\/2);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .directoryName {
@@ -83,12 +100,8 @@
   width: 12px;
 }
 
-.main {
-  margin-top: var(--spacer-4);
-}
-
-.icon {
-  height: 20px;
-  margin-right: var(--spacer-1);
-  width: 20px;
+.directoryContent {
+  /* overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; */
 }
