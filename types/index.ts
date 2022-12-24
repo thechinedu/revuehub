@@ -56,6 +56,21 @@ export type FetchRepoResponse =
   | FetchRepoSuccessResponse
   | FetchRepoErrorResponse;
 
+type BaseRepoContent = {
+  id: number;
+  path: string;
+};
+type RepoContentBlob = BaseRepoContent & {
+  type: "blob";
+};
+type RepoContentTree = BaseRepoContent & {
+  type: "tree";
+  contents: (RepoContentBlob | RepoContentTree)[];
+};
+export type RepoContent = RepoContentTree | RepoContentBlob;
+export type FetchRepoContentsSuccessResponse = Response<RepoContent[]>;
+export type FetchRepoContentsErrorResponse = Response<null>;
+
 export const GITHUB_AUTH_ENDPOINT = process.env
   .NEXT_PUBLIC_GITHUB_AUTH_ENDPOINT as string;
 export const GITHUB_OAUTH_CLIENT_ID = process.env
