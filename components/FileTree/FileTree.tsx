@@ -5,6 +5,7 @@ import {
   AngleRightIcon,
   BookmarkIcon,
   CodeBranchIcon,
+  FileIcon,
   FolderClosedIcon,
   FolderOpenedIcon,
 } from "@/components/Icons";
@@ -15,7 +16,7 @@ import { cn } from "@/utils";
 
 import { NextPage } from "next";
 
-import { MouseEvent, useEffect, useState } from "react";
+import { MouseEvent, useState } from "react";
 
 const sampleRepositoryContentsRes: RepoContent[] = [
   {
@@ -524,7 +525,8 @@ const generateFileTree = (
 
   if (type === "blob") {
     return (
-      <p className={styles.directoryContent} key={id}>
+      <p className={styles.directoryContent} key={id} title={path}>
+        <FileIcon className={styles.icon} />
         {name}
       </p>
     );
@@ -539,6 +541,7 @@ const generateFileTree = (
         expanded: isExpanded,
       })}
       key={id}
+      title={path}
     >
       <p className={styles.directoryName} data-directory-path={path}>
         {isExpanded ? (
@@ -573,12 +576,14 @@ type FileTreeProps = {
   expanded: boolean;
   folderName: string;
   branchName: string;
+  description: string;
 };
 
 const FileTree: NextPage<FileTreeProps> = ({
   expanded,
   branchName,
   folderName,
+  description,
 }) => {
   const [directoryStatusMap, setDirectoryStatusMap] = useState(
     new Map<string, boolean>()
@@ -623,10 +628,7 @@ const FileTree: NextPage<FileTreeProps> = ({
           <CodeBranchIcon className={styles.icon} /> {branchName}
         </span>
 
-        <span className={styles.description}>
-          A computer science study tracker and plan to become a more
-          well-rounded software engineer.
-        </span>
+        <span className={styles.description}>{description}</span>
       </h3>
 
       {sampleRepositoryContentsRes.map((repositoryContent) =>

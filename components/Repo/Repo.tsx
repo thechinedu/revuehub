@@ -98,6 +98,7 @@ const Repo: NextPage = () => {
           expanded={isFileTreeShowing}
           folderName={repoName}
           branchName={repo?.default_branch || "main"}
+          description={repo?.description || ""}
         />
 
         <main className={styles.main}>
