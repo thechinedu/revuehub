@@ -40,14 +40,13 @@ export const OAuthCallback = (): JSX.Element => {
 
         push("/sign-up");
       },
-      onSuccess: (data) => {
+      onSuccess: () => {
         const path = redirectPath.current?.success;
 
         if (path) {
           if (authStatus !== AuthStatus.SIGNED_IN && path === "/dashboard") {
             setAuthStatus(AuthStatus.SIGNED_IN);
           }
-          console.log("success::OAUTH", data);
           push(path);
           return;
         }

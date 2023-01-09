@@ -70,6 +70,9 @@ type RepoContentTree = BaseRepoContent & {
 export type RepoContent = RepoContentTree | RepoContentBlob;
 export type FetchRepoContentsSuccessResponse = Response<RepoContent[]>;
 export type FetchRepoContentsErrorResponse = Response<null>;
+export type FetchRepoContentsResponse =
+  | FetchRepoContentsSuccessResponse
+  | FetchRepoContentsErrorResponse;
 
 export const GITHUB_AUTH_ENDPOINT = process.env
   .NEXT_PUBLIC_GITHUB_AUTH_ENDPOINT as string;
