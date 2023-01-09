@@ -108,9 +108,7 @@ const Repo: NextPage = () => {
           <FileTree
             data={repoContents}
             expanded={isFileTreeShowing}
-            folderName={repoName}
-            branchName={repo.default_branch}
-            description={repo.description}
+            repo={repo}
           />
         )}
 
