@@ -30,20 +30,16 @@ export const Navbar: NextPage = () => {
   return (
     <header>
       <nav className={styles.navbar} aria-label="Main navigation">
-        <Link href={isSignedIn ? "/dashboard" : "/"}>
-          <a className={styles.logo}>
-            Revue<span>Hub</span>
-          </a>
+        <Link href={isSignedIn ? "/dashboard" : "/"} className={styles.logo}>
+          Revue<span>Hub</span>
         </Link>
 
         {router.pathname === "/" && (
           <>
-            <Link href="/sign-in">
-              <a>Sign in</a>
-            </Link>
+            <Link href="/sign-in">Sign in</Link>
 
-            <Link href="/sign-up">
-              <a className={styles.tryFree}>Try for free</a>
+            <Link href="/sign-up" className={styles.tryFree}>
+              Try for free
             </Link>
           </>
         )}

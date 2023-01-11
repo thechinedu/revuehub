@@ -33,15 +33,14 @@ const Home: NextPage = () => {
           </p>
 
           <div className={styles.newAccountFlows}>
-            <Link href="/sign-up">
-              <a
-                className={cn(styles, {
-                  signUp: true,
-                  heroCta: true,
-                })}
-              >
-                Get started
-              </a>
+            <Link
+              href="/sign-up"
+              className={cn(styles, {
+                signUp: true,
+                heroCta: true,
+              })}
+            >
+              Get started
             </Link>
 
             <OAuthButton

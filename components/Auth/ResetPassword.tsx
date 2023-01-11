@@ -2,9 +2,7 @@ import styles from "./Auth.module.css";
 
 import Container from "@/components/Container";
 import { Navbar } from "@/components/Navbar";
-import {
-  EnvelopeIcon,
-} from "@/components/Icons";
+import { EnvelopeIcon } from "@/components/Icons";
 
 import { cn } from "@/utils";
 
@@ -41,8 +39,8 @@ export const ResetPassword = (): JSX.Element => {
             </button>
           </form>
 
-          <Link href="/sign-in">
-            <a className={styles.authPage}>Back to sign in</a>
+          <Link href="/sign-in" className={styles.authPage}>
+            Back to sign in
           </Link>
         </main>
       </Container>
