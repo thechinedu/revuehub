@@ -8,7 +8,6 @@ import { Navbar, SubNav } from "@/components/Navbar";
 import {
   FetchRepoContentsResponse,
   FetchRepoContentsSuccessResponse,
-  FetchRepoErrorResponse,
   FetchRepoResponse,
   FetchRepoSuccessResponse,
   Repo,
@@ -20,12 +19,18 @@ import { cn, get } from "@/utils";
 import { useQuery } from "@tanstack/react-query";
 
 import { NextPage } from "next";
+import Error from "next/error";
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import { MouseEvent, useState } from "react";
-import Error from "next/error";
-import { useRouter } from "next/router";
+import {
+  PrismAsyncLight as SyntaxHighlighter,
+  LightAsync as SyntaxHighlighterr,
+} from "react-syntax-highlighter";
+import { duotoneLight } from "react-syntax-highlighter/dist/cjs/styles/prism";
+import { zenburn } from "react-syntax-highlighter/dist/cjs/styles/hljs";
 
 const fetchRepoByName = (owner: string, repo: string) =>
   get<FetchRepoResponse>(`/repositories/${owner}/${repo}`);
@@ -93,15 +98,11 @@ const Repo: NextPage = () => {
       >
         <Navbar />
         <SubNav className={styles.subNav}>
-          <Link href="#">
-            <a>Feedback</a>
+          <Link href="#">Feedback</Link>
+          <Link href="/dashboard" className={styles.active}>
+            Code
           </Link>
-          <Link href="/dashboard">
-            <a className={styles.active}>Code</a>
-          </Link>
-          <Link href="#">
-            <a>Repo Settings</a>
-          </Link>
+          <Link href="#">Repo Settings</Link>
         </SubNav>
 
         {repo && repoContents && (
@@ -120,6 +121,51 @@ const Repo: NextPage = () => {
             <FolderTreeIcon className={styles.icon} />
             Open file explorer
           </button>
+
+          <SyntaxHighlighter
+            language="javascript"
+            style={duotoneLight}
+            // startingLineNumber={10}
+            showLineNumbers
+          >
+            {`import type { Knex } from 'knex';
+
+const config: Knex.Config = {
+  client: 'pg',
+  connection: process.env.DATABASE_URL,
+  pool: {
+    min: 2,
+    max: 10,
+  },
+  migrations: {
+    tableName: 'schema_migrations',
+  },
+};
+
+export default config;`}
+          </SyntaxHighlighter>
+
+          <SyntaxHighlighterr
+            language="javascript"
+            style={zenburn}
+            showLineNumbers
+          >
+            {`import type { Knex } from 'knex';
+
+const config: Knex.Config = {
+  client: 'pg',
+  connection: process.env.DATABASE_URL,
+  pool: {
+    min: 2,
+    max: 10,
+  },
+  migrations: {
+    tableName: 'schema_migrations',
+  },
+};
+
+export default config;`}
+          </SyntaxHighlighterr>
         </main>
       </Container>
     </>

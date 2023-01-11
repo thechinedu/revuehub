@@ -114,8 +114,8 @@ export const Signin = (): JSX.Element => {
                 onChange={handleChange(Attributes.PASSWORD)}
                 autoComplete="current-password"
               />
-              <Link href="/reset-password">
-                <a className={styles.resetPassword}>Reset password?</a>
+              <Link href="/reset-password" className={styles.resetPassword}>
+                Reset password?
               </Link>
 
               {hasInvalidCredentials && (
@@ -149,8 +149,8 @@ export const Signin = (): JSX.Element => {
 
           <p>
             Don&apos;t have an account?{" "}
-            <Link href="/sign-up">
-              <a className={styles.authPage}>Sign up</a>
+            <Link href="/sign-up" className={styles.authPage}>
+              Sign up
             </Link>
           </p>
         </main>

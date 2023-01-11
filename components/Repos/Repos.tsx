@@ -54,10 +54,8 @@ const RepoSummary = ({
 
         <p className={styles.description}>{description}</p>
 
-        <Link href="#">
-          <a className={styles.action} onClick={onActionClick}>
-            {hasPulledContent ? "Re-sync" : "Add Repo"}
-          </a>
+        <Link href="#" className={styles.action} onClick={onActionClick}>
+          {hasPulledContent ? "Re-sync" : "Add Repo"}
         </Link>
       </div>
     </section>

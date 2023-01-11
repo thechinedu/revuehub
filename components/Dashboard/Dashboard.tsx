@@ -45,22 +45,20 @@ const RepoSummary = ({
   const [owner, repoName] = name.split("/");
   return (
     <section className={styles.repoSummary}>
-      <Link href={`/${owner}/${repoName}`}>
-        <a className={styles.container}>
-          <h3 className={styles.heading}>
-            <GithubIcon className={styles.githubIcon} /> {name}
-          </h3>
+      <Link href={`/${owner}/${repoName}`} className={styles.container}>
+        <h3 className={styles.heading}>
+          <GithubIcon className={styles.githubIcon} /> {name}
+        </h3>
 
-          {/* TODO: show full description in tooltip once this is hovered on */}
-          <p className={styles.description}>{description}</p>
+        {/* TODO: show full description in tooltip once this is hovered on */}
+        <p className={styles.description}>{description}</p>
 
-          <div className={styles.meta}>
-            <p>
-              Updated{" "}
-              {formatDistanceToNow(new Date(lastUpdated), { addSuffix: true })}
-            </p>
-          </div>
-        </a>
+        <div className={styles.meta}>
+          <p>
+            Updated{" "}
+            {formatDistanceToNow(new Date(lastUpdated), { addSuffix: true })}
+          </p>
+        </div>
       </Link>
     </section>
   );
@@ -99,17 +97,11 @@ const Dashboard: NextPage = () => {
 
         <SubNav className={styles.subNav}>
           {/* TODO: set active style only when page is the active view */}
-          <Link href="/dashboard">
-            <a className={styles.active}>
-              My repositories {repos.length ? `(${repos.length})` : ""}
-            </a>
+          <Link href="/dashboard" className={styles.active}>
+            My repositories {repos.length ? `(${repos.length})` : ""}
           </Link>
-          <Link href="#">
-            <a>Review requested (10)</a>
-          </Link>
-          <Link href="#">
-            <a>Settings</a>
-          </Link>
+          <Link href="#">Review requested (10)</Link>
+          <Link href="#">Settings</Link>
         </SubNav>
 
         {isLoading && <span className={styles.pending}>Loading...</span>}
@@ -148,8 +140,8 @@ const Dashboard: NextPage = () => {
                   className={styles.search}
                   aria-label="Search repositories"
                 />
-                <Link href="/repos/new">
-                  <a className={styles.addRepo}>Add new repository</a>
+                <Link href="/repos/new" className={styles.addRepo}>
+                  Add new repository
                 </Link>
               </div>
             )}

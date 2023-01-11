@@ -293,8 +293,8 @@ export const Signup = (): JSX.Element => {
 
           <p>
             Already have an account?{" "}
-            <Link href="/sign-in">
-              <a className={styles.authPage}>Sign in</a>
+            <Link href="/sign-in" className={styles.authPage}>
+              Sign in
             </Link>
           </p>
         </main>
