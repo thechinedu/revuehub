@@ -12,12 +12,11 @@ import {
 
 import { Repo, RepoContent } from "@/types";
 
-import { cn, get } from "@/utils";
+import { cn } from "@/utils";
 
 import { NextPage } from "next";
 
 import { MouseEvent, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 
 const generateFileTree = (
   content: RepoContent,
@@ -81,42 +80,23 @@ const getDirectoryPath = (elem: HTMLElement | null) => {
   return "";
 };
 
-const fetchRepoBlobFileContents = (
-  repositoryId: number,
-  fileBlobId: number | null
-) => {
-  if (!fileBlobId) return Promise.resolve(null);
-
-  return get(`/repositories/${repositoryId}/contents/${fileBlobId}`);
-};
-
 type FileTreeProps = {
   data: RepoContent[];
   expanded: boolean;
   repo: Repo;
+  onFileSelection: (fileBlobId: number) => void;
 };
 
-const FileTree: NextPage<FileTreeProps> = ({ data, expanded, repo }) => {
+const FileTree: NextPage<FileTreeProps> = ({
+  data,
+  expanded,
+  repo,
+  onFileSelection,
+}) => {
   const { default_branch: branchName, description, id: repoId, name } = repo;
   const folderName = name.split("/")[1];
   const [directoryStatusMap, setDirectoryStatusMap] = useState(
     new Map<string, boolean>()
-  );
-  const [fileBlobId, setFileBlobId] = useState<number | null>(null);
-
-  useQuery(
-    ["repoBlobFileContents", fileBlobId],
-    () => fetchRepoBlobFileContents(repoId, fileBlobId),
-    {
-      onSuccess: (res) => {
-        console.log((res as any).data.content);
-      },
-      enabled: Boolean(fileBlobId),
-      retry: false,
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    }
   );
 
   const handleToggleDirectoryStatus = (evt: MouseEvent) => {
@@ -145,7 +125,7 @@ const FileTree: NextPage<FileTreeProps> = ({ data, expanded, repo }) => {
 
     if (!fileBlobId) return;
 
-    setFileBlobId(+fileBlobId);
+    onFileSelection(+fileBlobId);
   };
 
   return (

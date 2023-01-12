@@ -74,6 +74,15 @@ export type FetchRepoContentsResponse =
   | FetchRepoContentsSuccessResponse
   | FetchRepoContentsErrorResponse;
 
+type FileBlobContent = {
+  content: string;
+};
+export type FetchFileBlobContentSuccessResponse = Response<FileBlobContent>;
+export type FetchFileBlobContentErrorResponse = Response<null>;
+export type FetchFileBlobResponse =
+  | FetchFileBlobContentSuccessResponse
+  | FetchFileBlobContentErrorResponse;
+
 export const GITHUB_AUTH_ENDPOINT = process.env
   .NEXT_PUBLIC_GITHUB_AUTH_ENDPOINT as string;
 export const GITHUB_OAUTH_CLIENT_ID = process.env
