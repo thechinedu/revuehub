@@ -6,6 +6,8 @@ import { FolderTreeIcon } from "@/components/Icons";
 import { Navbar, SubNav } from "@/components/Navbar";
 
 import {
+  FetchFileBlobContentSuccessResponse,
+  FetchFileBlobResponse,
   FetchRepoContentsResponse,
   FetchRepoContentsSuccessResponse,
   FetchRepoResponse,
@@ -29,8 +31,7 @@ import {
   PrismAsyncLight as SyntaxHighlighter,
   LightAsync as SyntaxHighlighterr,
 } from "react-syntax-highlighter";
-import { duotoneLight } from "react-syntax-highlighter/dist/cjs/styles/prism";
-import { zenburn } from "react-syntax-highlighter/dist/cjs/styles/hljs";
+import { ghcolors } from "react-syntax-highlighter/dist/cjs/styles/prism";
 
 const fetchRepoByName = (owner: string, repo: string) =>
   get<FetchRepoResponse>(`/repositories/${owner}/${repo}`);
@@ -41,12 +42,41 @@ const fetchRepoContents = (repoID: number | undefined) => {
   return get<FetchRepoContentsResponse>(`/repositories/${repoID}/contents`);
 };
 
+const fetchRepoBlobFileContents = (
+  repositoryId: number,
+  fileBlobId: number | null
+) => {
+  if (!fileBlobId) return Promise.resolve(null);
+
+  return get<FetchFileBlobResponse>(
+    `/repositories/${repositoryId}/contents/${fileBlobId}`
+  );
+};
+
 const Repo: NextPage = () => {
   const router = useRouter();
   const path = router.asPath.slice(1);
   const [owner, repoName] = path.split("/");
   const [repo, setRepo] = useState<Repo | null>(null);
   const [repoContents, setRepoContents] = useState<RepoContent[]>();
+  const [isFileTreeShowing, setIsFileTreeShowing] = useState(false);
+  const [fileBlobId, setFileBlobId] = useState<number | null>(null);
+  const [fileBlobContents, setFileBlobContents] = useState("");
+
+  useQuery(
+    ["repoBlobFileContents", fileBlobId],
+    () => fetchRepoBlobFileContents(repo?.id as number, fileBlobId),
+    {
+      onSuccess: (res: FetchFileBlobContentSuccessResponse) => {
+        setFileBlobContents(res.data.content.trimEnd());
+      },
+      enabled: Boolean(fileBlobId && repo?.id),
+      retry: false,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    }
+  );
 
   const { isError } = useQuery(
     ["repoByName"],
@@ -67,7 +97,6 @@ const Repo: NextPage = () => {
     enabled: Boolean(repo?.id),
     retry: false,
   });
-  const [isFileTreeShowing, setIsFileTreeShowing] = useState(false);
 
   const handleToggleFileTree =
     (action: "open" | "close") => (evt: MouseEvent) => {
@@ -110,6 +139,7 @@ const Repo: NextPage = () => {
             data={repoContents}
             expanded={isFileTreeShowing}
             repo={repo}
+            onFileSelection={setFileBlobId}
           />
         )}
 
@@ -124,48 +154,12 @@ const Repo: NextPage = () => {
 
           <SyntaxHighlighter
             language="javascript"
-            style={duotoneLight}
-            // startingLineNumber={10}
+            style={ghcolors}
             showLineNumbers
+            wrapLongLines
           >
-            {`import type { Knex } from 'knex';
-
-const config: Knex.Config = {
-  client: 'pg',
-  connection: process.env.DATABASE_URL,
-  pool: {
-    min: 2,
-    max: 10,
-  },
-  migrations: {
-    tableName: 'schema_migrations',
-  },
-};
-
-export default config;`}
+            {fileBlobContents}
           </SyntaxHighlighter>
-
-          <SyntaxHighlighterr
-            language="javascript"
-            style={zenburn}
-            showLineNumbers
-          >
-            {`import type { Knex } from 'knex';
-
-const config: Knex.Config = {
-  client: 'pg',
-  connection: process.env.DATABASE_URL,
-  pool: {
-    min: 2,
-    max: 10,
-  },
-  migrations: {
-    tableName: 'schema_migrations',
-  },
-};
-
-export default config;`}
-          </SyntaxHighlighterr>
         </main>
       </Container>
     </>
