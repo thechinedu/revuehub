@@ -152,13 +152,23 @@ const Repo: NextPage = () => {
             Open file explorer
           </button>
 
+          {/* TODOS:
+            Add menu above file content display
+            Use custom font for code display (fira code, source code pro etc)
+            Show file path bread crumb
+            Detect language via file extension
+            Use custom renderer to fix rendering issues
+            Mobile: Auto close file explorer sidebar when a file is selected
+          */}
+
           <SyntaxHighlighter
-            language="javascript"
+            language="markdown"
             style={ghcolors}
-            showLineNumbers
+            showLineNumbers={Boolean(fileBlobContents.length)}
             wrapLongLines
+            wrapLines
           >
-            {fileBlobContents}
+            {fileBlobContents || "no file selected"}
           </SyntaxHighlighter>
         </main>
       </Container>
