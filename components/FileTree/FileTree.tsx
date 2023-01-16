@@ -84,7 +84,7 @@ type FileTreeProps = {
   data: RepoContent[];
   expanded: boolean;
   repo: Repo;
-  onFileSelection: (fileBlobId: number) => void;
+  onFileSelection: (fileBlobId: number, path: string) => void;
 };
 
 const FileTree: NextPage<FileTreeProps> = ({
@@ -121,11 +121,13 @@ const FileTree: NextPage<FileTreeProps> = ({
   };
 
   const handleDisplayFileBlobContents = (evt: MouseEvent) => {
-    const fileBlobId = (evt.target as HTMLElement).dataset.blobId;
+    const elem = evt.target as HTMLElement;
+    const fileBlobId = elem.dataset.blobId;
+    const path = elem.title;
 
     if (!fileBlobId) return;
 
-    onFileSelection(+fileBlobId);
+    onFileSelection(+fileBlobId, path);
   };
 
   return (
