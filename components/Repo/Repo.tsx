@@ -27,11 +27,10 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { MouseEvent, useState } from "react";
-import {
-  PrismAsyncLight as SyntaxHighlighter,
-  LightAsync as SyntaxHighlighterr,
-} from "react-syntax-highlighter";
+import { PrismAsyncLight as SyntaxHighlighter } from "react-syntax-highlighter";
 import { ghcolors } from "react-syntax-highlighter/dist/cjs/styles/prism";
+
+import { getLanguageForExtension } from "@/utils";
 
 const fetchRepoByName = (owner: string, repo: string) =>
   get<FetchRepoResponse>(`/repositories/${owner}/${repo}`);
@@ -60,17 +59,24 @@ const Repo: NextPage = () => {
   const [repo, setRepo] = useState<Repo | null>(null);
   const [repoContents, setRepoContents] = useState<RepoContent[]>();
   const [isFileTreeShowing, setIsFileTreeShowing] = useState(false);
-  const [fileBlobId, setFileBlobId] = useState<number | null>(null);
+  const [fileBlobInfo, setFileBlobInfo] = useState({
+    fileBlobId: 0,
+    filePath: "",
+  });
   const [fileBlobContents, setFileBlobContents] = useState("");
 
+  const showFileContents = Boolean(fileBlobContents.length);
+
   useQuery(
-    ["repoBlobFileContents", fileBlobId],
-    () => fetchRepoBlobFileContents(repo?.id as number, fileBlobId),
+    ["repoBlobFileContents", fileBlobInfo.fileBlobId],
+    () =>
+      fetchRepoBlobFileContents(repo?.id as number, fileBlobInfo.fileBlobId),
     {
       onSuccess: (res: FetchFileBlobContentSuccessResponse) => {
+        setIsFileTreeShowing(false);
         setFileBlobContents(res.data.content.trimEnd());
       },
-      enabled: Boolean(fileBlobId && repo?.id),
+      enabled: Boolean(fileBlobInfo.fileBlobId && repo?.id),
       retry: false,
       refetchOnMount: false,
       refetchOnWindowFocus: false,
@@ -139,7 +145,9 @@ const Repo: NextPage = () => {
             data={repoContents}
             expanded={isFileTreeShowing}
             repo={repo}
-            onFileSelection={setFileBlobId}
+            onFileSelection={(fileBlobId, filePath) =>
+              setFileBlobInfo({ fileBlobId, filePath })
+            }
           />
         )}
 
@@ -153,22 +161,43 @@ const Repo: NextPage = () => {
           </button>
 
           {/* TODOS:
-            Add menu above file content display
-            Use custom font for code display (fira code, source code pro etc)
-            Show file path bread crumb
-            Detect language via file extension
+            Add menu above file content display ✅
+            Show file path bread crumb ✅
+            Use custom font for code display (fira code, source code pro etc) ✅
+            Mobile: Auto close file explorer sidebar when a file is selected ✅
+            Detect language via file extension ✅
             Use custom renderer to fix rendering issues
-            Mobile: Auto close file explorer sidebar when a file is selected
           */}
 
+          {showFileContents && (
+            <div className={styles.menu}>
+              <p className={styles.filePath}>{fileBlobInfo.filePath}</p>
+
+              <label>
+                <input type="checkbox" checked /> Show comments
+              </label>
+
+              <button className={styles.fileCommentBtn}>
+                Add file-level comment
+              </button>
+            </div>
+          )}
+
           <SyntaxHighlighter
-            language="markdown"
+            language={getLanguageForExtension(fileBlobInfo.filePath)}
             style={ghcolors}
-            showLineNumbers={Boolean(fileBlobContents.length)}
+            showLineNumbers={showFileContents}
+            customStyle={{
+              backgroundColor: "transparent",
+              border: "2px solid var(--black)",
+              borderTopWidth: showFileContents ? 0 : 2,
+              marginTop: showFileContents ? 0 : "var(--spacer-4)",
+            }}
+            codeTagProps={{ className: styles.codeContainer }}
             wrapLongLines
             wrapLines
           >
-            {fileBlobContents || "no file selected"}
+            {showFileContents ? fileBlobContents : "no file selected"}
           </SyntaxHighlighter>
         </main>
       </Container>

@@ -48,6 +48,7 @@
   align-items: center;
   box-shadow: 5px 5px var(--black);
   display: flex;
+  font-size: var(--small);
 
   @media (min-width: 1101px) {
     display: none;
@@ -58,4 +59,39 @@
   height: 20px;
   margin-right: var(--spacer-1);
   width: 20px;
+}
+
+.menu {
+  border: 2px solid var(--black);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: var(--small);
+  justify-content: space-between;
+  margin-top: var(--spacer-2);
+  padding: var(--spacer-1);
+}
+
+.menu .filePath {
+  border-bottom: 2px solid var(--black);
+  flex-basis: 105%;
+  margin-bottom: var(--spacer-2);
+  margin-left: calc(var(--spacer-1) * -1);
+  margin-right: calc(var(--spacer-1) * -1);
+  padding-bottom: var(--spacer-1);
+  padding-left: var(--spacer-1);
+}
+
+.menu label {
+  align-items: center;
+  display: flex;
+}
+
+.fileCommentBtn {
+  composes: btn from "@/styles/blocks.module.css";
+  padding: var(--spacer-1);
+}
+
+.codeContainer {
+  font-family: "Fira Code", ui-monospace, monospace;
+  font-size: var(--small);
 }
