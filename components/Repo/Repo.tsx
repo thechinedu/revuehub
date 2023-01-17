@@ -26,9 +26,14 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { MouseEvent, useState } from "react";
-import { PrismAsyncLight as SyntaxHighlighter } from "react-syntax-highlighter";
+import { MouseEvent, ReactElement, useState } from "react";
+import {
+  PrismAsyncLight as SyntaxHighlighter,
+  createElement,
+} from "react-syntax-highlighter";
 import { ghcolors } from "react-syntax-highlighter/dist/cjs/styles/prism";
+import { FixedSizeList as List } from "react-window";
+import AutoSizer from "react-virtualized-auto-sizer";
 
 import { getLanguageForExtension } from "@/utils";
 
@@ -49,6 +54,47 @@ const fetchRepoBlobFileContents = (
 
   return get<FetchFileBlobResponse>(
     `/repositories/${repositoryId}/contents/${fileBlobId}`
+  );
+};
+
+const Row =
+  ({ rows, stylesheet, useInlineStyles }: any) =>
+  ({ index, key, style }: any) =>
+    createElement({
+      node: rows[index],
+      stylesheet,
+      style,
+      useInlineStyles,
+      key,
+    });
+
+// const fileContentsRenderer = ({ rows, stylesheet, useInlineStyles }: any) => {
+//   return (
+//     <AutoSizer defaultHeight={500} defaultWidth={375}>
+//       {({ height, width }) => (
+//         <List
+//           height={height}
+//           width={width}
+//           itemCount={rows.length}
+//           itemSize={35}
+//         >
+//           {Row}
+//         </List>
+//       )}
+//     </AutoSizer>
+//   );
+// };
+
+const fileContentsRenderer = ({ rows, stylesheet, useInlineStyles }: any) => {
+  return (
+    <List
+      height={rows.length * 15}
+      width={320}
+      itemCount={rows.length}
+      itemSize={15}
+    >
+      {Row({ rows, stylesheet, useInlineStyles }) as any}
+    </List>
   );
 };
 
@@ -140,17 +186,6 @@ const Repo: NextPage = () => {
           <Link href="#">Repo Settings</Link>
         </SubNav>
 
-        {repo && repoContents && (
-          <FileTree
-            data={repoContents}
-            expanded={isFileTreeShowing}
-            repo={repo}
-            onFileSelection={(fileBlobId, filePath) =>
-              setFileBlobInfo({ fileBlobId, filePath })
-            }
-          />
-        )}
-
         <main className={styles.main}>
           <button
             className={styles.fileExplorerBtn}
@@ -194,12 +229,24 @@ const Repo: NextPage = () => {
               marginTop: showFileContents ? 0 : "var(--spacer-4)",
             }}
             codeTagProps={{ className: styles.codeContainer }}
+            // renderer={fileContentsRenderer}
             wrapLongLines
             wrapLines
           >
             {showFileContents ? fileBlobContents : "no file selected"}
           </SyntaxHighlighter>
         </main>
+
+        {repo && repoContents && (
+          <FileTree
+            data={repoContents}
+            expanded={isFileTreeShowing}
+            repo={repo}
+            onFileSelection={(fileBlobId, filePath) =>
+              setFileBlobInfo({ fileBlobId, filePath })
+            }
+          />
+        )}
       </Container>
     </>
   );
