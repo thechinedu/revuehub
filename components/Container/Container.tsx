@@ -1,17 +1,17 @@
 import styles from "./Container.module.css";
 
-import { FC, ReactNode, HTMLProps } from "react";
+import { ReactNode, HTMLProps } from "react";
 
 type ContainerProps = {
   children: ReactNode;
   className?: string;
 } & HTMLProps<HTMLDivElement>;
 
-const Container: FC<ContainerProps> = ({
+const Container = ({
   children,
   className = "",
   ...restProps
-}) => {
+}: ContainerProps): JSX.Element => {
   const containerClassName = `${styles.container} ${className}`.trim();
   return (
     <div className={containerClassName} {...restProps}>

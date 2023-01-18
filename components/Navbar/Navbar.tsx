@@ -7,8 +7,6 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { ComponentPropsWithoutRef } from "react";
 
-import type { NextPage } from "next";
-
 type SubNavProps = ComponentPropsWithoutRef<"nav">;
 
 export const SubNav = ({
@@ -22,7 +20,7 @@ export const SubNav = ({
   );
 };
 
-export const Navbar: NextPage = () => {
+export const Navbar = (): JSX.Element => {
   const { authStatus } = useAuth();
   const isSignedIn = authStatus === AuthStatus.SIGNED_IN;
   const router = useRouter();

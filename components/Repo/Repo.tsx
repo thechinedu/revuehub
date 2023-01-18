@@ -1,5 +1,6 @@
 import styles from "./Repo.module.css";
 
+import CodeViewer from "@/components/CodeViewer";
 import Container from "@/components/Container";
 import FileTree from "@/components/FileTree";
 import { FolderTreeIcon } from "@/components/Icons";
@@ -26,14 +27,13 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { MouseEvent, ReactElement, useState } from "react";
+import { MouseEvent, useState } from "react";
 import {
   PrismAsyncLight as SyntaxHighlighter,
   createElement,
 } from "react-syntax-highlighter";
 import { ghcolors } from "react-syntax-highlighter/dist/cjs/styles/prism";
 import { FixedSizeList as List } from "react-window";
-import AutoSizer from "react-virtualized-auto-sizer";
 
 import { getLanguageForExtension } from "@/utils";
 
@@ -67,23 +67,6 @@ const Row =
       useInlineStyles,
       key,
     });
-
-// const fileContentsRenderer = ({ rows, stylesheet, useInlineStyles }: any) => {
-//   return (
-//     <AutoSizer defaultHeight={500} defaultWidth={375}>
-//       {({ height, width }) => (
-//         <List
-//           height={height}
-//           width={width}
-//           itemCount={rows.length}
-//           itemSize={35}
-//         >
-//           {Row}
-//         </List>
-//       )}
-//     </AutoSizer>
-//   );
-// };
 
 const fileContentsRenderer = ({ rows, stylesheet, useInlineStyles }: any) => {
   return (
@@ -209,7 +192,7 @@ const Repo: NextPage = () => {
               <p className={styles.filePath}>{fileBlobInfo.filePath}</p>
 
               <label>
-                <input type="checkbox" checked /> Show comments
+                <input type="checkbox" checked readOnly /> Show comments
               </label>
 
               <button className={styles.fileCommentBtn}>
@@ -218,7 +201,9 @@ const Repo: NextPage = () => {
             </div>
           )}
 
-          <SyntaxHighlighter
+          <CodeViewer />
+
+          {/* <SyntaxHighlighter
             language={getLanguageForExtension(fileBlobInfo.filePath)}
             style={ghcolors}
             showLineNumbers={showFileContents}
@@ -234,7 +219,7 @@ const Repo: NextPage = () => {
             wrapLines
           >
             {showFileContents ? fileBlobContents : "no file selected"}
-          </SyntaxHighlighter>
+          </SyntaxHighlighter> */}
         </main>
 
         {repo && repoContents && (
