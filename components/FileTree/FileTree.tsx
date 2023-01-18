@@ -14,8 +14,6 @@ import { Repo, RepoContent } from "@/types";
 
 import { cn } from "@/utils";
 
-import { NextPage } from "next";
-
 import { MouseEvent, useState } from "react";
 
 const generateFileTree = (
@@ -87,12 +85,12 @@ type FileTreeProps = {
   onFileSelection: (fileBlobId: number, path: string) => void;
 };
 
-const FileTree: NextPage<FileTreeProps> = ({
+const FileTree = ({
   data,
   expanded,
   repo,
   onFileSelection,
-}) => {
+}: FileTreeProps): JSX.Element => {
   const { default_branch: branchName, description, id: repoId, name } = repo;
   const folderName = name.split("/")[1];
   const [directoryStatusMap, setDirectoryStatusMap] = useState(

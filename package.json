@@ -17,6 +17,8 @@
     "lhci:serve": "NODE_ENV=production yarn start"
   },
   "dependencies": {
+    "@codemirror/state": "^6.2.0",
+    "@codemirror/view": "^6.7.3",
     "@radix-ui/react-dialog": "^1.0.2",
     "@tanstack/react-query": "^4.20.4",
     "date-fns": "^2.29.3",

@@ -6,7 +6,6 @@ import { useRouter } from "next/router";
 import {
   createContext,
   Dispatch,
-  FC,
   ReactNode,
   SetStateAction,
   useContext,
@@ -37,7 +36,7 @@ type AuthProviderProps = {
 
 const publicOnlyPages = ["/", "/sign-in", "/sign-up", "/oauth-callback"];
 
-export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
+export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
   const [authStatus, setAuthStatus] = useState(AuthStatus.UNKNOWN);
   const router = useRouter();
   const { isFetching: isFetchingCurrentUser } = useQuery(
