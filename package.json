@@ -20,7 +20,7 @@
     "@codemirror/state": "^6.2.0",
     "@codemirror/view": "^6.7.3",
     "@radix-ui/react-dialog": "^1.0.2",
-    "@tanstack/react-query": "^4.20.4",
+    "@tanstack/react-query": "^4.22.0",
     "date-fns": "^2.29.3",
     "joi": "^17.7.0",
     "modern-css-reset": "^1.4.0",
