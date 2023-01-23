@@ -81,6 +81,11 @@ const fileContentsRenderer = ({ rows, stylesheet, useInlineStyles }: any) => {
   );
 };
 
+enum Viewer {
+  CM = "code-mirror",
+  SH = "syntax-highlighter",
+}
+
 const Repo: NextPage = () => {
   const router = useRouter();
   const path = router.asPath.slice(1);
@@ -93,6 +98,7 @@ const Repo: NextPage = () => {
     filePath: "",
   });
   const [fileBlobContents, setFileBlobContents] = useState("");
+  const [viewer, setViewer] = useState(Viewer.CM);
 
   const showFileContents = Boolean(fileBlobContents.length);
 
@@ -178,6 +184,15 @@ const Repo: NextPage = () => {
             Open file explorer
           </button>
 
+          <button
+            onClick={() => {
+              if (viewer === Viewer.CM) setViewer(Viewer.SH);
+              else setViewer(Viewer.CM);
+            }}
+          >
+            Switch viewer
+          </button>
+
           {/* TODOS:
             Add menu above file content display ✅
             Show file path bread crumb ✅
@@ -201,25 +216,34 @@ const Repo: NextPage = () => {
             </div>
           )}
 
-          <CodeViewer />
+          {viewer === Viewer.CM && (
+            <CodeViewer
+              doc={showFileContents ? fileBlobContents : "no file selected"}
+            />
+          )}
 
-          {/* <SyntaxHighlighter
-            language={getLanguageForExtension(fileBlobInfo.filePath)}
-            style={ghcolors}
-            showLineNumbers={showFileContents}
-            customStyle={{
-              backgroundColor: "transparent",
-              border: "2px solid var(--black)",
-              borderTopWidth: showFileContents ? 0 : 2,
-              marginTop: showFileContents ? 0 : "var(--spacer-4)",
-            }}
-            codeTagProps={{ className: styles.codeContainer }}
-            // renderer={fileContentsRenderer}
-            wrapLongLines
-            wrapLines
-          >
-            {showFileContents ? fileBlobContents : "no file selected"}
-          </SyntaxHighlighter> */}
+          {viewer === Viewer.SH && (
+            <SyntaxHighlighter
+              // language={getLanguageForExtension(fileBlobInfo.filePath)}
+              language="javascript"
+              style={ghcolors}
+              // showLineNumbers={showFileContents}
+              showLineNumbers
+              customStyle={{
+                backgroundColor: "transparent",
+                border: "2px solid var(--black)",
+                borderTopWidth: showFileContents ? 0 : 2,
+                marginTop: showFileContents ? 0 : "var(--spacer-4)",
+              }}
+              codeTagProps={{ className: styles.codeContainer }}
+              // renderer={fileContentsRenderer}
+              wrapLongLines
+              wrapLines
+            >
+              {showFileContents ? fileBlobContents : "no file selected"}
+              {/* {doc} */}
+            </SyntaxHighlighter>
+          )}
         </main>
 
         {repo && repoContents && (
