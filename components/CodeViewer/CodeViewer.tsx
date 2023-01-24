@@ -12,65 +12,48 @@ import { EditorView, lineNumbers } from "@codemirror/view";
 
 import { indentationMarkers } from "@replit/codemirror-indentation-markers";
 
-import { LegacyRef, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 type CodeViewerProps = {
   doc: string;
 };
 
 const CodeViewer = ({ doc }: CodeViewerProps): JSX.Element => {
-  const viewRef = useRef();
+  const viewRef = useRef<HTMLDivElement | null>(null);
+  const editorViewRef = useRef<EditorView | null>(null);
 
-  // DEV only
-  // const renderCount = useRef(0);
-  // useEffect(() => {
-  //   // TODO: ReactStrictMode causes effects to be called twice on render.
-  //   // remove before deploying to prod as check is not needed in non-dev environments
-  //   if (renderCount.current > 0) return;
-
-  //   renderCount.current += 1;
-
-  // new EditorView({
-  //   state: EditorState.create({
-  //     doc,
-  //     extensions: [
-  //       EditorView.editable.of(false),
-  //       EditorView.lineWrapping,
-  //       syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
-  //       javascript(),
-  //       lineNumbers(),
-  //       codeFolding(),
-  //       foldGutter(),
-  //       indentationMarkers(),
-  //     ],
-  //   }),
-  //   parent: viewRef.current,
-  // });
-  // }, [doc]);
-
-  // Prod
   useEffect(() => {
-    new EditorView({
-      state: EditorState.create({
-        doc,
-        extensions: [
-          EditorView.editable.of(false),
-          EditorView.lineWrapping,
-          syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
-          javascript(),
-          lineNumbers(),
-          codeFolding(),
-          foldGutter(),
-          indentationMarkers(),
-        ],
-      }),
-      parent: viewRef.current,
+    if (!editorViewRef.current) {
+      editorViewRef.current = new EditorView({
+        state: EditorState.create({
+          doc,
+          extensions: [
+            EditorView.editable.of(false),
+            EditorView.lineWrapping,
+            syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
+            javascript(),
+            lineNumbers(),
+            codeFolding(),
+            foldGutter(),
+            indentationMarkers(),
+          ],
+        }),
+        parent: viewRef.current as HTMLDivElement,
+      });
+    }
+
+    const transaction = editorViewRef.current.state.update({
+      changes: {
+        from: 0,
+        to: editorViewRef.current.state.doc.length,
+        insert: doc,
+      },
     });
+
+    editorViewRef.current.dispatch(transaction);
   }, [doc]);
 
-  return (
-    <div ref={viewRef as unknown as LegacyRef<HTMLDivElement> | undefined} />
-  );
+  return <div ref={viewRef} />;
 };
 
 export default CodeViewer;
