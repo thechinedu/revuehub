@@ -1,0 +1,5 @@
+.container {
+  border: 2px solid var(--black);
+  font-size: 0.875rem; /* not part of the typography scale */
+  padding: var(--spacer-1);
+}
