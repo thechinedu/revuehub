@@ -189,6 +189,7 @@ const Repo: NextPage = () => {
               if (viewer === Viewer.CM) setViewer(Viewer.SH);
               else setViewer(Viewer.CM);
             }}
+            style={{ position: "absolute", top: 150, left: 220 }}
           >
             Switch viewer
           </button>
@@ -198,8 +199,9 @@ const Repo: NextPage = () => {
             Show file path bread crumb ✅
             Use custom font for code display (fira code, source code pro etc) ✅
             Mobile: Auto close file explorer sidebar when a file is selected ✅
-            Detect language via file extension ✅
-            Use custom renderer to fix rendering issues
+            Fix rendering issues with large string content ✅
+            Detect language via file extension
+            URL should be updated based on the currently active file (reloading page should load the last viewed file)
           */}
 
           {showFileContents && (
@@ -219,6 +221,11 @@ const Repo: NextPage = () => {
           {viewer === Viewer.CM && (
             <CodeViewer
               doc={showFileContents ? fileBlobContents : "no file selected"}
+              className={
+                showFileContents
+                  ? styles.codeViewerWithMenu
+                  : styles.codeViewerWithoutMenu
+              }
             />
           )}
 
