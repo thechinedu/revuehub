@@ -70,12 +70,7 @@ const Row =
 
 const fileContentsRenderer = ({ rows, stylesheet, useInlineStyles }: any) => {
   return (
-    <List
-      height={rows.length * 15}
-      width={320}
-      itemCount={rows.length}
-      itemSize={15}
-    >
+    <List height={1000} width={1000} itemCount={rows.length} itemSize={15}>
       {Row({ rows, stylesheet, useInlineStyles }) as any}
     </List>
   );
@@ -189,7 +184,7 @@ const Repo: NextPage = () => {
               if (viewer === Viewer.CM) setViewer(Viewer.SH);
               else setViewer(Viewer.CM);
             }}
-            style={{ position: "absolute", top: 150, left: 220 }}
+            style={{ position: "absolute", top: 110, left: 280 }}
           >
             Switch viewer
           </button>
@@ -243,7 +238,7 @@ const Repo: NextPage = () => {
                 marginTop: showFileContents ? 0 : "var(--spacer-4)",
               }}
               codeTagProps={{ className: styles.codeContainer }}
-              // renderer={fileContentsRenderer}
+              renderer={fileContentsRenderer}
               wrapLongLines
               wrapLines
             >
