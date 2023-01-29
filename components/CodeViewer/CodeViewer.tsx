@@ -11,7 +11,14 @@ import {
   syntaxHighlighting,
 } from "@codemirror/language";
 import { Compartment, EditorState } from "@codemirror/state";
-import { EditorView, lineNumbers } from "@codemirror/view";
+import {
+  Decoration,
+  DecorationSet,
+  EditorView,
+  lineNumbers,
+  ViewPlugin,
+  WidgetType,
+} from "@codemirror/view";
 
 import { indentationMarkers } from "@replit/codemirror-indentation-markers";
 
@@ -28,6 +35,43 @@ const editorTheme = EditorView.theme({
   },
 });
 
+const eventHandlers = EditorView.domEventHandlers({
+  mouseover: (evt, view) => {
+    console.log(
+      "mouse enter fired!",
+      evt.target,
+      (evt.target as HTMLDivElement).getBoundingClientRect()
+    );
+  },
+});
+
+class CommentBoxWidget extends WidgetType {
+  toDOM(view: EditorView): HTMLElement {
+    const button = document.createElement("button");
+    button.textContent = "Add comment";
+
+    return button;
+  }
+}
+
+const commentBoxPlugin = ViewPlugin.fromClass(
+  class {
+    decorations: DecorationSet;
+
+    constructor() {
+      const commentBoxDecoration = Decoration.widget({
+        widget: new CommentBoxWidget(),
+        // block: true,
+      });
+      this.decorations = Decoration.set([commentBoxDecoration.range(2)]);
+    }
+  },
+  {
+    decorations: (v) => v.decorations,
+    eventHandlers: {},
+  }
+);
+
 const languageConf = new Compartment();
 
 const CodeViewer = ({ doc, className = "" }: CodeViewerProps): JSX.Element => {
@@ -42,6 +86,7 @@ const CodeViewer = ({ doc, className = "" }: CodeViewerProps): JSX.Element => {
           extensions: [
             EditorView.editable.of(false),
             EditorView.lineWrapping,
+            eventHandlers,
             editorTheme,
             syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
             javascript(),
@@ -49,6 +94,7 @@ const CodeViewer = ({ doc, className = "" }: CodeViewerProps): JSX.Element => {
             codeFolding(),
             foldGutter(),
             indentationMarkers(),
+            commentBoxPlugin,
           ],
         }),
         parent: viewRef.current as HTMLDivElement,
