@@ -93,7 +93,7 @@
 
 .codeContainer {
   font-family: "Fira Code", ui-monospace, monospace;
-  font-size: var(--small);
+  font-size: 0.875rem;
 }
 
 /* specifity doubled in order to override base codeviewer styles */
