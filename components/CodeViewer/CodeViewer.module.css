@@ -3,3 +3,9 @@
   font-size: 0.875rem; /* not part of the typography scale */
   padding: var(--spacer-1);
 }
+
+.addCommentIcon {
+  cursor: pointer;
+  height: 16px;
+  width: 16px;
+}

@@ -70,7 +70,12 @@ const Row =
 
 const fileContentsRenderer = ({ rows, stylesheet, useInlineStyles }: any) => {
   return (
-    <List height={1000} width={1000} itemCount={rows.length} itemSize={15}>
+    <List
+      height={rows.length * 20}
+      width={1000}
+      itemCount={rows.length}
+      itemSize={20}
+    >
       {Row({ rows, stylesheet, useInlineStyles }) as any}
     </List>
   );
@@ -195,6 +200,9 @@ const Repo: NextPage = () => {
             Use custom font for code display (fira code, source code pro etc) ✅
             Mobile: Auto close file explorer sidebar when a file is selected ✅
             Fix rendering issues with large string content ✅
+            Show comment icon when code content is hovered on
+
+
             Detect language via file extension
             URL should be updated based on the currently active file (reloading page should load the last viewed file)
           */}
@@ -226,8 +234,8 @@ const Repo: NextPage = () => {
 
           {viewer === Viewer.SH && (
             <SyntaxHighlighter
-              // language={getLanguageForExtension(fileBlobInfo.filePath)}
-              language="javascript"
+              language={getLanguageForExtension(fileBlobInfo.filePath)}
+              // language="javascript"
               style={ghcolors}
               // showLineNumbers={showFileContents}
               showLineNumbers

@@ -14,3 +14,4 @@ export { FolderOpened as FolderOpenedIcon } from "./FolderOpened";
 export { FolderTree as FolderTreeIcon } from "./FolderTree";
 export { Github as GithubIcon } from "./Github";
 export { Password as PasswordIcon } from "./Password";
+export { SquarePlus } from "./SquarePlus";
