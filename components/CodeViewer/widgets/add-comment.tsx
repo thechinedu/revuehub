@@ -13,6 +13,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 
 import {
   addCommentBoxCompartment,
+  addCommentBoxStore,
   commentBoxDecorationSet,
 } from "./add-comment-box";
 import { getLineElem } from "../helpers/get-line-elem";
@@ -34,6 +35,7 @@ class AddCommentWidget extends WidgetType {
       <SquarePlus className={styles.addCommentIcon} />
     );
 
+    iconContainer.classList.add("cm-add-icon-container");
     iconContainer.innerHTML = iconMarkup;
     this.attachEvents(iconContainer);
 
@@ -42,8 +44,7 @@ class AddCommentWidget extends WidgetType {
 
   attachEvents(widgetContainer: HTMLSpanElement) {
     widgetContainer.addEventListener("click", (evt) => {
-      console.log("Show comment box below code line", Boolean(this.view));
-
+      console.log("Show comment box below code line", evt.target);
       if (!this.view) return;
       const editorTop = this.view.documentTop;
       const elem = evt.target as HTMLElement;
@@ -52,18 +53,17 @@ class AddCommentWidget extends WidgetType {
       const lineElemPos = lineELemTop - editorTop;
       const lineElemBlockInfo = this.view.lineBlockAtHeight(lineElemPos);
       const lineData = this.view.state.doc.lineAt(lineElemBlockInfo.from);
+      const pos = lineData.text ? lineData.to : lineData.to + 1;
 
-      console.log(lineElem, lineData);
+      addCommentBoxStore.add(pos);
 
+      console.log(lineElem, lineData, addCommentBoxStore.store);
       // const foo = addCommentBoxCompartment.get(this.view.state);
       // console.log({ foo });
-
       const trx = this.view.state.update({
-        effects: addCommentBoxCompartment.reconfigure([
-          commentBoxDecorationSet(
-            lineData.text ? lineData.to : lineData.to + 1
-          ),
-        ]),
+        effects: addCommentBoxCompartment.reconfigure(
+          addCommentBoxStore.generateDecorations()
+        ),
         // effects: StateEffect.appendConfig.of(commentBoxDecorationSet(60)),
       });
       this.view.dispatch(trx);
