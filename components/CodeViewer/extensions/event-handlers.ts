@@ -1,18 +1,15 @@
 import { EditorView } from "@codemirror/view";
 
 import { getLineElem } from "../helpers/get-line-elem";
-import {
-  addCommentCompartment,
-  addCommentPlugin,
-} from "../widgets/add-comment";
+import { addCommentCompartment, addCommentPlugin } from "../widgets";
 
 export const eventHandlers = EditorView.domEventHandlers({
   mouseover: (evt, view) => {
-    const editorTop = view.documentTop;
     const elem = evt.target as HTMLElement;
 
     if (elem.classList.contains("cm-content")) return;
 
+    const editorTop = view.documentTop;
     const lineElem = getLineElem(elem);
     const { top: lineELemTop } = lineElem.getBoundingClientRect();
     const lineElemPos = lineELemTop - editorTop;

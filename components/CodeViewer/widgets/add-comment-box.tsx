@@ -15,6 +15,7 @@ class CommentBoxWidget extends WidgetType {
     const container = document.createElement("div");
     const commentBox = renderToStaticMarkup(<AddCommentBox />);
 
+    container.classList.add("cm-comment-box");
     container.innerHTML = commentBox;
 
     // ret.addEventListener("click", () => {
@@ -52,3 +53,21 @@ export const commentBoxDecorationSet = (pos: number) =>
   });
 
 export const addCommentBoxCompartment = new Compartment();
+
+class AddCommentBoxCompartmentStore {
+  store: number[] = [];
+
+  add(pos: number) {
+    this.store.push(pos);
+  }
+
+  remove(pos: number) {
+    this.store = this.store.filter((item) => item !== pos);
+  }
+
+  generateDecorations() {
+    return this.store.map((pos) => commentBoxDecorationSet(pos));
+  }
+}
+
+export const addCommentBoxStore = new AddCommentBoxCompartmentStore();

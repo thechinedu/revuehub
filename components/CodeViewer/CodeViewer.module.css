@@ -9,3 +9,10 @@
   height: 16px;
   width: 16px;
 }
+
+.commentBox {
+  border: 2px solid var(--black);
+  /* margin-bottom: var(--spacer-3);
+  margin-top: var(--spacer-1); */
+  padding: var(--spacer-2);
+}

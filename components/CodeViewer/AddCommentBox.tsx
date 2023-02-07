@@ -1,3 +1,5 @@
+import styles from "./CodeViewer.module.css";
+
 export const AddCommentBox = () => {
-  return <div>Comment goes here</div>;
+  return <div className={styles.commentBox}>Comment goes here</div>;
 };

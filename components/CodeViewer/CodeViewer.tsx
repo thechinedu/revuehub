@@ -56,6 +56,10 @@ const CodeViewer = ({ doc, className = "" }: CodeViewerProps): JSX.Element => {
         to: editorViewRef.current.state.doc.length,
         insert: doc,
       },
+      effects: [
+        addCommentCompartment.reconfigure([]),
+        addCommentBoxCompartment.reconfigure([]),
+      ],
     });
 
     editorViewRef.current.dispatch(transaction);
