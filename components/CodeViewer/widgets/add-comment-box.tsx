@@ -10,27 +10,56 @@ import { renderToStaticMarkup } from "react-dom/server";
 
 import { AddCommentBox } from "../AddCommentBox";
 
+type AddCommentBoxProperties = any;
+
+class AddCommentBoxCompartmentStore {
+  store: Map<number, AddCommentBoxProperties> = new Map();
+
+  add(key: number) {
+    this.store.set(key, {});
+  }
+
+  remove(pos: number) {
+    this.store.delete(pos);
+  }
+
+  generateDecorations() {
+    return Array.from(this.store.keys()).map((key) =>
+      commentBoxDecorationSet(+key)
+    );
+  }
+}
+
+export const addCommentBoxStore = new AddCommentBoxCompartmentStore();
+
 class CommentBoxWidget extends WidgetType {
+  view: EditorView | null;
+
+  constructor() {
+    super();
+
+    this.view = null;
+  }
+
   toDOM(view: EditorView): HTMLElement {
+    this.view = view;
+
     const container = document.createElement("div");
     const commentBox = renderToStaticMarkup(<AddCommentBox />);
 
     container.classList.add("cm-comment-box");
     container.innerHTML = commentBox;
 
-    // ret.addEventListener("click", () => {
-    //   const trx = view.state.update({
-    //     // effects: addCommentBoxCompartment.of({ from: 60, to: 82 }),
-    //     // effects:
-    //   });
-    //   view.dispatch({
-    //     effects: addCommentBoxCompartment.reconfigure([
-    //       commentBoxDecorationSet(60),
-    //     ]),
-    //   });
-    // });
+    this.attachListeners(container);
 
     return container;
+  }
+
+  attachListeners(widgetContainer: HTMLDivElement) {
+    widgetContainer.addEventListener("submit", (evt) => {
+      evt.preventDefault();
+      console.log("submit", this.view);
+    });
   }
 }
 
@@ -40,7 +69,7 @@ export const commentBoxDecorationSet = (pos: number) =>
       return Decoration.none;
     },
     update(value, trx) {
-      // console.log("updating comment box", { value, trx });
+      console.log("updating comment box", { value, trx });
       const commentBoxDecoration = Decoration.widget({
         widget: new CommentBoxWidget(),
         block: true,
@@ -53,21 +82,3 @@ export const commentBoxDecorationSet = (pos: number) =>
   });
 
 export const addCommentBoxCompartment = new Compartment();
-
-class AddCommentBoxCompartmentStore {
-  store: number[] = [];
-
-  add(pos: number) {
-    this.store.push(pos);
-  }
-
-  remove(pos: number) {
-    this.store = this.store.filter((item) => item !== pos);
-  }
-
-  generateDecorations() {
-    return this.store.map((pos) => commentBoxDecorationSet(pos));
-  }
-}
-
-export const addCommentBoxStore = new AddCommentBoxCompartmentStore();
