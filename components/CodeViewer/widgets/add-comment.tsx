@@ -28,6 +28,7 @@ class AddCommentWidget extends WidgetType {
   }
 
   toDOM(view: EditorView): HTMLElement {
+    console.log("creating add comment icon widget");
     this.view = view;
 
     const iconContainer = document.createElement("span");
@@ -37,12 +38,12 @@ class AddCommentWidget extends WidgetType {
 
     iconContainer.classList.add("cm-add-icon-container");
     iconContainer.innerHTML = iconMarkup;
-    this.attachEvents(iconContainer);
+    this.attachListeners(iconContainer);
 
     return iconContainer;
   }
 
-  attachEvents(widgetContainer: HTMLSpanElement) {
+  attachListeners(widgetContainer: HTMLSpanElement) {
     widgetContainer.addEventListener("click", (evt) => {
       console.log("Show comment box below code line", evt.target);
       if (!this.view) return;
