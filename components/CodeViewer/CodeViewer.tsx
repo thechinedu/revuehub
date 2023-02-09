@@ -16,7 +16,10 @@ import { useEffect, useRef } from "react";
 
 import { editorTheme, eventHandlers } from "./extensions";
 import { addCommentBoxCompartment, addCommentCompartment } from "./widgets";
-import { commentBoxDecorationSet } from "./widgets/add-comment-box";
+import {
+  addCommentBoxStore,
+  commentBoxDecorationSet,
+} from "./widgets/add-comment-box";
 import { AddCommentBox } from "./AddCommentBox";
 
 import Image from "next/image";
@@ -63,11 +66,13 @@ const CodeViewer = ({ doc, className = "" }: CodeViewerProps): JSX.Element => {
         to: editorViewRef.current.state.doc.length,
         insert: doc,
       },
-      // effects: [
-      //   addCommentCompartment.reconfigure([]),
-      //   addCommentBoxCompartment.reconfigure([]),
-      // ],
+      effects: [
+        addCommentCompartment.reconfigure([]),
+        addCommentBoxCompartment.reconfigure([]),
+      ],
     });
+
+    addCommentBoxStore.reset();
 
     editorViewRef.current.dispatch(transaction);
   }, [doc]);
@@ -83,8 +88,8 @@ const CodeViewer = ({ doc, className = "" }: CodeViewerProps): JSX.Element => {
         src={gitlabCommentBox}
         alt=""
         style={{ position: "absolute", top: 8, left: 1100, height: 250 }}
-      />
-      <AddCommentBox /> */}
+      /> */}
+      {/* <AddCommentBox /> */}
       <div ref={viewRef} className={`${styles.container} ${className}`} />
     </>
   );

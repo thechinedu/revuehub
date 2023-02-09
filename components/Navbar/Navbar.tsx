@@ -30,6 +30,7 @@ export const Navbar = (): JSX.Element => {
       <nav className={styles.navbar} aria-label="Main navigation">
         <Link href={isSignedIn ? "/dashboard" : "/"} className={styles.logo}>
           Revue<span>Hub</span>
+          <sub>alpha</sub>
         </Link>
 
         {router.pathname === "/" && (

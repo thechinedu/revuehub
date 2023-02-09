@@ -28,7 +28,7 @@ class AddCommentWidget extends WidgetType {
   }
 
   toDOM(view: EditorView): HTMLElement {
-    console.log("creating add comment icon widget");
+    // console.log("creating add comment icon widget");
     this.view = view;
 
     const iconContainer = document.createElement("span");
@@ -45,7 +45,7 @@ class AddCommentWidget extends WidgetType {
 
   attachListeners(widgetContainer: HTMLSpanElement) {
     widgetContainer.addEventListener("click", (evt) => {
-      console.log("Show comment box below code line", evt.target);
+      // console.log("Show comment box below code line", evt.target);
       if (!this.view) return;
       const editorTop = this.view.documentTop;
       const elem = evt.target as HTMLElement;
@@ -58,7 +58,7 @@ class AddCommentWidget extends WidgetType {
 
       addCommentBoxStore.add(pos);
 
-      console.log(lineElem, lineData, addCommentBoxStore.store);
+      // console.log(lineElem, lineData, addCommentBoxStore.store);
       // const foo = addCommentBoxCompartment.get(this.view.state);
       // console.log({ foo });
       const trx = this.view.state.update({

@@ -8,34 +8,48 @@ import {
 
 import { renderToStaticMarkup } from "react-dom/server";
 
-import { AddCommentBox } from "../AddCommentBox";
+import { AddCommentBox, AddCommentBoxProps } from "../AddCommentBox";
 
-type AddCommentBoxProperties = any;
-
-class AddCommentBoxCompartmentStore {
-  store: Map<number, AddCommentBoxProperties> = new Map();
+export const addCommentBoxStore = {
+  store: new Map<number, AddCommentBoxProps>(),
 
   add(key: number) {
-    this.store.set(key, {});
-  }
+    if (this.store.has(key)) return;
 
-  remove(pos: number) {
-    this.store.delete(pos);
-  }
+    this.store.set(key, {
+      value: "",
+      isFileComment: false,
+      isSubmitDisabled: true,
+    });
+  },
+
+  remove(key: number) {
+    this.store.delete(key);
+  },
+
+  update(key: number, props: AddCommentBoxProps) {
+    if (!this.store.has(key)) return;
+
+    const state = this.store.get(key);
+
+    this.store.set(key, { ...state, ...props });
+  },
+
+  reset() {
+    this.store.clear();
+  },
 
   generateDecorations() {
     return Array.from(this.store.keys()).map((key) =>
       commentBoxDecorationSet(+key)
     );
-  }
-}
-
-export const addCommentBoxStore = new AddCommentBoxCompartmentStore();
+  },
+};
 
 class CommentBoxWidget extends WidgetType {
   view: EditorView | null;
 
-  constructor() {
+  constructor(private key: number) {
     super();
 
     this.view = null;
@@ -44,8 +58,23 @@ class CommentBoxWidget extends WidgetType {
   toDOM(view: EditorView): HTMLElement {
     this.view = view;
 
+    const { store } = addCommentBoxStore;
+    const props = store.get(this.key) || {
+      value: "",
+      isFileComment: false,
+      isSubmitDisabled: true,
+    };
+
+    console.log("toDOM", { v: props.value });
+
     const container = document.createElement("div");
-    const commentBox = renderToStaticMarkup(<AddCommentBox />);
+    const commentBox = renderToStaticMarkup(
+      <AddCommentBox
+        value={props.value}
+        isFileComment={props.isFileComment}
+        isSubmitDisabled={props.isSubmitDisabled}
+      />
+    );
 
     container.classList.add("cm-comment-box");
     container.innerHTML = commentBox;
@@ -60,6 +89,37 @@ class CommentBoxWidget extends WidgetType {
       evt.preventDefault();
       console.log("submit", this.view);
     });
+
+    widgetContainer.addEventListener("keyup", (evt) => {
+      const textAreaElem = evt.target as HTMLTextAreaElement;
+      const submitBtn = widgetContainer.querySelector(
+        "button[type=submit]"
+      ) as HTMLButtonElement;
+
+      if (textAreaElem.nodeName !== "TEXTAREA") return;
+
+      const { value } = textAreaElem;
+
+      addCommentBoxStore.update(this.key, { value });
+
+      if (value.trim().length) {
+        submitBtn.disabled = false;
+        addCommentBoxStore.update(this.key, { isSubmitDisabled: false });
+      } else {
+        submitBtn.disabled = true;
+        addCommentBoxStore.update(this.key, { isSubmitDisabled: true });
+      }
+    });
+
+    widgetContainer.addEventListener("change", (evt) => {
+      const checkboxElem = evt.target as HTMLInputElement;
+
+      if (checkboxElem.nodeName !== "INPUT") return;
+
+      const { checked: isFileComment } = checkboxElem;
+
+      addCommentBoxStore.update(this.key, { isFileComment });
+    });
   }
 }
 
@@ -69,9 +129,9 @@ export const commentBoxDecorationSet = (pos: number) =>
       return Decoration.none;
     },
     update(value, trx) {
-      console.log("updating comment box", { value, trx });
+      // console.log("updating comment box", { value, trx });
       const commentBoxDecoration = Decoration.widget({
-        widget: new CommentBoxWidget(),
+        widget: new CommentBoxWidget(pos),
         block: true,
       });
 
