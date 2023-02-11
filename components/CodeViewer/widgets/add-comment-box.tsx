@@ -65,7 +65,7 @@ class CommentBoxWidget extends WidgetType {
       isSubmitDisabled: true,
     };
 
-    console.log("toDOM", { v: props.value });
+    // console.log("toDOM", { v: props.value });
 
     const container = document.createElement("div");
     const commentBox = renderToStaticMarkup(

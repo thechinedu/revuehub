@@ -4,10 +4,13 @@ export const editorTheme = EditorView.theme({
   ".cm-content": {
     fontFamily: "Fira Code, ui-monospace, monospace",
   },
+  ".cm-line": {
+    paddingLeft: "var(--spacer-1)",
+  },
   ".cm-add-icon-container": {
     display: "inline-block",
     height: "16px",
-    left: "-12px",
+    left: "-8px",
     position: "absolute",
     top: "1px",
     transitionDuration: "0.1s",
