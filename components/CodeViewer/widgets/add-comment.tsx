@@ -18,6 +18,22 @@ import {
 } from "./add-comment-box";
 import { getLineElem } from "../helpers/get-line-elem";
 
+export const addCommentIconStore = {
+  store: new Map<string, any>(),
+
+  add(key: string, value: boolean) {
+    this.store.set(key, value);
+  },
+
+  get(key: string) {
+    return this.store.get(key);
+  },
+
+  remove(key: string) {
+    this.store.delete(key);
+  },
+};
+
 class AddCommentWidget extends WidgetType {
   view: EditorView | null;
 
@@ -68,6 +84,38 @@ class AddCommentWidget extends WidgetType {
         // effects: StateEffect.appendConfig.of(commentBoxDecorationSet(60)),
       });
       this.view.dispatch(trx);
+    });
+
+    widgetContainer.addEventListener("mousedown", (evt) => {
+      console.log("mousedown");
+      addCommentIconStore.add("isDragging", true);
+      // set isDragging to active (user is potentially dragging)
+      // prevent iconContainer compartment from being reconfigured in event-handlers.ts (using the isDragging flag)
+      // get lineData of elem --> represents start line
+      // add lineData to lineEntries
+    });
+
+    widgetContainer.addEventListener("mousemove", (evt) => {
+      if (!addCommentIconStore.get("isDragging")) return false;
+      console.log(
+        "mousemove: prevent click from registering. Prevent icon from being reconfigured"
+      );
+      // Only fire if isDragging is set to active
+      // get active line elem, indicate that is is being selected as part of a multi-line comment
+      // get lineData of elem
+      // add every lineData object to lineEntries
+    });
+
+    widgetContainer.addEventListener("mouseup", (evt) => {
+      addCommentIconStore.remove("isDragging");
+      console.log("mouseup: get lines selected. auto inject comment box");
+      // get line data of elem --> represents end line
+      // add lineData to lineEntries
+
+      // remove mousemove listener
+      // set isDragging to inactive
+      // sort data in lineEntries in asc order --> represents start-line - lines selected - end-line
+      // auto-trigger click event to ensure that add comment box shows up beneath end line
     });
   }
 }

@@ -2,12 +2,15 @@ import { EditorView } from "@codemirror/view";
 
 import { getLineElem } from "../helpers/get-line-elem";
 import { addCommentCompartment, addCommentPlugin } from "../widgets";
+import { addCommentIconStore } from "../widgets/add-comment";
 
 export const eventHandlers = EditorView.domEventHandlers({
   mouseover: (evt, view) => {
     const elem = evt.target as HTMLElement;
 
     if (elem.classList.contains("cm-content")) return;
+
+    if (addCommentIconStore.get("isDragging")) return;
 
     const editorTop = view.documentTop;
     const lineElem = getLineElem(elem);

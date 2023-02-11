@@ -200,9 +200,10 @@ const Repo: NextPage = () => {
             Use custom font for code display (fira code, source code pro etc) ✅
             Mobile: Auto close file explorer sidebar when a file is selected ✅
             Fix rendering issues with large string content ✅
-            Show comment icon when code content is hovered on
+            Show comment icon when code content is hovered on ✅
 
-
+            Support adding multi-line comments
+            Support removing comment-box by clicking on cancel
             Detect language via file extension
             URL should be updated based on the currently active file (reloading page should load the last viewed file)
           */}
