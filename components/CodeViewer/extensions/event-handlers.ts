@@ -1,8 +1,8 @@
 import { EditorView } from "@codemirror/view";
 
-import { getLineElem } from "../helpers/get-line-elem";
+import { getLineData, getLineElem } from "../helpers";
 import { addCommentCompartment, addCommentPlugin } from "../widgets";
-import { addCommentIconStore } from "../widgets/add-comment";
+import { multiLineCommentStore } from "../widgets/add-comment";
 
 export const eventHandlers = EditorView.domEventHandlers({
   mouseover: (evt, view) => {
@@ -10,14 +10,9 @@ export const eventHandlers = EditorView.domEventHandlers({
 
     if (elem.classList.contains("cm-content")) return;
 
-    if (addCommentIconStore.get("isDragging")) return;
-
-    const editorTop = view.documentTop;
+    // if (addCommentIconStore.get("isDragging")) return;
     const lineElem = getLineElem(elem);
-    const { top: lineELemTop } = lineElem.getBoundingClientRect();
-    const lineElemPos = lineELemTop - editorTop;
-    const lineElemBlockInfo = view.lineBlockAtHeight(lineElemPos);
-    const lineData = view.state.doc.lineAt(lineElemBlockInfo.from);
+    const lineData = getLineData(lineElem, view);
 
     const trx = view.state.update({
       effects: addCommentCompartment.reconfigure([
@@ -31,5 +26,24 @@ export const eventHandlers = EditorView.domEventHandlers({
       effects: addCommentCompartment.reconfigure([]),
     });
     view.dispatch(trx);
+  },
+  dragover: (evt, view) => {
+    const elem = evt.target as HTMLElement;
+
+    if (elem.classList.contains("cm-content")) return;
+
+    const lineElem = getLineElem(elem);
+    const lineData = getLineData(lineElem, view);
+
+    const { number: key, length: _, ...remainingLineData } = lineData;
+
+    lineElem.classList.add("cm-highlight-line");
+
+    multiLineCommentStore.add(key, remainingLineData);
+
+    if (multiLineCommentStore.hasSkippedLines()) {
+      // update multiline comment store: add line data for skipped lines
+      // add highlight class to skipped line elements
+    }
   },
 });

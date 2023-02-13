@@ -6,6 +6,10 @@ export const editorTheme = EditorView.theme({
   },
   ".cm-line": {
     paddingLeft: "var(--spacer-1)",
+    transitionDuration: "0.4s",
+  },
+  ".cm-highlight-line": {
+    backgroundColor: "#fcf8e7",
   },
   ".cm-add-icon-container": {
     display: "inline-block",
