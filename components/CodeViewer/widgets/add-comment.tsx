@@ -127,7 +127,7 @@ class AddCommentWidget extends WidgetType {
 
     widgetContainer.addEventListener("dragstart", (evt) => {
       // addCommentIconStore.add("isDragging", true);
-      // evt.dataTransfer!.dropEffect = "copy";
+      evt.dataTransfer!.effectAllowed = "copyMove";
 
       if (!this.view) return;
 
@@ -150,7 +150,14 @@ class AddCommentWidget extends WidgetType {
     });
 
     widgetContainer.addEventListener("drag", (evt) => {
-      console.log(evt.clientX, evt.clientY);
+      // // console.log(evt.clientX, evt.clientY);
+      // if (!this.view) return;
+      // const editorTop = this.view.documentTop;
+      // const lineElemTop = evt.clientY;
+      // const lineElemPos = lineElemTop - editorTop;
+      // const lineElemBlockInfo = this.view.lineBlockAtHeight(lineElemPos);
+      // const doc = this.view.state.doc.lineAt(lineElemBlockInfo.from);
+      // console.log({ lineElemBlockInfo, lineElemTop, doc });
     });
 
     widgetContainer.addEventListener("dragend", (evt) => {
