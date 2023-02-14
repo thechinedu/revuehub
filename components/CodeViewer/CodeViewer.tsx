@@ -21,6 +21,7 @@ import {
   commentBoxDecorationSet,
 } from "./widgets/add-comment-box";
 import { AddCommentBox } from "./AddCommentBox";
+import { multiLineCommentStore } from "./widgets/add-comment";
 
 type CodeViewerProps = {
   doc: string;
@@ -68,6 +69,7 @@ const CodeViewer = ({ doc, className = "" }: CodeViewerProps): JSX.Element => {
     });
 
     addCommentBoxStore.reset();
+    multiLineCommentStore.reset();
 
     editorViewRef.current.dispatch(transaction);
   }, [doc]);

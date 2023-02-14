@@ -23,6 +23,10 @@ export const addCommentBoxStore = {
     });
   },
 
+  get(key: number) {
+    return this.store.get(key);
+  },
+
   remove(key: number) {
     this.store.delete(key);
   },
@@ -58,8 +62,7 @@ class CommentBoxWidget extends WidgetType {
   toDOM(view: EditorView): HTMLElement {
     this.view = view;
 
-    const { store } = addCommentBoxStore;
-    const props = store.get(this.key) || {
+    const props = addCommentBoxStore.get(this.key) || {
       value: "",
       isFileComment: false,
       isSubmitDisabled: true,
