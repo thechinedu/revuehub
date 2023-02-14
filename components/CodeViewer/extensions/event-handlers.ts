@@ -28,9 +28,12 @@ export const eventHandlers = EditorView.domEventHandlers({
     view.dispatch(trx);
   },
   dragover: (evt, view) => {
+    evt.preventDefault();
+
     const elem = evt.target as HTMLElement;
 
     if (elem.classList.contains("cm-content")) return;
+    evt.dataTransfer!.dropEffect = "copy";
 
     const lineElem = getLineElem(elem);
     const lineData = getLineData(lineElem, view);
