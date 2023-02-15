@@ -22,13 +22,22 @@ type LineData = Pick<Line, "from" | "to" | "text">;
 
 export const multiLineCommentStore = {
   store: new Map<number, LineData>(),
+  storee: new Map<number, LineData>(),
 
   add(key: number, value: LineData) {
     this.store.set(key, value);
   },
 
+  addD(key: number, value: LineData) {
+    this.storee.set(key, value);
+  },
+
   get(key: number) {
     return this.store.get(key);
+  },
+
+  getD(key: number) {
+    return this.storee.get(key);
   },
 
   remove(key: number) {
@@ -37,6 +46,7 @@ export const multiLineCommentStore = {
 
   reset() {
     this.store.clear();
+    this.storee.clear();
   },
 
   hasSkippedLines() {
@@ -127,7 +137,7 @@ class AddCommentWidget extends WidgetType {
 
     widgetContainer.addEventListener("dragstart", (evt) => {
       // addCommentIconStore.add("isDragging", true);
-      evt.dataTransfer!.effectAllowed = "copyMove";
+      // evt.dataTransfer!.effectAllowed = "copyMove";
 
       if (!this.view) return;
 
@@ -151,12 +161,15 @@ class AddCommentWidget extends WidgetType {
 
     widgetContainer.addEventListener("drag", (evt) => {
       // // console.log(evt.clientX, evt.clientY);
-      // if (!this.view) return;
-      // const editorTop = this.view.documentTop;
-      // const lineElemTop = evt.clientY;
-      // const lineElemPos = lineElemTop - editorTop;
-      // const lineElemBlockInfo = this.view.lineBlockAtHeight(lineElemPos);
-      // const doc = this.view.state.doc.lineAt(lineElemBlockInfo.from);
+      if (!this.view) return;
+      const editorTop = this.view.documentTop;
+      const lineElemTop = evt.clientY;
+      const lineElemPos = lineElemTop - editorTop;
+      const lineElemBlockInfo = this.view.lineBlockAtHeight(lineElemPos);
+      const doc = this.view.state.doc.lineAt(lineElemBlockInfo.from);
+      const { number, ...data } = doc;
+
+      multiLineCommentStore.addD(number, data);
       // console.log({ lineElemBlockInfo, lineElemTop, doc });
     });
 
@@ -168,6 +181,7 @@ class AddCommentWidget extends WidgetType {
       );
       if (!this.view) return;
       console.log(multiLineCommentStore.store);
+      console.log(multiLineCommentStore.storee);
       // widgetContainer.dispatchEvent(new Event("click"));
       // widgetContainer.click()
       // addCommentBoxStore.add(49);
