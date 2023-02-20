@@ -14,6 +14,10 @@ export const eventHandlers = EditorView.domEventHandlers({
     const lineElem = getLineElem(elem);
     const lineData = getLineData(lineElem, view);
 
+    const { number: key, length: _, ...remainingLineData } = lineData;
+
+    multiLineCommentStore.addD(key, remainingLineData);
+
     const trx = view.state.update({
       effects: addCommentCompartment.reconfigure([
         addCommentPlugin(lineData.from),
@@ -28,15 +32,16 @@ export const eventHandlers = EditorView.domEventHandlers({
     view.dispatch(trx);
   },
   dragover: (evt, view) => {
-    // evt.preventDefault();
+    evt.preventDefault();
+    if (evt.dataTransfer) evt.dataTransfer.dropEffect = "copy";
 
     const elem = evt.target as HTMLElement;
 
     if (elem.classList.contains("cm-content")) return;
-    // evt.dataTransfer!.dropEffect = "copy";
 
     const lineElem = getLineElem(elem);
     const lineData = getLineData(lineElem, view);
+    // console.log({ line: lineData.number });
 
     const { number: key, length: _, ...remainingLineData } = lineData;
 
