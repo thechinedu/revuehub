@@ -137,7 +137,7 @@ class AddCommentWidget extends WidgetType {
 
     widgetContainer.addEventListener("dragstart", (evt) => {
       // addCommentIconStore.add("isDragging", true);
-      // evt.dataTransfer!.effectAllowed = "copyMove";
+      if (evt.dataTransfer) evt.dataTransfer.effectAllowed = "copyMove";
 
       if (!this.view) return;
 
@@ -182,6 +182,14 @@ class AddCommentWidget extends WidgetType {
       if (!this.view) return;
       console.log(multiLineCommentStore.store);
       console.log(multiLineCommentStore.storee);
+      console.log(this.view.state.doc);
+      // const editorTop = this.view.documentTop;
+      // const lineElemTop = evt.clientY;
+      // const lineElemPos = lineElemTop - editorTop;
+      // const lineElemBlockInfo = this.view.lineBlockAtHeight(lineElemPos);
+      // const doc = this.view.state.doc.lineAt(lineElemBlockInfo.from);
+      // const { number, ...data } = doc;
+      // console.log(doc);
       // widgetContainer.dispatchEvent(new Event("click"));
       // widgetContainer.click()
       // addCommentBoxStore.add(49);
@@ -214,3 +222,35 @@ export const addCommentPlugin = (pos: number) =>
       decorations: (v) => v.decorations,
     }
   );
+
+/**
+ * Support multi-line comments
+ *
+ * Add support for line-decoration widgets (required to highlight active selected lines)
+ *
+ * onDragStart:
+ *  * Save line data (range, number, text) of current line
+ *  * Add line data range to line-decoration widget which will highlight the line
+ *
+ * onDragOver:
+ *  * Perform the same operation as onDragStart
+ *  -- One thing to note is that if the mouse cursor moves very fast, there is a high chance that lines will be skipped
+ *  -- to handle this case, have a check to see if any lines have been skipped (sequential progression will be broken)
+ *  -- to detect skipped lines, e.g (line data of 1,8,10 means we need data for 2,3,4,5,6,7 and 9)
+ *     iterate over the line-data store sorted by line number (key) and if the if the difference between two lines is greater than 1
+ *     get the skipped lines between the two lines from the text document (view.state.doc.children || view.state.doc.text)
+ *     update line data with skipped lines, update line-decoration widgets
+ *
+ *  -- Another thing, lines can be deselected as a user performs a drag operation
+ *  -- to handle this case, get the current coordinates of the mouse cursor
+ *  -- get the line-data that corresponds to the mouse cursor coordinates (mcc line-data)
+ *  -- update line-data store by removing every line number greater than mcc line-data
+ *  -- update line-decoration widgets
+ *
+ * onDragEnd:
+ *  * Run skipped lines rule like for onDragOver
+ *  * Run deselected lines rule like for onDragOver
+ *  * Update line-data if necessary
+ *  * Remove add-comment icon
+ *  * Display add-comment box (showing line info for selected lines)
+ */
