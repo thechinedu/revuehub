@@ -3,6 +3,10 @@ import { EditorView } from "@codemirror/view";
 import { getLineData, getLineElem } from "../helpers";
 import { addCommentCompartment, addCommentPlugin } from "../widgets";
 import { multiLineCommentStore } from "../widgets/add-comment";
+import {
+  lineDecorationSet,
+  lineHighlightCompartment,
+} from "../widgets/line-highlight";
 
 export const eventHandlers = EditorView.domEventHandlers({
   mouseover: (evt, view) => {
@@ -14,9 +18,9 @@ export const eventHandlers = EditorView.domEventHandlers({
     const lineElem = getLineElem(elem);
     const lineData = getLineData(lineElem, view);
 
-    const { number: key, length: _, ...remainingLineData } = lineData;
+    // const { number: key, length: _, ...remainingLineData } = lineData;
 
-    multiLineCommentStore.addD(key, remainingLineData);
+    // multiLineCommentStore.addD(key, remainingLineData);
 
     const trx = view.state.update({
       effects: addCommentCompartment.reconfigure([
@@ -45,9 +49,14 @@ export const eventHandlers = EditorView.domEventHandlers({
 
     const { number: key, length: _, ...remainingLineData } = lineData;
 
-    lineElem.classList.add("cm-highlight-line");
-
     multiLineCommentStore.add(key, remainingLineData);
+
+    const trx = view.state.update({
+      effects: lineHighlightCompartment.reconfigure(
+        multiLineCommentStore.highlightLines()
+      ),
+    });
+    view.dispatch(trx);
 
     if (multiLineCommentStore.hasSkippedLines()) {
       // update multiline comment store: add line data for skipped lines

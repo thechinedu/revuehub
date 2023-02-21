@@ -17,6 +17,7 @@ import {
   commentBoxDecorationSet,
 } from "./add-comment-box";
 import { getLineData, getLineElem } from "../helpers";
+import { lineDecorationSet, lineHighlightCompartment } from "./line-highlight";
 
 type LineData = Pick<Line, "from" | "to" | "text">;
 
@@ -51,6 +52,12 @@ export const multiLineCommentStore = {
 
   hasSkippedLines() {
     return true;
+  },
+
+  highlightLines() {
+    return Array.from(this.store.values()).map(({ from }) =>
+      lineDecorationSet(from)
+    );
   },
 };
 
@@ -145,16 +152,19 @@ class AddCommentWidget extends WidgetType {
 
       const elem = evt.target as HTMLElement;
 
-      if (elem.classList.contains("cm-content")) return;
-
       const lineElem = getLineElem(elem);
       const lineData = getLineData(lineElem, this.view);
-
-      lineElem.classList.add("cm-dragover-line");
 
       const { number: key, length: _, ...remainingLineData } = lineData;
 
       multiLineCommentStore.add(key, remainingLineData);
+
+      // const trx = this.view.state.update({
+      //   effects: lineHighlightCompartment.reconfigure(
+      //     multiLineCommentStore.highlightLines()
+      //   ),
+      // });
+      // this.view.dispatch(trx);
 
       // console.log(lineData);
     });
@@ -226,7 +236,7 @@ export const addCommentPlugin = (pos: number) =>
 /**
  * Support multi-line comments
  *
- * Add support for line-decoration widgets (required to highlight active selected lines)
+ * Add support for line-decoration widgets (required to highlight active selected lines) ✅
  *
  * onDragStart:
  *  * Save line data (range, number, text) of current line
@@ -253,4 +263,27 @@ export const addCommentPlugin = (pos: number) =>
  *  * Update line-data if necessary
  *  * Remove add-comment icon
  *  * Display add-comment box (showing line info for selected lines)
+ */
+
+/**
+ * Getting skipped line data when only view.state.doc.children is available
+ *
+ * doc.children has a different structure (more complicated) from doc.text
+ * while doc.text largely correlates to the lines shown on the page (1 indexed) ensuring constant-time access of
+ * the line data, doc.children contains multiple nested arrays grouped into text nodes that each have a children array
+ * which containing leaf nodes and each leaf node contains a text property which itself is an array containing a bit
+ * of the document shown on the page
+ *
+ * Get the max line number from the existing line data (this will help with determining which subset should be used for the skipped lines search)
+ * iterate over doc.children to find the text node that corresponds to the max line number
+ *  each text node has a lines property that only contains the number of lines within the subset
+ *  initialize an accumulator value, set to 0
+ *  start from the first text node, update accumulator to accumulator + lines (this should happen at every step until the subset is found)
+ *    if the max line number is <= accumulator
+ *      subset found -> proceed to find skipped lines
+ *    else the max line number is > accumulator
+ *       update accumulator to accumulator + lines, continue to next iteration
+ *
+ *  find skipped lines:
+ *
  */
