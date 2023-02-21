@@ -22,6 +22,10 @@ import {
 } from "./widgets/add-comment-box";
 import { AddCommentBox } from "./AddCommentBox";
 import { multiLineCommentStore } from "./widgets/add-comment";
+import {
+  lineHighlightCompartment,
+  lineDecorationSet,
+} from "./widgets/line-highlight";
 
 type CodeViewerProps = {
   doc: string;
@@ -50,6 +54,7 @@ const CodeViewer = ({ doc, className = "" }: CodeViewerProps): JSX.Element => {
             indentationMarkers(),
             addCommentCompartment.of([]),
             addCommentBoxCompartment.of([]),
+            lineHighlightCompartment.of([]),
           ],
         }),
         parent: viewRef.current as HTMLDivElement,
@@ -65,6 +70,7 @@ const CodeViewer = ({ doc, className = "" }: CodeViewerProps): JSX.Element => {
       effects: [
         addCommentCompartment.reconfigure([]),
         addCommentBoxCompartment.reconfigure([]),
+        lineHighlightCompartment.reconfigure([]),
       ],
     });
 
