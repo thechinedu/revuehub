@@ -17,7 +17,7 @@
     "lhci:serve": "NODE_ENV=production yarn start"
   },
   "dependencies": {
-    "@codemirror/lang-javascript": "^6.1.2",
+    "@codemirror/lang-javascript": "^6.1.4",
     "@codemirror/language": "^6.4.0",
     "@codemirror/state": "^6.2.0",
     "@codemirror/view": "^6.7.3",
