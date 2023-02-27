@@ -23,22 +23,13 @@ type LineData = Pick<Line, "from" | "to" | "text">;
 
 export const multiLineCommentStore = {
   store: new Map<number, LineData>(),
-  storee: new Map<number, LineData>(),
 
   add(key: number, value: LineData) {
     this.store.set(key, value);
   },
 
-  addD(key: number, value: LineData) {
-    this.storee.set(key, value);
-  },
-
   get(key: number) {
     return this.store.get(key);
-  },
-
-  getD(key: number) {
-    return this.storee.get(key);
   },
 
   remove(key: number) {
@@ -47,17 +38,55 @@ export const multiLineCommentStore = {
 
   reset() {
     this.store.clear();
-    this.storee.clear();
   },
 
   hasSkippedLines() {
-    return true;
+    return this.sortedKeys.some((item, idx, arr) => {
+      const nextItem = arr[idx + 1];
+
+      if (typeof nextItem === "undefined") return false;
+
+      return nextItem - item !== 1;
+    });
+  },
+
+  getSkippedLines(): number[] {
+    const result = [];
+
+    for (let i = 0; i < this.sortedKeys.length; i += 1) {
+      const num = this.sortedKeys[i];
+      const nextNum = this.sortedKeys[i + 1];
+
+      if (typeof nextNum !== "undefined" && nextNum - num > 1) {
+        let j = num + 1;
+
+        while (j < nextNum) {
+          result.push(j);
+
+          j += 1;
+        }
+      }
+    }
+
+    return result;
+  },
+
+  getStartLine() {
+    return this.sortedKeys[0];
+  },
+
+  getEndLine() {
+    return this.sortedKeys[this.sortedKeys.length - 1];
   },
 
   highlightLines() {
     return Array.from(this.store.values()).map(({ from }) =>
       lineDecorationSet(from)
     );
+  },
+
+  get sortedKeys() {
+    return Array.from(this.store.keys()).sort((a, b) => a - b);
   },
 };
 
@@ -179,7 +208,6 @@ class AddCommentWidget extends WidgetType {
       const doc = this.view.state.doc.lineAt(lineElemBlockInfo.from);
       const { number, ...data } = doc;
 
-      multiLineCommentStore.addD(number, data);
       // console.log({ lineElemBlockInfo, lineElemTop, doc });
     });
 
@@ -191,7 +219,6 @@ class AddCommentWidget extends WidgetType {
       );
       if (!this.view) return;
       console.log(multiLineCommentStore.store);
-      console.log(multiLineCommentStore.storee);
       console.log(this.view.state.doc);
       // const editorTop = this.view.documentTop;
       // const lineElemTop = evt.clientY;
@@ -247,7 +274,7 @@ export const addCommentPlugin = (pos: number) =>
  *  -- One thing to note is that if the mouse cursor moves very fast, there is a high chance that lines will be skipped
  *  -- to handle this case, have a check to see if any lines have been skipped (sequential progression will be broken)
  *  -- to detect skipped lines, e.g (line data of 1,8,10 means we need data for 2,3,4,5,6,7 and 9)
- *     iterate over the line-data store sorted by line number (key) and if the if the difference between two lines is greater than 1
+ *     iterate over the line-data store sorted by line number (key) and if the difference between two lines is greater than 1
  *     get the skipped lines between the two lines from the text document (view.state.doc.children || view.state.doc.text)
  *     update line data with skipped lines, update line-decoration widgets
  *
@@ -271,7 +298,7 @@ export const addCommentPlugin = (pos: number) =>
  * doc.children has a different structure (more complicated) from doc.text
  * while doc.text largely correlates to the lines shown on the page (1 indexed) ensuring constant-time access of
  * the line data, doc.children contains multiple nested arrays grouped into text nodes that each have a children array
- * which containing leaf nodes and each leaf node contains a text property which itself is an array containing a bit
+ * containing leaf nodes and each leaf node contains a text property which itself is an array containing a bit
  * of the document shown on the page
  *
  * Get the max line number from the existing line data (this will help with determining which subset should be used for the skipped lines search)
@@ -285,5 +312,11 @@ export const addCommentPlugin = (pos: number) =>
  *       update accumulator to accumulator + lines, continue to next iteration
  *
  *  find skipped lines:
+ *    at this point, the text-node subset should have been found
+ *    iterate over the children list (each item is a text leaf)
+ *    each text leaf has a text property which is itself an array of strings (which map to the document on the page)
+ *    concatenate all the text-leaf text items into one single list
+ *    start line number maps to first item in the concatenated list
  *
+ * (lineNumber % endAccumulator) - startAccumulator => document index for skipped line access
  */

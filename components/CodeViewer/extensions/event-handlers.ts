@@ -61,6 +61,10 @@ export const eventHandlers = EditorView.domEventHandlers({
     if (multiLineCommentStore.hasSkippedLines()) {
       // update multiline comment store: add line data for skipped lines
       // add highlight class to skipped line elements
+      console.log(
+        "hasSkippedLines:: Updating store",
+        multiLineCommentStore.getSkippedLines()
+      );
     }
   },
 });
