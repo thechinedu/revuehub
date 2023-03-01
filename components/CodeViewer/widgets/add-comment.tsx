@@ -1,7 +1,7 @@
 import styles from "../CodeViewer.module.css";
 
 import { SquarePlus } from "@/components/Icons";
-import { Compartment, Line } from "@codemirror/state";
+import { Compartment, Line, Text } from "@codemirror/state";
 import {
   Decoration,
   DecorationSet,
@@ -21,24 +21,31 @@ import { lineDecorationSet, lineHighlightCompartment } from "./line-highlight";
 
 type LineData = Pick<Line, "from" | "to" | "text">;
 
-export const multiLineCommentStore = {
-  store: new Map<number, LineData>(),
+export const multiLineCommentStore = new (class {
+  // TODO: Mark as private
+  readonly store = new Map<number, LineData>();
 
   add(key: number, value: LineData) {
     this.store.set(key, value);
-  },
+  }
 
   get(key: number) {
     return this.store.get(key);
-  },
+  }
 
   remove(key: number) {
     this.store.delete(key);
-  },
+  }
 
   reset() {
     this.store.clear();
-  },
+  }
+
+  highlightLines() {
+    return Array.from(this.store.values()).map(({ from }) =>
+      lineDecorationSet(from)
+    );
+  }
 
   hasSkippedLines() {
     return this.sortedKeys.some((item, idx, arr) => {
@@ -48,9 +55,42 @@ export const multiLineCommentStore = {
 
       return nextItem - item !== 1;
     });
-  },
+  }
 
-  getSkippedLines(): number[] {
+  setDataForSkippedLines({
+    textNode,
+    textLeaf,
+  }: {
+    textNode: readonly Text[] | null;
+    textLeaf: string[] | undefined;
+  }) {
+    if (textNode?.length) {
+      /**
+       * get skipped lines
+       * get start line
+       * get end line
+       * if state.doc.children is null => use state.doc.text => read skipped line data directly from the array list
+       * otherwise =>
+       *  find subset => contains start_line and end_line (merge text nodes where necessary, merge all text leafs that are in the subset)
+       *  build up start_acc and end_acc using line info on the children array
+       *  get line data for the skipped lines.
+       */
+
+      const skippedLines = this.getSkippedLines();
+      const startLine = this.getStartLine();
+      const endLine = this.getEndLine();
+
+      const startLineData = multiLineCommentStore.get(startLine);
+
+      return;
+    }
+
+    if (textLeaf?.length) {
+      return;
+    }
+  }
+
+  private getSkippedLines(): number[] {
     const result = [];
 
     for (let i = 0; i < this.sortedKeys.length; i += 1) {
@@ -69,26 +109,20 @@ export const multiLineCommentStore = {
     }
 
     return result;
-  },
+  }
 
-  getStartLine() {
+  private getStartLine() {
     return this.sortedKeys[0];
-  },
+  }
 
-  getEndLine() {
+  private getEndLine() {
     return this.sortedKeys[this.sortedKeys.length - 1];
-  },
+  }
 
-  highlightLines() {
-    return Array.from(this.store.values()).map(({ from }) =>
-      lineDecorationSet(from)
-    );
-  },
-
-  get sortedKeys() {
+  private get sortedKeys() {
     return Array.from(this.store.keys()).sort((a, b) => a - b);
-  },
-};
+  }
+})();
 
 class AddCommentWidget extends WidgetType {
   view: EditorView | null;

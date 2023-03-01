@@ -45,7 +45,6 @@ export const eventHandlers = EditorView.domEventHandlers({
 
     const lineElem = getLineElem(elem);
     const lineData = getLineData(lineElem, view);
-    // console.log({ line: lineData.number });
 
     const { number: key, length: _, ...remainingLineData } = lineData;
 
@@ -59,12 +58,13 @@ export const eventHandlers = EditorView.domEventHandlers({
     view.dispatch(trx);
 
     if (multiLineCommentStore.hasSkippedLines()) {
-      // update multiline comment store: add line data for skipped lines
-      // add highlight class to skipped line elements
-      console.log(
-        "hasSkippedLines:: Updating store",
-        multiLineCommentStore.getSkippedLines()
-      );
+      const { doc } = view.state;
+      const editorDocument = doc as typeof doc & { text: string[] | undefined };
+
+      multiLineCommentStore.setDataForSkippedLines({
+        textNode: editorDocument.children,
+        textLeaf: editorDocument.text,
+      });
     }
   },
 });
