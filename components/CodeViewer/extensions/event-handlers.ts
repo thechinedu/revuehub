@@ -57,14 +57,14 @@ export const eventHandlers = EditorView.domEventHandlers({
     });
     view.dispatch(trx);
 
-    if (multiLineCommentStore.hasSkippedLines()) {
-      const { doc } = view.state;
-      const editorDocument = doc as typeof doc & { text: string[] | undefined };
+    // if (multiLineCommentStore.hasSkippedLines()) {
+    //   const { doc } = view.state;
+    //   const editorDocument = doc as typeof doc & { text: string[] | undefined };
 
-      multiLineCommentStore.setDataForSkippedLines({
-        textNode: editorDocument.children,
-        textLeaf: editorDocument.text,
-      });
-    }
+    //   multiLineCommentStore.setDataForSkippedLines({
+    //     textNode: editorDocument.children,
+    //     textLeaf: editorDocument.text,
+    //   });
+    // }
   },
 });
