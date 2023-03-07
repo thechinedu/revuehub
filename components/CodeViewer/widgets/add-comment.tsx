@@ -20,6 +20,7 @@ import { getLineData, getLineElem } from "../helpers";
 import { lineDecorationSet, lineHighlightCompartment } from "./line-highlight";
 
 type LineData = Pick<Line, "from" | "to" | "text">;
+type Leaf = Text & { text: string[] };
 
 export const multiLineCommentStore = new (class {
   // TODO: Mark as private
@@ -81,6 +82,47 @@ export const multiLineCommentStore = new (class {
       const endLine = this.getEndLine();
 
       const startLineData = multiLineCommentStore.get(startLine);
+
+      const subsets: Text[] = [];
+      let subsetStart = 0;
+      let subsetEnd = textNode[0].lines;
+
+      for (let i = 0; i < textNode.length; i += 1) {
+        const node = textNode[i];
+        const nextNode = textNode[i + 1];
+
+        if (subsetStart + node.lines < startLine) {
+          subsetStart += node.lines;
+
+          if (nextNode) subsetEnd += nextNode.lines;
+
+          continue;
+        }
+
+        subsets.push(node);
+
+        if (subsetEnd >= endLine) {
+          break;
+        }
+
+        subsetStart += node.lines;
+
+        if (nextNode) subsetEnd += nextNode.lines;
+      }
+      // Do something with subsets
+      const flattenedSubsets = subsets.flatMap((textNode) =>
+        textNode.children?.flatMap(
+          (textLeaf: unknown) => (textLeaf as Leaf).text
+        )
+      );
+      console.log({
+        subsets,
+        flattenedSubsets,
+        startLine,
+        endLine,
+        subsetStart,
+        subsetEnd,
+      });
 
       return;
     }
@@ -271,6 +313,17 @@ class AddCommentWidget extends WidgetType {
       // });
       // this.view.dispatch(trx);
       // widgetContainer.remove();
+      if (multiLineCommentStore.hasSkippedLines()) {
+        const { doc } = this.view.state;
+        const editorDocument = doc as typeof doc & {
+          text: string[] | undefined;
+        };
+
+        multiLineCommentStore.setDataForSkippedLines({
+          textNode: editorDocument.children,
+          textLeaf: editorDocument.text,
+        });
+      }
     });
   }
 }
