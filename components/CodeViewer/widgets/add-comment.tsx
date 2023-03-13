@@ -109,7 +109,7 @@ export const multiLineCommentStore = new (class {
 
         if (nextNode) subsetEnd += nextNode.lines;
       }
-      // Do something with subsets
+
       const flattenedSubsets = subsets.flatMap((textNode) =>
         textNode.children?.flatMap(
           (textLeaf: unknown) => (textLeaf as Leaf).text
@@ -123,6 +123,18 @@ export const multiLineCommentStore = new (class {
         subsetStart,
         subsetEnd,
       });
+      // loop over the skipped lines
+      // get line data before the skipped line from store (this.get(skippedLine - 1))
+      //  line data contains { from: number, to: number, text: string }
+      // create line data entry for skipped line (this.add(skippedLine, lineData))
+      //  how to get line data for skipped line:
+      //    from --> prevLineDataEntry.to + 1
+      //    to --> length(skippedLine text)
+      //    text --> skipped line text
+
+      // for (const skippedLine of skippedLines) {
+      //   const closestLineDataEntry = this.get(skippedLine - 1);
+      // }
 
       return;
     }
@@ -294,8 +306,6 @@ class AddCommentWidget extends WidgetType {
         Boolean(this.view)
       );
       if (!this.view) return;
-      console.log(multiLineCommentStore.store);
-      console.log(this.view.state.doc);
       // const editorTop = this.view.documentTop;
       // const lineElemTop = evt.clientY;
       // const lineElemPos = lineElemTop - editorTop;
@@ -313,17 +323,20 @@ class AddCommentWidget extends WidgetType {
       // });
       // this.view.dispatch(trx);
       // widgetContainer.remove();
-      if (multiLineCommentStore.hasSkippedLines()) {
-        const { doc } = this.view.state;
-        const editorDocument = doc as typeof doc & {
-          text: string[] | undefined;
-        };
+      // if (multiLineCommentStore.hasSkippedLines()) {
+      //   const { doc } = this.view.state;
+      //   const editorDocument = doc as typeof doc & {
+      //     text: string[] | undefined;
+      //   };
 
-        multiLineCommentStore.setDataForSkippedLines({
-          textNode: editorDocument.children,
-          textLeaf: editorDocument.text,
-        });
-      }
+      //   multiLineCommentStore.setDataForSkippedLines({
+      //     textNode: editorDocument.children,
+      //     textLeaf: editorDocument.text,
+      //   });
+      // }
+
+      console.log(multiLineCommentStore.store);
+      console.log(this.view.state.doc);
     });
   }
 }
