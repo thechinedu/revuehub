@@ -97,6 +97,8 @@ export const multiLineCommentStore = new (class {
           if (nextNode) subsetEnd += nextNode.lines;
 
           continue;
+        } else if (subsetStart + node.lines === startLine) {
+          subsetStart += node.lines;
         }
 
         subsets.push(node);
@@ -104,8 +106,6 @@ export const multiLineCommentStore = new (class {
         if (subsetEnd >= endLine) {
           break;
         }
-
-        subsetStart += node.lines;
 
         if (nextNode) subsetEnd += nextNode.lines;
       }
@@ -122,6 +122,7 @@ export const multiLineCommentStore = new (class {
         endLine,
         subsetStart,
         subsetEnd,
+        skippedLines,
       });
       // loop over the skipped lines
       // get line data before the skipped line from store (this.get(skippedLine - 1))
@@ -132,9 +133,24 @@ export const multiLineCommentStore = new (class {
       //    to --> length(skippedLine text)
       //    text --> skipped line text
 
-      // for (const skippedLine of skippedLines) {
-      //   const closestLineDataEntry = this.get(skippedLine - 1);
-      // }
+      for (const skippedLine of skippedLines) {
+        const closestLineDataEntry = this.get(skippedLine - 1);
+        const text =
+          flattenedSubsets[((skippedLine - 1) % subsetEnd) - subsetStart];
+
+        if (closestLineDataEntry && typeof text !== "undefined") {
+          const from = closestLineDataEntry.to + 1;
+          const to = from + text.length;
+
+          const skippedLineData = {
+            from,
+            to,
+            text,
+          };
+
+          this.add(skippedLine, skippedLineData);
+        }
+      }
 
       return;
     }
