@@ -14,7 +14,7 @@ review and conversation tools that enable easy and seamless collaboration betwee
         <link
           rel="preconnect"
           href="https://fonts.gstatic.com"
-          crossOrigin="crossorigin"
+          crossOrigin="anonymous"
         />
         <link
           href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700&display=swap"
