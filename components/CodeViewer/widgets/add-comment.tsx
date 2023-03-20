@@ -23,8 +23,8 @@ type LineData = Pick<Line, "from" | "to" | "text">;
 type Leaf = Text & { text: string[] };
 
 export const multiLineCommentStore = new (class {
-  // TODO: Mark as private
-  readonly store = new Map<number, LineData>();
+  private readonly store = new Map<number, LineData>();
+  private startLineAtPointOfDragStart: number | null = null;
 
   add(key: number, value: LineData) {
     this.store.set(key, value);
@@ -119,20 +119,39 @@ export const multiLineCommentStore = new (class {
   }
 
   removeInactiveLines(line: number) {
-    // line represents current line that mouse cursor is hovering
-    // if line is less than endLine (user moved pointer upwards, deselect all lines after)
-    //  - remove every line number greater than line and deselect all lines after the current line
-    // if line is less than startLine (user moved cursor upwards past startLine)
-    //  - get start line at drag start
-    //  - highlight new lines (start line at drag is new endLine and current pointer line is new startLine)
+    const startLineAtDragStart = this.startLineAtPointOfDragStart;
     const startLine = this.getStartLine();
     const endLine = this.getEndLine();
+
+    if (startLineAtDragStart != null && line < startLineAtDragStart) {
+      const activeLines = new Set<number>();
+      for (let key = line; key <= startLineAtDragStart; key += 1) {
+        activeLines.add(key);
+      }
+
+      for (const key of Array.from(this.store.keys())) {
+        if (activeLines.has(key)) continue;
+
+        this.remove(key);
+      }
+      return;
+    }
 
     if (line < endLine) {
       for (let key = endLine; key > line; key -= 1) {
         this.remove(key);
       }
     }
+
+    if (startLineAtDragStart != null && startLine !== startLineAtDragStart) {
+      for (let key = startLine; key < startLineAtDragStart; key += 1) {
+        this.remove(key);
+      }
+    }
+  }
+
+  setStartLineAtPointOfDragStart(line: number) {
+    this.startLineAtPointOfDragStart = line;
   }
 
   private getSkippedLines(): number[] {
@@ -248,6 +267,7 @@ class AddCommentWidget extends WidgetType {
       const { number: key, length: _, ...remainingLineData } = lineData;
 
       multiLineCommentStore.add(key, remainingLineData);
+      multiLineCommentStore.setStartLineAtPointOfDragStart(key);
     });
 
     // TODO: is this still required? remove if no longer needed
@@ -262,10 +282,10 @@ class AddCommentWidget extends WidgetType {
       const { number, ...data } = doc;
     });
 
+    // TODO: is this still required? remove if no longer needed
     widgetContainer.addEventListener("dragend", (evt) => {
       if (!this.view) return;
 
-      console.log(multiLineCommentStore.store);
       console.log(this.view.state.doc);
     });
   }
