@@ -14,13 +14,8 @@ export const eventHandlers = EditorView.domEventHandlers({
 
     if (elem.classList.contains("cm-content")) return;
 
-    // if (addCommentIconStore.get("isDragging")) return;
     const lineElem = getLineElem(elem);
     const lineData = getLineData(lineElem, view);
-
-    // const { number: key, length: _, ...remainingLineData } = lineData;
-
-    // multiLineCommentStore.addD(key, remainingLineData);
 
     const trx = view.state.update({
       effects: addCommentCompartment.reconfigure([
@@ -43,6 +38,7 @@ export const eventHandlers = EditorView.domEventHandlers({
 
     if (elem.classList.contains("cm-content")) return;
 
+    const { doc } = view.state;
     const lineElem = getLineElem(elem);
     const lineData = getLineData(lineElem, view);
 
@@ -51,7 +47,6 @@ export const eventHandlers = EditorView.domEventHandlers({
     multiLineCommentStore.add(key, remainingLineData);
 
     if (multiLineCommentStore.hasSkippedLines()) {
-      const { doc } = view.state;
       const editorDocument = doc as typeof doc & { text: string[] | undefined };
 
       multiLineCommentStore.setDataForSkippedLines({
@@ -59,6 +54,15 @@ export const eventHandlers = EditorView.domEventHandlers({
         textLeaf: editorDocument.text,
       });
     }
+
+    const editorTop = view.documentTop;
+    const pointerYPos = evt.clientY;
+    const lineElemPos = pointerYPos - editorTop;
+    const pointerLineElemBlockInfo = view.lineBlockAtHeight(lineElemPos);
+    const pointerLineData = doc.lineAt(pointerLineElemBlockInfo.from);
+    const { number } = pointerLineData;
+
+    multiLineCommentStore.removeInactiveLines(number);
 
     const trx = view.state.update({
       effects: lineHighlightCompartment.reconfigure(
