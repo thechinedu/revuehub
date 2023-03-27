@@ -9,7 +9,7 @@ export const editorTheme = EditorView.theme({
     transitionDuration: "0.4s",
   },
   ".cm-highlight-line": {
-    backgroundColor: "#fcf8e7",
+    backgroundColor: "#daedff",
   },
   ".cm-add-icon-container": {
     display: "inline-block",
