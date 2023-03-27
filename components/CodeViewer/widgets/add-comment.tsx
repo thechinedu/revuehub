@@ -154,6 +154,14 @@ export const multiLineCommentStore = new (class {
     this.startLineAtPointOfDragStart = line;
   }
 
+  getStartLine() {
+    return this.sortedKeys[0];
+  }
+
+  getEndLine() {
+    return this.sortedKeys[this.sortedKeys.length - 1];
+  }
+
   private getSkippedLines(): number[] {
     const result = [];
 
@@ -173,14 +181,6 @@ export const multiLineCommentStore = new (class {
     }
 
     return result;
-  }
-
-  private getStartLine() {
-    return this.sortedKeys[0];
-  }
-
-  private getEndLine() {
-    return this.sortedKeys[this.sortedKeys.length - 1];
   }
 
   private addSkippedLinesData(
@@ -286,7 +286,21 @@ class AddCommentWidget extends WidgetType {
     widgetContainer.addEventListener("dragend", (evt) => {
       if (!this.view) return;
 
-      console.log(this.view.state.doc);
+      const endLine = multiLineCommentStore.getEndLine();
+      const lineData = multiLineCommentStore.get(endLine);
+
+      if (lineData) {
+        const pos = lineData.text ? lineData.to : lineData.to + 1;
+
+        addCommentBoxStore.add(pos);
+
+        const trx = this.view.state.update({
+          effects: addCommentBoxCompartment.reconfigure(
+            addCommentBoxStore.generateDecorations()
+          ),
+        });
+        this.view.dispatch(trx);
+      }
     });
   }
 }
