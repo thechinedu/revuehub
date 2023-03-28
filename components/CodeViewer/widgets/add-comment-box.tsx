@@ -10,17 +10,17 @@ import { renderToStaticMarkup } from "react-dom/server";
 
 import { AddCommentBox, AddCommentBoxProps } from "../AddCommentBox";
 
-export const addCommentBoxStore = {
-  store: new Map<number, AddCommentBoxProps>(),
+type CommentBoxStore = AddCommentBoxProps & {
+  snippet?: string;
+};
 
-  add(key: number) {
+export const addCommentBoxStore = {
+  store: new Map<number, CommentBoxStore>(),
+
+  add(key: number, value: CommentBoxStore) {
     if (this.store.has(key)) return;
 
-    this.store.set(key, {
-      value: "",
-      isFileComment: false,
-      isSubmitDisabled: true,
-    });
+    this.store.set(key, value);
   },
 
   get(key: number) {
@@ -31,7 +31,7 @@ export const addCommentBoxStore = {
     this.store.delete(key);
   },
 
-  update(key: number, props: AddCommentBoxProps) {
+  update(key: number, props: CommentBoxStore) {
     if (!this.store.has(key)) return;
 
     const state = this.store.get(key);
@@ -64,18 +64,17 @@ class CommentBoxWidget extends WidgetType {
 
     const props = addCommentBoxStore.get(this.key) || {
       value: "",
-      isFileComment: false,
       isSubmitDisabled: true,
+      commentLineReference: "",
+      snippet: "",
     };
-
-    // console.log("toDOM", { v: props.value });
 
     const container = document.createElement("div");
     const commentBox = renderToStaticMarkup(
       <AddCommentBox
         value={props.value}
-        isFileComment={props.isFileComment}
         isSubmitDisabled={props.isSubmitDisabled}
+        commentLineReference={props.commentLineReference}
       />
     );
 
@@ -112,16 +111,6 @@ class CommentBoxWidget extends WidgetType {
         submitBtn.disabled = true;
         addCommentBoxStore.update(this.key, { isSubmitDisabled: true });
       }
-    });
-
-    widgetContainer.addEventListener("change", (evt) => {
-      const checkboxElem = evt.target as HTMLInputElement;
-
-      if (checkboxElem.nodeName !== "INPUT") return;
-
-      const { checked: isFileComment } = checkboxElem;
-
-      addCommentBoxStore.update(this.key, { isFileComment });
     });
   }
 }
