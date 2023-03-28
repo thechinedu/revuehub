@@ -118,14 +118,24 @@ export const multiLineCommentStore = new (class {
     }
   }
 
-  removeInactiveLines(line: number) {
+  removeInactiveLines(lineNumberAtMouseCursorPosition: number) {
     const startLineAtDragStart = this.startLineAtPointOfDragStart;
     const startLine = this.getStartLine();
     const endLine = this.getEndLine();
 
-    if (startLineAtDragStart != null && line < startLineAtDragStart) {
+    // User drags line highlight upwards past the initial point of where they started the drag operation
+    // e.g User starts dragging from line 8 and moves upwards towards lower line numbers (line 7,6,5...)
+    // Operation ensures line numbers from the mouse current position to the initial line number at the start of the drag operation are highlighted
+    if (
+      startLineAtDragStart != null &&
+      lineNumberAtMouseCursorPosition < startLineAtDragStart
+    ) {
       const activeLines = new Set<number>();
-      for (let key = line; key <= startLineAtDragStart; key += 1) {
+      for (
+        let key = lineNumberAtMouseCursorPosition;
+        key <= startLineAtDragStart;
+        key += 1
+      ) {
         activeLines.add(key);
       }
 
@@ -137,12 +147,21 @@ export const multiLineCommentStore = new (class {
       return;
     }
 
-    if (line < endLine) {
-      for (let key = endLine; key > line; key -= 1) {
+    // User drags line highlight past the stored end line for the multi-line comment
+    // e.g User initially highlights line 8 - 15 (drags over 8 - 15) and then moves the cursor upwards towards lower numbers (line 14, 13...)
+    // Operation ensures line numbers from start line to the mouse's current position are highlighted
+    if (lineNumberAtMouseCursorPosition < endLine) {
+      for (let key = endLine; key > lineNumberAtMouseCursorPosition; key -= 1) {
         this.remove(key);
       }
     }
 
+    // User drags line highlight downwards past the initial point of where they started the drag operation and
+    // then drag line highlight upwards past the point of where they started the drag
+    // e.g User starts dragging from line 8, drags over line 9, 10, 11, 12 and then moves the drag upwards
+    // such that they drag over 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 and then finally moves the cursor downwards again
+    // such that they drag past 1,2,3,4 and then stop the drag operation
+    // Operation ensures that the line highlight starts at the point where the mouse cursor stopped
     if (startLineAtDragStart != null && startLine !== startLineAtDragStart) {
       for (let key = startLine; key < startLineAtDragStart; key += 1) {
         this.remove(key);
@@ -244,7 +263,12 @@ class AddCommentWidget extends WidgetType {
       const lineData = getLineData(lineElem, this.view);
       const pos = lineData.text ? lineData.to : lineData.to + 1;
 
-      addCommentBoxStore.add(pos);
+      addCommentBoxStore.add(pos, {
+        value: "",
+        isSubmitDisabled: true,
+        commentLineReference: `Commenting on line ${lineData.number}`,
+        snippet: lineData.text,
+      });
 
       const trx = this.view.state.update({
         effects: addCommentBoxCompartment.reconfigure(
@@ -271,28 +295,33 @@ class AddCommentWidget extends WidgetType {
     });
 
     // TODO: is this still required? remove if no longer needed
-    widgetContainer.addEventListener("drag", (evt) => {
-      if (!this.view) return;
+    // widgetContainer.addEventListener("drag", (evt) => {
+    //   if (!this.view) return;
 
-      const editorTop = this.view.documentTop;
-      const lineElemTop = evt.clientY;
-      const lineElemPos = lineElemTop - editorTop;
-      const lineElemBlockInfo = this.view.lineBlockAtHeight(lineElemPos);
-      const doc = this.view.state.doc.lineAt(lineElemBlockInfo.from);
-      const { number, ...data } = doc;
-    });
+    //   const editorTop = this.view.documentTop;
+    //   const lineElemTop = evt.clientY;
+    //   const lineElemPos = lineElemTop - editorTop;
+    //   const lineElemBlockInfo = this.view.lineBlockAtHeight(lineElemPos);
+    //   const doc = this.view.state.doc.lineAt(lineElemBlockInfo.from);
+    //   const { number, ...data } = doc;
+    // });
 
-    // TODO: is this still required? remove if no longer needed
     widgetContainer.addEventListener("dragend", (evt) => {
       if (!this.view) return;
 
+      const startLine = multiLineCommentStore.getStartLine();
       const endLine = multiLineCommentStore.getEndLine();
       const lineData = multiLineCommentStore.get(endLine);
 
       if (lineData) {
         const pos = lineData.text ? lineData.to : lineData.to + 1;
 
-        addCommentBoxStore.add(pos);
+        addCommentBoxStore.add(pos, {
+          value: "",
+          isSubmitDisabled: true,
+          commentLineReference: `Commenting on lines ${startLine} to ${endLine}`,
+          snippet: lineData.text,
+        });
 
         const trx = this.view.state.update({
           effects: addCommentBoxCompartment.reconfigure(

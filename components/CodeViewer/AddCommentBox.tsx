@@ -2,25 +2,22 @@ import styles from "./CodeViewer.module.css";
 
 export type AddCommentBoxProps = {
   value?: string;
-  isFileComment?: boolean;
   isSubmitDisabled?: boolean;
+  commentLineReference?: string;
 };
 
 export const AddCommentBox = ({
   value = "",
-  isFileComment = false,
   isSubmitDisabled = true,
+  commentLineReference = "",
 }: AddCommentBoxProps): JSX.Element => {
   return (
     <div className={styles.commentBox}>
+      <p>{commentLineReference}</p>
       <form>
         <textarea placeholder="Write a comment" defaultValue={value} />
 
         <div className={styles.actions}>
-          <label>
-            <input type="checkbox" defaultChecked={isFileComment} /> Comment
-            applies to entire file
-          </label>
           <button
             type="submit"
             className={styles.btn}
