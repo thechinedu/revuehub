@@ -9,9 +9,13 @@ import {
 import { renderToStaticMarkup } from "react-dom/server";
 
 import { AddCommentBox, AddCommentBoxProps } from "../AddCommentBox";
+import { multiLineCommentStore } from "./add-comment";
+import { lineHighlightCompartment } from "./line-highlight";
 
 type CommentBoxStore = AddCommentBoxProps & {
   snippet?: string;
+  startLine?: number;
+  endLine?: number;
 };
 
 export const addCommentBoxStore = {
@@ -112,6 +116,34 @@ class CommentBoxWidget extends WidgetType {
         addCommentBoxStore.update(this.key, { isSubmitDisabled: true });
       }
     });
+
+    widgetContainer.addEventListener("click", (evt) => {
+      const cancelBtn = evt.target as HTMLButtonElement;
+
+      if (cancelBtn.dataset.action !== "reset" || this.view == null) return;
+
+      const { startLine, endLine } = addCommentBoxStore.get(this.key) || {};
+
+      if (startLine && endLine) {
+        for (let i = startLine; i <= endLine; i++) {
+          multiLineCommentStore.remove(i);
+        }
+      }
+
+      addCommentBoxStore.remove(this.key);
+
+      const trx = this.view.state.update({
+        effects: [
+          addCommentBoxCompartment.reconfigure(
+            addCommentBoxStore.generateDecorations()
+          ),
+          lineHighlightCompartment.reconfigure(
+            multiLineCommentStore.highlightLines()
+          ),
+        ],
+      });
+      this.view.dispatch(trx);
+    });
   }
 }
 
@@ -120,8 +152,7 @@ export const commentBoxDecorationSet = (pos: number) =>
     create() {
       return Decoration.none;
     },
-    update(value, trx) {
-      // console.log("updating comment box", { value, trx });
+    update() {
       const commentBoxDecoration = Decoration.widget({
         widget: new CommentBoxWidget(pos),
         block: true,

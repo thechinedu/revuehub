@@ -25,7 +25,7 @@ export const AddCommentBox = ({
           >
             Add review comment
           </button>
-          <button className={styles.btn} type="button">
+          <button className={styles.btn} type="button" data-action="reset">
             Cancel
           </button>
         </div>

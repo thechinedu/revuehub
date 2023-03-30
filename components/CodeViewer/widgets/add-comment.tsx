@@ -268,6 +268,8 @@ class AddCommentWidget extends WidgetType {
         isSubmitDisabled: true,
         commentLineReference: `Commenting on line ${lineData.number}`,
         snippet: lineData.text,
+        startLine: lineData.number,
+        endLine: lineData.number,
       });
 
       const trx = this.view.state.update({
@@ -321,6 +323,8 @@ class AddCommentWidget extends WidgetType {
           isSubmitDisabled: true,
           commentLineReference: `Commenting on lines ${startLine} to ${endLine}`,
           snippet: lineData.text,
+          startLine,
+          endLine,
         });
 
         const trx = this.view.state.update({
