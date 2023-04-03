@@ -1,3 +1,5 @@
+import { post } from "@/utils";
+
 import { Compartment, StateField } from "@codemirror/state";
 import {
   Decoration,
@@ -93,7 +95,8 @@ class CommentBoxWidget extends WidgetType {
   attachListeners(widgetContainer: HTMLDivElement) {
     widgetContainer.addEventListener("submit", (evt) => {
       evt.preventDefault();
-      console.log("submit", this.view);
+      const store = addCommentBoxStore.get(this.key);
+      console.log("submit", { store });
     });
 
     widgetContainer.addEventListener("keyup", (evt) => {

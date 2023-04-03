@@ -201,9 +201,11 @@ const Repo: NextPage = () => {
             Mobile: Auto close file explorer sidebar when a file is selected ✅
             Fix rendering issues with large string content ✅
             Show comment icon when code content is hovered on ✅
+            Support adding multi-line comment boxes ✅
+            Support removing comment-box by clicking on cancel button ✅
 
-            Support adding multi-line comments
-            Support removing comment-box by clicking on cancel
+            Support submitting comment by clicking on add review comment button
+            Support adding file-level comments
             Detect language via file extension
             URL should be updated based on the currently active file (reloading page should load the last viewed file)
           */}
