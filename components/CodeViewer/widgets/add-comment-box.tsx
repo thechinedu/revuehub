@@ -96,7 +96,7 @@ class CommentBoxWidget extends WidgetType {
     widgetContainer.addEventListener("submit", (evt) => {
       evt.preventDefault();
       const store = addCommentBoxStore.get(this.key);
-      console.log("submit", { store });
+      console.log("submit", { store: { ...store, insertion_pos: this.key } });
     });
 
     widgetContainer.addEventListener("keyup", (evt) => {
