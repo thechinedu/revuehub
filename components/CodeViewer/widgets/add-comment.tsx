@@ -181,6 +181,12 @@ export const multiLineCommentStore = new (class {
     return this.sortedKeys[this.sortedKeys.length - 1];
   }
 
+  getSnippet(): string {
+    const lines = this.sortedKeys.map((key) => this.get(key)?.text ?? "");
+
+    return lines.join("\n");
+  }
+
   private getSkippedLines(): number[] {
     const result = [];
 
@@ -322,7 +328,7 @@ class AddCommentWidget extends WidgetType {
           value: "",
           isSubmitDisabled: true,
           commentLineReference: `Commenting on lines ${startLine} to ${endLine}`,
-          snippet: lineData.text,
+          snippet: multiLineCommentStore.getSnippet(),
           startLine,
           endLine,
         });
