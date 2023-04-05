@@ -20,6 +20,12 @@ type CommentBoxStore = AddCommentBoxProps & {
   endLine?: number;
 };
 
+// General store for all comment boxes for shared data
+export const codeViewerStore = new Map<
+  "filePath" | "repositoryID",
+  string | number
+>();
+
 export const addCommentBoxStore = {
   store: new Map<number, CommentBoxStore>(),
 
@@ -96,7 +102,14 @@ class CommentBoxWidget extends WidgetType {
     widgetContainer.addEventListener("submit", (evt) => {
       evt.preventDefault();
       const store = addCommentBoxStore.get(this.key);
-      console.log("submit", { store: { ...store, insertion_pos: this.key } });
+      console.log("submit", {
+        store: {
+          ...store,
+          insertion_pos: this.key,
+          filePath: codeViewerStore.get("filePath"),
+          repositoryID: codeViewerStore.get("repositoryID"),
+        },
+      });
     });
 
     widgetContainer.addEventListener("keyup", (evt) => {
