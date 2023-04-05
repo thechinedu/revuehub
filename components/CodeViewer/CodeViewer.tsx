@@ -7,7 +7,7 @@ import {
   foldGutter,
   syntaxHighlighting,
 } from "@codemirror/language";
-import { EditorState } from "@codemirror/state";
+import { EditorState, StateEffect } from "@codemirror/state";
 import { EditorView, lineNumbers } from "@codemirror/view";
 
 import { indentationMarkers } from "@replit/codemirror-indentation-markers";
@@ -18,6 +18,7 @@ import { editorTheme, eventHandlers } from "./extensions";
 import { addCommentBoxCompartment, addCommentCompartment } from "./widgets";
 import {
   addCommentBoxStore,
+  codeViewerStore,
   commentBoxDecorationSet,
 } from "./widgets/add-comment-box";
 import { AddCommentBox } from "./AddCommentBox";
@@ -29,10 +30,17 @@ import {
 
 type CodeViewerProps = {
   doc: string;
+  filePath: string;
   className?: string;
+  repositoryID?: number;
 };
 
-const CodeViewer = ({ doc, className = "" }: CodeViewerProps): JSX.Element => {
+const CodeViewer = ({
+  doc,
+  filePath,
+  className = "",
+  repositoryID,
+}: CodeViewerProps): JSX.Element => {
   const viewRef = useRef<HTMLDivElement | null>(null);
   const editorViewRef = useRef<EditorView | null>(null);
 
@@ -41,21 +49,6 @@ const CodeViewer = ({ doc, className = "" }: CodeViewerProps): JSX.Element => {
       editorViewRef.current = new EditorView({
         state: EditorState.create({
           doc,
-          extensions: [
-            EditorView.editable.of(false),
-            EditorView.lineWrapping,
-            eventHandlers,
-            editorTheme,
-            syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
-            javascript(),
-            lineNumbers(),
-            codeFolding(),
-            foldGutter(),
-            indentationMarkers(),
-            addCommentCompartment.of([]),
-            addCommentBoxCompartment.of([]),
-            lineHighlightCompartment.of([]),
-          ],
         }),
         parent: viewRef.current as HTMLDivElement,
       });
@@ -68,6 +61,23 @@ const CodeViewer = ({ doc, className = "" }: CodeViewerProps): JSX.Element => {
         insert: doc,
       },
       effects: [
+        filePath
+          ? StateEffect.reconfigure.of([
+              EditorView.editable.of(false),
+              EditorView.lineWrapping,
+              eventHandlers,
+              editorTheme,
+              syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
+              javascript(),
+              lineNumbers(),
+              codeFolding(),
+              foldGutter(),
+              indentationMarkers(),
+              addCommentCompartment.of([]),
+              addCommentBoxCompartment.of([]),
+              lineHighlightCompartment.of([]),
+            ])
+          : StateEffect.reconfigure.of([EditorView.editable.of(false)]),
         addCommentCompartment.reconfigure([]),
         addCommentBoxCompartment.reconfigure([]),
         lineHighlightCompartment.reconfigure([]),
@@ -77,15 +87,18 @@ const CodeViewer = ({ doc, className = "" }: CodeViewerProps): JSX.Element => {
     addCommentBoxStore.reset();
     multiLineCommentStore.reset();
 
-    editorViewRef.current.dispatch(transaction);
-  }, [doc]);
+    codeViewerStore.set("filePath", filePath);
 
-  return (
-    <>
-      {/* <AddCommentBox /> */}
-      <div ref={viewRef} className={`${styles.container} ${className}`} />
-    </>
-  );
+    editorViewRef.current.dispatch(transaction);
+  }, [doc, filePath]);
+
+  useEffect(() => {
+    if (repositoryID) {
+      codeViewerStore.set("repositoryID", repositoryID);
+    }
+  }, [repositoryID]);
+
+  return <div ref={viewRef} className={`${styles.container} ${className}`} />;
 };
 
 export default CodeViewer;

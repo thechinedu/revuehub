@@ -227,6 +227,8 @@ const Repo: NextPage = () => {
           {viewer === Viewer.CM && (
             <CodeViewer
               doc={showFileContents ? fileBlobContents : "no file selected"}
+              filePath={fileBlobInfo.filePath}
+              repositoryID={repo?.id}
               className={
                 showFileContents
                   ? styles.codeViewerWithMenu
