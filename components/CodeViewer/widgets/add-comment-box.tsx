@@ -99,17 +99,35 @@ class CommentBoxWidget extends WidgetType {
   }
 
   attachListeners(widgetContainer: HTMLDivElement) {
-    widgetContainer.addEventListener("submit", (evt) => {
+    widgetContainer.addEventListener("submit", async (evt) => {
       evt.preventDefault();
       const store = addCommentBoxStore.get(this.key);
-      console.log("submit", {
-        store: {
-          ...store,
+
+      if (store) {
+        const commentRequestBody = {
+          content: store.value,
+          file_path: codeViewerStore.get("filePath"),
+          repository_id: codeViewerStore.get("repositoryID"),
+          start_line: store.startLine,
+          end_line: store.endLine,
+          snippet: store.snippet,
+          level: "LINE",
           insertion_pos: this.key,
-          filePath: codeViewerStore.get("filePath"),
-          repositoryID: codeViewerStore.get("repositoryID"),
-        },
-      });
+        };
+
+        console.log({ commentRequestBody });
+
+        try {
+          const jsonRes = await post("/comments", commentRequestBody);
+          // Successfully added comment
+          // Update comment box store, set mode to read (read mode has a reply input box at the bottom)
+          // Update view to show the comment box in read mode
+
+          console.log({ jsonRes });
+        } catch (err) {
+          console.log(err);
+        }
+      }
     });
 
     widgetContainer.addEventListener("keyup", (evt) => {
