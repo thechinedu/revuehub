@@ -18,6 +18,7 @@ import {
 } from "./add-comment-box";
 import { getLineData, getLineElem } from "../helpers";
 import { lineDecorationSet, lineHighlightCompartment } from "./line-highlight";
+import { CommentBoxMode } from "../AddCommentBox";
 
 type LineData = Pick<Line, "from" | "to" | "text">;
 type Leaf = Text & { text: string[] };
@@ -269,14 +270,17 @@ class AddCommentWidget extends WidgetType {
       const lineData = getLineData(lineElem, this.view);
       const pos = lineData.text ? lineData.to : lineData.to + 1;
 
-      addCommentBoxStore.add(pos, {
-        value: "",
-        isSubmitDisabled: true,
-        commentLineReference: `Commenting on line ${lineData.number}`,
-        snippet: lineData.text,
-        startLine: lineData.number,
-        endLine: lineData.number,
-      });
+      addCommentBoxStore.add(pos, [
+        {
+          value: "",
+          isSubmitDisabled: true,
+          commentLineReference: `Commenting on line ${lineData.number}`,
+          snippet: lineData.text,
+          startLine: lineData.number,
+          endLine: lineData.number,
+          mode: CommentBoxMode.ADD,
+        },
+      ]);
 
       const trx = this.view.state.update({
         effects: addCommentBoxCompartment.reconfigure(
@@ -324,14 +328,17 @@ class AddCommentWidget extends WidgetType {
       if (lineData) {
         const pos = lineData.text ? lineData.to : lineData.to + 1;
 
-        addCommentBoxStore.add(pos, {
-          value: "",
-          isSubmitDisabled: true,
-          commentLineReference: `Commenting on lines ${startLine} to ${endLine}`,
-          snippet: multiLineCommentStore.getSnippet(),
-          startLine,
-          endLine,
-        });
+        addCommentBoxStore.add(pos, [
+          {
+            value: "",
+            isSubmitDisabled: true,
+            commentLineReference: `Commenting on lines ${startLine} to ${endLine}`,
+            snippet: multiLineCommentStore.getSnippet(),
+            startLine,
+            endLine,
+            mode: CommentBoxMode.ADD,
+          },
+        ]);
 
         const trx = this.view.state.update({
           effects: addCommentBoxCompartment.reconfigure(

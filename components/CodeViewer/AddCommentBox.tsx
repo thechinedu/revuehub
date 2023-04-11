@@ -1,23 +1,35 @@
 import styles from "./CodeViewer.module.css";
 
+export enum CommentBoxMode {
+  ADD,
+  EDIT,
+  READ,
+}
+
 export type AddCommentBoxProps = {
   value?: string;
   isSubmitDisabled?: boolean;
   commentLineReference?: string;
-  mode?: "add" | "edit" | "read" | "reply";
+  mode?: CommentBoxMode;
+  pos?: number;
 };
 
 export const AddCommentBox = ({
   value = "",
   isSubmitDisabled = true,
   commentLineReference = "",
-  mode = "add",
+  mode = CommentBoxMode.ADD,
+  pos,
 }: AddCommentBoxProps): JSX.Element => {
   return (
     <div className={styles.commentBox}>
       <p>{commentLineReference}</p>
       <form>
-        <textarea placeholder="Write a comment" defaultValue={value} />
+        <textarea
+          placeholder="Write a comment"
+          defaultValue={value}
+          data-elem-pos={pos}
+        />
 
         <div className={styles.actions}>
           <button
@@ -33,6 +45,20 @@ export const AddCommentBox = ({
         </div>
       </form>
     </div>
+  );
+};
+
+type CommentBoxProps = {
+  comments: AddCommentBoxProps[];
+};
+
+export const CommentBox = ({ comments = [] }: CommentBoxProps) => {
+  return (
+    <>
+      {comments.map((comment, idx) => (
+        <AddCommentBox key={idx} pos={idx} {...comment} />
+      ))}
+    </>
   );
 };
 
