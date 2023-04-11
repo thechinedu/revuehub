@@ -10,15 +10,19 @@ import {
 
 import { renderToStaticMarkup } from "react-dom/server";
 
-import { AddCommentBox, AddCommentBoxProps } from "../AddCommentBox";
+import {
+  AddCommentBox,
+  AddCommentBoxProps,
+  CommentBox,
+} from "../AddCommentBox";
 import { multiLineCommentStore } from "./add-comment";
 import { lineHighlightCompartment } from "./line-highlight";
 
-type CommentBoxStore = AddCommentBoxProps & {
+type CommentBoxStore = (AddCommentBoxProps & {
   snippet?: string;
   startLine?: number;
   endLine?: number;
-};
+})[];
 
 // General store for all comment boxes for shared data
 export const codeViewerStore = new Map<
@@ -74,21 +78,10 @@ class CommentBoxWidget extends WidgetType {
   toDOM(view: EditorView): HTMLElement {
     this.view = view;
 
-    const props = addCommentBoxStore.get(this.key) || {
-      value: "",
-      isSubmitDisabled: true,
-      commentLineReference: "",
-      snippet: "",
-    };
+    const props = addCommentBoxStore.get(this.key) || [];
 
     const container = document.createElement("div");
-    const commentBox = renderToStaticMarkup(
-      <AddCommentBox
-        value={props.value}
-        isSubmitDisabled={props.isSubmitDisabled}
-        commentLineReference={props.commentLineReference}
-      />
-    );
+    const commentBox = renderToStaticMarkup(<CommentBox comments={props} />);
 
     container.classList.add("cm-comment-box");
     container.innerHTML = commentBox;
@@ -103,31 +96,31 @@ class CommentBoxWidget extends WidgetType {
       evt.preventDefault();
       const store = addCommentBoxStore.get(this.key);
 
-      if (store) {
-        const commentRequestBody = {
-          content: store.value,
-          file_path: codeViewerStore.get("filePath"),
-          repository_id: codeViewerStore.get("repositoryID"),
-          start_line: store.startLine,
-          end_line: store.endLine,
-          snippet: store.snippet,
-          level: "LINE",
-          insertion_pos: this.key,
-        };
+      // if (store) {
+      //   const commentRequestBody = {
+      //     content: store.value,
+      //     file_path: codeViewerStore.get("filePath"),
+      //     repository_id: codeViewerStore.get("repositoryID"),
+      //     start_line: store.startLine,
+      //     end_line: store.endLine,
+      //     snippet: store.snippet,
+      //     level: "LINE",
+      //     insertion_pos: this.key,
+      //   };
 
-        console.log({ commentRequestBody });
+      //   console.log({ commentRequestBody });
 
-        try {
-          const jsonRes = await post("/comments", commentRequestBody);
-          // Successfully added comment
-          // Update comment box store, set mode to read (read mode has a reply input box at the bottom)
-          // Update view to show the comment box in read mode
+      //   try {
+      //     const jsonRes = await post("/comments", commentRequestBody);
+      //     // Successfully added comment
+      //     // Update comment box store, set mode to read (read mode has a reply input box at the bottom)
+      //     // Update view to show the comment box in read mode
 
-          console.log({ jsonRes });
-        } catch (err) {
-          console.log(err);
-        }
-      }
+      //     console.log({ jsonRes });
+      //   } catch (err) {
+      //     console.log(err);
+      //   }
+      // }
     });
 
     widgetContainer.addEventListener("keyup", (evt) => {
@@ -139,45 +132,52 @@ class CommentBoxWidget extends WidgetType {
       if (textAreaElem.nodeName !== "TEXTAREA") return;
 
       const { value } = textAreaElem;
+      const pos = textAreaElem.dataset.elemPos as string;
 
-      addCommentBoxStore.update(this.key, { value });
+      const store = addCommentBoxStore.get(this.key);
 
-      if (value.trim().length) {
-        submitBtn.disabled = false;
-        addCommentBoxStore.update(this.key, { isSubmitDisabled: false });
-      } else {
-        submitBtn.disabled = true;
-        addCommentBoxStore.update(this.key, { isSubmitDisabled: true });
-      }
-    });
+      if (store) {
+        const commentBox = store[+pos];
 
-    widgetContainer.addEventListener("click", (evt) => {
-      const cancelBtn = evt.target as HTMLButtonElement;
+        commentBox.value = value;
 
-      if (cancelBtn.dataset.action !== "reset" || this.view == null) return;
-
-      const { startLine, endLine } = addCommentBoxStore.get(this.key) || {};
-
-      if (startLine && endLine) {
-        for (let i = startLine; i <= endLine; i++) {
-          multiLineCommentStore.remove(i);
+        if (value.trim().length) {
+          submitBtn.disabled = false;
+          commentBox.isSubmitDisabled = false;
+        } else {
+          submitBtn.disabled = true;
+          commentBox.isSubmitDisabled = true;
         }
       }
-
-      addCommentBoxStore.remove(this.key);
-
-      const trx = this.view.state.update({
-        effects: [
-          addCommentBoxCompartment.reconfigure(
-            addCommentBoxStore.generateDecorations()
-          ),
-          lineHighlightCompartment.reconfigure(
-            multiLineCommentStore.highlightLines()
-          ),
-        ],
-      });
-      this.view.dispatch(trx);
     });
+
+    // widgetContainer.addEventListener("click", (evt) => {
+    //   const cancelBtn = evt.target as HTMLButtonElement;
+
+    //   if (cancelBtn.dataset.action !== "reset" || this.view == null) return;
+
+    //   const { startLine, endLine } = addCommentBoxStore.get(this.key) || {};
+
+    //   if (startLine && endLine) {
+    //     for (let i = startLine; i <= endLine; i++) {
+    //       multiLineCommentStore.remove(i);
+    //     }
+    //   }
+
+    //   addCommentBoxStore.remove(this.key);
+
+    //   const trx = this.view.state.update({
+    //     effects: [
+    //       addCommentBoxCompartment.reconfigure(
+    //         addCommentBoxStore.generateDecorations()
+    //       ),
+    //       lineHighlightCompartment.reconfigure(
+    //         multiLineCommentStore.highlightLines()
+    //       ),
+    //     ],
+    //   });
+    //   this.view.dispatch(trx);
+    // });
   }
 }
 
