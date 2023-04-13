@@ -14,6 +14,7 @@ import {
   AddCommentBox,
   AddCommentBoxProps,
   CommentBox,
+  CommentBoxMode,
 } from "../AddCommentBox";
 import { multiLineCommentStore } from "./add-comment";
 import { lineHighlightCompartment } from "./line-highlight";
@@ -93,34 +94,50 @@ class CommentBoxWidget extends WidgetType {
 
   attachListeners(widgetContainer: HTMLDivElement) {
     widgetContainer.addEventListener("submit", async (evt) => {
+      if (!this.view) return;
+
       evt.preventDefault();
+      const formElem = evt.target as HTMLFormElement;
+      const pos = formElem.dataset.elemPos as string;
       const store = addCommentBoxStore.get(this.key);
 
-      // if (store) {
-      //   const commentRequestBody = {
-      //     content: store.value,
-      //     file_path: codeViewerStore.get("filePath"),
-      //     repository_id: codeViewerStore.get("repositoryID"),
-      //     start_line: store.startLine,
-      //     end_line: store.endLine,
-      //     snippet: store.snippet,
-      //     level: "LINE",
-      //     insertion_pos: this.key,
-      //   };
+      if (store && store[+pos]) {
+        const commentBox = store[+pos];
 
-      //   console.log({ commentRequestBody });
+        const commentRequestBody = {
+          content: commentBox.value,
+          file_path: codeViewerStore.get("filePath"),
+          repository_id: codeViewerStore.get("repositoryID"),
+          start_line: commentBox.startLine,
+          end_line: commentBox.endLine,
+          snippet: commentBox.snippet,
+          level: "LINE",
+          insertion_pos: this.key,
+        };
 
-      //   try {
-      //     const jsonRes = await post("/comments", commentRequestBody);
-      //     // Successfully added comment
-      //     // Update comment box store, set mode to read (read mode has a reply input box at the bottom)
-      //     // Update view to show the comment box in read mode
+        console.log({ commentRequestBody });
 
-      //     console.log({ jsonRes });
-      //   } catch (err) {
-      //     console.log(err);
-      //   }
-      // }
+        try {
+          const jsonRes = await post("/comments", commentRequestBody);
+          // Successfully added comment
+          // Update comment box store, set mode to read (read mode has a reply input box at the bottom)
+          // Update view to show the comment box in read mode
+          commentBox.mode = CommentBoxMode.READ;
+
+          const trx = this.view.state.update({
+            effects: [
+              addCommentBoxCompartment.reconfigure(
+                addCommentBoxStore.generateDecorations()
+              ),
+            ],
+          });
+          this.view.dispatch(trx);
+
+          console.log({ jsonRes });
+        } catch (err) {
+          console.log(err);
+        }
+      }
     });
 
     widgetContainer.addEventListener("keyup", (evt) => {
@@ -151,33 +168,37 @@ class CommentBoxWidget extends WidgetType {
       }
     });
 
-    // widgetContainer.addEventListener("click", (evt) => {
-    //   const cancelBtn = evt.target as HTMLButtonElement;
+    widgetContainer.addEventListener("click", (evt) => {
+      const cancelBtn = evt.target as HTMLButtonElement;
 
-    //   if (cancelBtn.dataset.action !== "reset" || this.view == null) return;
+      if (cancelBtn.dataset.action !== "reset" || this.view == null) return;
 
-    //   const { startLine, endLine } = addCommentBoxStore.get(this.key) || {};
+      const store = addCommentBoxStore.get(this.key);
 
-    //   if (startLine && endLine) {
-    //     for (let i = startLine; i <= endLine; i++) {
-    //       multiLineCommentStore.remove(i);
-    //     }
-    //   }
+      if (store) {
+        const { startLine, endLine } = store[0];
 
-    //   addCommentBoxStore.remove(this.key);
+        if (startLine && endLine) {
+          for (let i = startLine; i <= endLine; i++) {
+            multiLineCommentStore.remove(i);
+          }
+        }
+      }
 
-    //   const trx = this.view.state.update({
-    //     effects: [
-    //       addCommentBoxCompartment.reconfigure(
-    //         addCommentBoxStore.generateDecorations()
-    //       ),
-    //       lineHighlightCompartment.reconfigure(
-    //         multiLineCommentStore.highlightLines()
-    //       ),
-    //     ],
-    //   });
-    //   this.view.dispatch(trx);
-    // });
+      addCommentBoxStore.remove(this.key);
+
+      const trx = this.view.state.update({
+        effects: [
+          addCommentBoxCompartment.reconfigure(
+            addCommentBoxStore.generateDecorations()
+          ),
+          lineHighlightCompartment.reconfigure(
+            multiLineCommentStore.highlightLines()
+          ),
+        ],
+      });
+      this.view.dispatch(trx);
+    });
   }
 }
 

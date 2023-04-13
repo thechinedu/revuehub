@@ -1,6 +1,6 @@
 import styles from "../CodeViewer.module.css";
 
-import { SquarePlus } from "@/components/Icons";
+import { SquarePlusIcon } from "@/components/Icons";
 import { Compartment, Line, Text } from "@codemirror/state";
 import {
   Decoration,
@@ -251,7 +251,7 @@ class AddCommentWidget extends WidgetType {
 
     const iconContainer = document.createElement("span");
     const iconMarkup = renderToStaticMarkup(
-      <SquarePlus className={styles.addCommentIcon} />
+      <SquarePlusIcon className={styles.addCommentIcon} />
     );
 
     iconContainer.draggable = true;

@@ -1,5 +1,10 @@
 import styles from "./CodeViewer.module.css";
 
+import { PenIcon, TrashIcon } from "@/components/Icons";
+import { cn } from "@/utils";
+
+import Image from "next/image";
+
 export enum CommentBoxMode {
   ADD,
   EDIT,
@@ -22,28 +27,66 @@ export const AddCommentBox = ({
   pos,
 }: AddCommentBoxProps): JSX.Element => {
   return (
-    <div className={styles.commentBox}>
-      <p>{commentLineReference}</p>
-      <form>
-        <textarea
-          placeholder="Write a comment"
-          defaultValue={value}
-          data-elem-pos={pos}
-        />
+    <div
+      className={cn(styles, {
+        commentBox: true,
+        readMode: mode === CommentBoxMode.READ,
+      })}
+    >
+      {mode === CommentBoxMode.READ && (
+        <div>
+          <div className={styles.metadata}>
+            <Image
+              src="https://placebeard.it/16/16/notag"
+              alt=""
+              width={16}
+              height={16}
+            />
+            <p className={styles.username}>thechinedu</p>
 
-        <div className={styles.actions}>
-          <button
-            type="submit"
-            className={styles.btn}
-            disabled={isSubmitDisabled}
-          >
-            Add review comment
-          </button>
-          <button className={styles.btn} type="button" data-action="reset">
-            Cancel
-          </button>
+            <div className={styles.actions}>
+              <button className={styles.iconWrapper}>
+                <PenIcon className={styles.icon} />
+              </button>
+              <button className={styles.iconWrapper}>
+                <TrashIcon
+                  className={cn(styles, {
+                    icon: true,
+                    deleteIcon: true,
+                  })}
+                />
+              </button>
+            </div>
+          </div>
+
+          <p className={styles.comment}>{value}</p>
         </div>
-      </form>
+      )}
+      {mode !== CommentBoxMode.READ && (
+        <>
+          <p>{commentLineReference}</p>
+          <form data-elem-pos={pos}>
+            <textarea
+              placeholder="Write a comment"
+              defaultValue={value}
+              data-elem-pos={pos}
+            />
+
+            <div className={styles.actions}>
+              <button
+                type="submit"
+                className={styles.btn}
+                disabled={isSubmitDisabled}
+              >
+                Add review comment
+              </button>
+              <button className={styles.btn} type="button" data-action="reset">
+                Cancel
+              </button>
+            </div>
+          </form>
+        </>
+      )}
     </div>
   );
 };
