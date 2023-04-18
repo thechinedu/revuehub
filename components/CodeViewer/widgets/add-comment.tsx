@@ -18,7 +18,7 @@ import {
 } from "./add-comment-box";
 import { getLineData, getLineElem } from "../helpers";
 import { lineDecorationSet, lineHighlightCompartment } from "./line-highlight";
-import { CommentBoxMode } from "../AddCommentBox";
+import { CommentBoxMode } from "../CommentBox";
 
 type LineData = Pick<Line, "from" | "to" | "text">;
 type Leaf = Text & { text: string[] };

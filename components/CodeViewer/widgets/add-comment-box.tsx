@@ -11,15 +11,14 @@ import {
 import { renderToStaticMarkup } from "react-dom/server";
 
 import {
-  AddCommentBox,
-  AddCommentBoxProps,
-  CommentBox,
+  CommentBoxProps,
+  CommentBoxContainer,
   CommentBoxMode,
-} from "../AddCommentBox";
+} from "../CommentBox";
 import { multiLineCommentStore } from "./add-comment";
 import { lineHighlightCompartment } from "./line-highlight";
 
-type CommentBoxStore = (AddCommentBoxProps & {
+type CommentBoxStore = (CommentBoxProps & {
   snippet?: string;
   startLine?: number;
   endLine?: number;
@@ -48,12 +47,12 @@ export const addCommentBoxStore = {
     this.store.delete(key);
   },
 
-  update(key: number, props: CommentBoxStore) {
+  update(key: number, newComment: CommentBoxStore) {
     if (!this.store.has(key)) return;
 
-    const state = this.store.get(key);
+    const existingComments = this.store.get(key) as CommentBoxStore;
 
-    this.store.set(key, { ...state, ...props });
+    this.store.set(key, [...existingComments, ...newComment]);
   },
 
   reset() {
@@ -82,7 +81,9 @@ class CommentBoxWidget extends WidgetType {
     const props = addCommentBoxStore.get(this.key) || [];
 
     const container = document.createElement("div");
-    const commentBox = renderToStaticMarkup(<CommentBox comments={props} />);
+    const commentBox = renderToStaticMarkup(
+      <CommentBoxContainer comments={props} />
+    );
 
     container.classList.add("cm-comment-box");
     container.innerHTML = commentBox;
@@ -198,6 +199,52 @@ class CommentBoxWidget extends WidgetType {
         ],
       });
       this.view.dispatch(trx);
+    });
+
+    widgetContainer.addEventListener("focusin", (evt) => {
+      if (!this.view) return;
+
+      console.log("focus event");
+      const inputElem = evt.target as HTMLInputElement;
+
+      if (inputElem.nodeName !== "INPUT") return;
+
+      console.log("input has focus");
+
+      const store = addCommentBoxStore.get(this.key);
+
+      if (store) {
+        const newCommentBox: CommentBoxStore[number] = {
+          ...store[0],
+          isSubmitDisabled: true,
+          commentLineReference: "",
+          value: "",
+          mode: CommentBoxMode.ADD,
+        };
+
+        store.push(newCommentBox);
+
+        addCommentBoxStore.update(this.key, store);
+
+        const trx = this.view.state.update({
+          effects: [
+            addCommentBoxCompartment.reconfigure(
+              addCommentBoxStore.generateDecorations()
+            ),
+          ],
+        });
+        this.view.dispatch(trx);
+
+        // commentBox.value = value;
+
+        // if (value.trim().length) {
+        //   submitBtn.disabled = false;
+        //   commentBox.isSubmitDisabled = false;
+        // } else {
+        //   submitBtn.disabled = true;
+        //   commentBox.isSubmitDisabled = true;
+        // }
+      }
     });
   }
 }
