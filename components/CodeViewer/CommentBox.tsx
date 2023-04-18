@@ -11,7 +11,7 @@ export enum CommentBoxMode {
   READ,
 }
 
-export type AddCommentBoxProps = {
+export type CommentBoxProps = {
   value?: string;
   isSubmitDisabled?: boolean;
   commentLineReference?: string;
@@ -19,13 +19,13 @@ export type AddCommentBoxProps = {
   pos?: number;
 };
 
-export const AddCommentBox = ({
+export const CommentBox = ({
   value = "",
   isSubmitDisabled = true,
   commentLineReference = "",
   mode = CommentBoxMode.ADD,
   pos,
-}: AddCommentBoxProps): JSX.Element => {
+}: CommentBoxProps): JSX.Element => {
   return (
     <div
       className={cn(styles, {
@@ -91,17 +91,30 @@ export const AddCommentBox = ({
   );
 };
 
-type CommentBoxProps = {
-  comments: AddCommentBoxProps[];
+type CommentBoxContainerProps = {
+  comments: CommentBoxProps[];
 };
 
-export const CommentBox = ({ comments = [] }: CommentBoxProps) => {
+export const CommentBoxContainer = ({
+  comments = [],
+}: CommentBoxContainerProps) => {
   return (
-    <>
+    <div className={styles.commentBoxContainer}>
       {comments.map((comment, idx) => (
-        <AddCommentBox key={idx} pos={idx} {...comment} />
+        <CommentBox key={idx} pos={idx} {...comment} />
       ))}
-    </>
+
+      <div className={styles.replyCommentWrapper}>
+        {comments[0]?.mode !== CommentBoxMode.ADD && (
+          <input
+            type="text"
+            placeholder="Reply..."
+            className={styles.replyComment}
+          />
+        )}
+        {/* <CommentBox /> */}
+      </div>
+    </div>
   );
 };
 

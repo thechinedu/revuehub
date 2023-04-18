@@ -21,7 +21,7 @@ import {
   codeViewerStore,
   commentBoxDecorationSet,
 } from "./widgets/add-comment-box";
-import { AddCommentBox, CommentBox, CommentBoxMode } from "./AddCommentBox";
+import { CommentBoxContainer, CommentBox, CommentBoxMode } from "./CommentBox";
 import { multiLineCommentStore } from "./widgets/add-comment";
 import {
   lineHighlightCompartment,
@@ -102,7 +102,6 @@ const CodeViewer = ({
     <>
       {/* {<AddCommentBox mode={CommentBoxMode.ADD} value="Hello comment box" />} */}
       <div ref={viewRef} className={`${styles.container} ${className}`} />
-      {/* <CommentBox comments={[]} /> */}
     </>
   );
 };
