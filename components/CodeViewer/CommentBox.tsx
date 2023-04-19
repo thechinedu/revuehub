@@ -98,6 +98,10 @@ type CommentBoxContainerProps = {
 export const CommentBoxContainer = ({
   comments = [],
 }: CommentBoxContainerProps) => {
+  const hideReplyBox = comments.find(
+    (comment) => comment.mode === CommentBoxMode.ADD
+  );
+
   return (
     <div className={styles.commentBoxContainer}>
       {comments.map((comment, idx) => (
@@ -105,7 +109,7 @@ export const CommentBoxContainer = ({
       ))}
 
       <div className={styles.replyCommentWrapper}>
-        {comments[0]?.mode !== CommentBoxMode.ADD && (
+        {!hideReplyBox && (
           <input
             type="text"
             placeholder="Reply..."
@@ -118,9 +122,7 @@ export const CommentBoxContainer = ({
   );
 };
 
-// Rename AddCommentBox to CommentBox
-// The CommentBox children will take a prop representing the mode they are in { value, isSubmitDisabled, commentLineReference, mode }
-//        CommentBox will have a child component that can be in one of three modes: add, read or edit
-// CommentBox should take a prop representing the comments that are associated with it
-// CommentBox should render a AddCommentBox in add mode if there are no comments
-//        CommentBox should render all CommentBoxes in read mode if there are comments
+// @Next::TODO
+// Clicking cancel on the comment box should only dismiss the specific comment box and not the entire comment box container
+// Add support for updating comments (clicking cancel should only dismiss the comment box being edited)
+// Add support for deleting comments

@@ -47,12 +47,12 @@ export const addCommentBoxStore = {
     this.store.delete(key);
   },
 
-  update(key: number, newComment: CommentBoxStore) {
+  update(key: number, newStore: CommentBoxStore) {
     if (!this.store.has(key)) return;
 
     const existingComments = this.store.get(key) as CommentBoxStore;
 
-    this.store.set(key, [...existingComments, ...newComment]);
+    this.store.set(key, newStore);
   },
 
   reset() {
@@ -119,7 +119,7 @@ class CommentBoxWidget extends WidgetType {
         console.log({ commentRequestBody });
 
         try {
-          const jsonRes = await post("/comments", commentRequestBody);
+          // const jsonRes = await post("/comments", commentRequestBody);
           // Successfully added comment
           // Update comment box store, set mode to read (read mode has a reply input box at the bottom)
           // Update view to show the comment box in read mode
@@ -134,7 +134,7 @@ class CommentBoxWidget extends WidgetType {
           });
           this.view.dispatch(trx);
 
-          console.log({ jsonRes });
+          // console.log({ jsonRes });
         } catch (err) {
           console.log(err);
         }
@@ -212,6 +212,7 @@ class CommentBoxWidget extends WidgetType {
       console.log("input has focus");
 
       const store = addCommentBoxStore.get(this.key);
+      console.log({ store });
 
       if (store) {
         const newCommentBox: CommentBoxStore[number] = {
@@ -224,7 +225,7 @@ class CommentBoxWidget extends WidgetType {
 
         store.push(newCommentBox);
 
-        addCommentBoxStore.update(this.key, store);
+        console.log(addCommentBoxStore.get(this.key), "after update");
 
         const trx = this.view.state.update({
           effects: [
