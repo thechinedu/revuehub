@@ -306,19 +306,7 @@ class AddCommentWidget extends WidgetType {
       multiLineCommentStore.setStartLineAtPointOfDragStart(key);
     });
 
-    // TODO: is this still required? remove if no longer needed
-    // widgetContainer.addEventListener("drag", (evt) => {
-    //   if (!this.view) return;
-
-    //   const editorTop = this.view.documentTop;
-    //   const lineElemTop = evt.clientY;
-    //   const lineElemPos = lineElemTop - editorTop;
-    //   const lineElemBlockInfo = this.view.lineBlockAtHeight(lineElemPos);
-    //   const doc = this.view.state.doc.lineAt(lineElemBlockInfo.from);
-    //   const { number, ...data } = doc;
-    // });
-
-    widgetContainer.addEventListener("dragend", (evt) => {
+    widgetContainer.addEventListener("dragend", () => {
       if (!this.view) return;
 
       const startLine = multiLineCommentStore.getStartLine();

@@ -170,35 +170,46 @@ class CommentBoxWidget extends WidgetType {
     });
 
     widgetContainer.addEventListener("click", (evt) => {
-      const cancelBtn = evt.target as HTMLButtonElement;
+      const btn = evt.target as HTMLButtonElement;
 
-      if (cancelBtn.dataset.action !== "reset" || this.view == null) return;
+      if (btn.dataset.action !== "reset" || this.view == null) return;
 
       const store = addCommentBoxStore.get(this.key);
 
       if (store) {
-        const { startLine, endLine } = store[0];
+        if (store.length === 1 && store[0].mode === CommentBoxMode.ADD) {
+          const { startLine, endLine } = store[0];
 
-        if (startLine && endLine) {
-          for (let i = startLine; i <= endLine; i++) {
-            multiLineCommentStore.remove(i);
+          if (startLine && endLine) {
+            for (let i = startLine; i <= endLine; i++) {
+              multiLineCommentStore.remove(i);
+            }
           }
+
+          addCommentBoxStore.remove(this.key);
         }
+
+        const itemPos = +(btn.dataset.elemPos as string);
+        const commentBox = store[itemPos];
+
+        if (commentBox.mode === CommentBoxMode.ADD) {
+          store.splice(itemPos, 1);
+        } else {
+          commentBox.mode = CommentBoxMode.READ;
+        }
+
+        const trx = this.view.state.update({
+          effects: [
+            addCommentBoxCompartment.reconfigure(
+              addCommentBoxStore.generateDecorations()
+            ),
+            lineHighlightCompartment.reconfigure(
+              multiLineCommentStore.highlightLines()
+            ),
+          ],
+        });
+        this.view.dispatch(trx);
       }
-
-      addCommentBoxStore.remove(this.key);
-
-      const trx = this.view.state.update({
-        effects: [
-          addCommentBoxCompartment.reconfigure(
-            addCommentBoxStore.generateDecorations()
-          ),
-          lineHighlightCompartment.reconfigure(
-            multiLineCommentStore.highlightLines()
-          ),
-        ],
-      });
-      this.view.dispatch(trx);
     });
 
     widgetContainer.addEventListener("focusin", (evt) => {

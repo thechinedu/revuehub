@@ -27,6 +27,13 @@ import {
   lineHighlightCompartment,
   lineDecorationSet,
 } from "./widgets/line-highlight";
+import { useQuery } from "@tanstack/react-query";
+import { get } from "@/utils";
+
+const fetchAllComments = (repositoryID: number | undefined, filePath: string) =>
+  get(
+    `/comments?repository_id=${repositoryID}&file_path=${filePath}&view=code`
+  );
 
 type CodeViewerProps = {
   doc: string;
@@ -43,6 +50,21 @@ const CodeViewer = ({
 }: CodeViewerProps): JSX.Element => {
   const viewRef = useRef<HTMLDivElement | null>(null);
   const editorViewRef = useRef<EditorView | null>(null);
+
+  useQuery(
+    ["getAllComments", filePath],
+    () => fetchAllComments(repositoryID, filePath),
+    {
+      onSuccess: (data) => {
+        console.log(data, "hello");
+      },
+      retry: false,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      enabled: Boolean(repositoryID && filePath),
+    }
+  );
 
   useEffect(() => {
     if (!editorViewRef.current) {
@@ -87,16 +109,14 @@ const CodeViewer = ({
     addCommentBoxStore.reset();
     multiLineCommentStore.reset();
 
-    codeViewerStore.set("filePath", filePath);
-
-    editorViewRef.current.dispatch(transaction);
-  }, [doc, filePath]);
-
-  useEffect(() => {
     if (repositoryID) {
       codeViewerStore.set("repositoryID", repositoryID);
     }
-  }, [repositoryID]);
+
+    codeViewerStore.set("filePath", filePath);
+
+    editorViewRef.current.dispatch(transaction);
+  }, [doc, filePath, repositoryID]);
 
   return (
     <>
