@@ -70,6 +70,7 @@ export const CommentBox = ({
               placeholder="Write a comment"
               defaultValue={value}
               data-elem-pos={pos}
+              autoFocus
             />
 
             <div className={styles.actions}>
@@ -80,7 +81,12 @@ export const CommentBox = ({
               >
                 Add review comment
               </button>
-              <button className={styles.btn} type="button" data-action="reset">
+              <button
+                className={styles.btn}
+                type="button"
+                data-action="reset"
+                data-elem-pos={pos}
+              >
                 Cancel
               </button>
             </div>
@@ -123,6 +129,7 @@ export const CommentBoxContainer = ({
 };
 
 // @Next::TODO
-// Clicking cancel on the comment box should only dismiss the specific comment box and not the entire comment box container
+// Clicking cancel on the comment box should only dismiss the specific comment box and not the entire comment box container ✅
+// Add support for retrieving all comments
 // Add support for updating comments (clicking cancel should only dismiss the comment box being edited)
 // Add support for deleting comments

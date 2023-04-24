@@ -203,8 +203,8 @@ const Repo: NextPage = () => {
             Show comment icon when code content is hovered on ✅
             Support adding multi-line comment boxes ✅
             Support removing comment-box by clicking on cancel button ✅
+            Support submitting comment by clicking on add review comment button ✅
 
-            Support submitting comment by clicking on add review comment button
             Support adding file-level comments
             Detect language via file extension
             URL should be updated based on the currently active file (reloading page should load the last viewed file)
