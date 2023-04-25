@@ -12,7 +12,7 @@ import { EditorView, lineNumbers } from "@codemirror/view";
 
 import { indentationMarkers } from "@replit/codemirror-indentation-markers";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { editorTheme, eventHandlers } from "./extensions";
 import { addCommentBoxCompartment, addCommentCompartment } from "./widgets";
@@ -21,7 +21,12 @@ import {
   codeViewerStore,
   commentBoxDecorationSet,
 } from "./widgets/add-comment-box";
-import { CommentBoxContainer, CommentBox, CommentBoxMode } from "./CommentBox";
+import {
+  CommentBoxContainer,
+  CommentBox,
+  CommentBoxMode,
+  CommentBoxProps,
+} from "./CommentBox";
 import { multiLineCommentStore } from "./widgets/add-comment";
 import {
   lineHighlightCompartment,
@@ -29,9 +34,10 @@ import {
 } from "./widgets/line-highlight";
 import { useQuery } from "@tanstack/react-query";
 import { get } from "@/utils";
+import { FetchAllCommentsResponse } from "@/types";
 
 const fetchAllComments = (repositoryID: number | undefined, filePath: string) =>
-  get(
+  get<FetchAllCommentsResponse>(
     `/comments?repository_id=${repositoryID}&file_path=${filePath}&view=code`
   );
 
@@ -50,13 +56,14 @@ const CodeViewer = ({
 }: CodeViewerProps): JSX.Element => {
   const viewRef = useRef<HTMLDivElement | null>(null);
   const editorViewRef = useRef<EditorView | null>(null);
+  const [comments, setComments] = useState<CommentBoxProps[]>([]);
 
   useQuery(
     ["getAllComments", filePath],
     () => fetchAllComments(repositoryID, filePath),
     {
-      onSuccess: (data) => {
-        console.log(data, "hello");
+      onSuccess: (comments) => {
+        console.log(comments.data, "hello");
       },
       retry: false,
       refetchOnMount: false,
@@ -105,6 +112,8 @@ const CodeViewer = ({
         lineHighlightCompartment.reconfigure([]),
       ],
     });
+
+    console.log("effectual");
 
     addCommentBoxStore.reset();
     multiLineCommentStore.reset();
