@@ -246,16 +246,6 @@ class CommentBoxWidget extends WidgetType {
           ],
         });
         this.view.dispatch(trx);
-
-        // commentBox.value = value;
-
-        // if (value.trim().length) {
-        //   submitBtn.disabled = false;
-        //   commentBox.isSubmitDisabled = false;
-        // } else {
-        //   submitBtn.disabled = true;
-        //   commentBox.isSubmitDisabled = true;
-        // }
       }
     });
   }

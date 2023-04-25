@@ -83,6 +83,16 @@ export type FetchFileBlobResponse =
   | FetchFileBlobContentSuccessResponse
   | FetchFileBlobContentErrorResponse;
 
+type Comment = {
+  id: number;
+  content: string;
+  created_at: string;
+  user_id: number;
+  insertion_pos: number;
+  status: "pending" | "published";
+};
+export type FetchAllCommentsResponse = Response<Comment[]>;
+
 export const GITHUB_AUTH_ENDPOINT = process.env
   .NEXT_PUBLIC_GITHUB_AUTH_ENDPOINT as string;
 export const GITHUB_OAUTH_CLIENT_ID = process.env
