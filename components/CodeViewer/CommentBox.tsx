@@ -17,6 +17,7 @@ export type CommentBoxProps = {
   commentLineReference?: string;
   mode?: CommentBoxMode;
   pos?: number;
+  username?: string;
 };
 
 export const CommentBox = ({
@@ -25,6 +26,7 @@ export const CommentBox = ({
   commentLineReference = "",
   mode = CommentBoxMode.ADD,
   pos,
+  username,
 }: CommentBoxProps): JSX.Element => {
   return (
     <div
@@ -42,7 +44,7 @@ export const CommentBox = ({
               width={16}
               height={16}
             />
-            <p className={styles.username}>thechinedu</p>
+            <p className={styles.username}>{username}</p>
 
             <div className={styles.actions}>
               <button className={styles.iconWrapper}>
