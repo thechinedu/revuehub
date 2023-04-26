@@ -268,9 +268,24 @@ class AddCommentWidget extends WidgetType {
       const elem = evt.target as HTMLElement;
       const lineElem = getLineElem(elem);
       const lineData = getLineData(lineElem, this.view);
-      const pos = lineData.text ? lineData.to : lineData.to + 1;
+      let key = lineData.text ? lineData.to : lineData.to + 1;
+      const commentBox = addCommentBoxStore.get(key);
 
-      addCommentBoxStore.add(pos, [
+      if (commentBox && commentBox[0]?.mode !== CommentBoxMode.ADD) {
+        // Comment box already exists at this position
+        // User wants to add a new comment box beneath the existing one
+        // Increase insertion position by one until a position is found for the new comment box
+
+        while (addCommentBoxStore.get(key)) {
+          const mode = addCommentBoxStore.get(key)?.[0].mode;
+
+          if (mode === CommentBoxMode.ADD) break;
+
+          key += 1;
+        }
+      }
+
+      addCommentBoxStore.add(key, [
         {
           value: "",
           isSubmitDisabled: true,

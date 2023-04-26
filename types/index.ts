@@ -83,13 +83,14 @@ export type FetchFileBlobResponse =
   | FetchFileBlobContentSuccessResponse
   | FetchFileBlobContentErrorResponse;
 
-type Comment = {
+export type Comment = {
   id: number;
   content: string;
   created_at: string;
-  user_id: number;
   insertion_pos: number;
-  status: "pending" | "published";
+  status: "PENDING" | "PUBLISHED";
+  username: string;
+  profile_image_url: string;
 };
 export type FetchAllCommentsResponse = Response<Comment[]>;
 
