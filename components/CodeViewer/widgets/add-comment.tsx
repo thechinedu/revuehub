@@ -268,41 +268,28 @@ class AddCommentWidget extends WidgetType {
       const elem = evt.target as HTMLElement;
       const lineElem = getLineElem(elem);
       const lineData = getLineData(lineElem, this.view);
-      let key = lineData.text ? lineData.to : lineData.to + 1;
-      const commentBox = addCommentBoxStore.get(key);
+      const pos = lineData.text ? lineData.to : lineData.to + 1;
 
-      if (commentBox && commentBox[0]?.mode !== CommentBoxMode.ADD) {
-        // Comment box already exists at this position
-        // User wants to add a new comment box beneath the existing one
-        // Increase insertion position by one until a position is found for the new comment box
+      if (addCommentBoxStore.canAddCommentBox(pos)) {
+        addCommentBoxStore.add(pos, [
+          {
+            value: "",
+            isSubmitDisabled: true,
+            commentLineReference: `Commenting on line ${lineData.number}`,
+            snippet: lineData.text,
+            startLine: lineData.number,
+            endLine: lineData.number,
+            mode: CommentBoxMode.ADD,
+          },
+        ]);
 
-        while (addCommentBoxStore.get(key)) {
-          const mode = addCommentBoxStore.get(key)?.[0].mode;
-
-          if (mode === CommentBoxMode.ADD) break;
-
-          key += 1;
-        }
+        const trx = this.view.state.update({
+          effects: addCommentBoxCompartment.reconfigure(
+            addCommentBoxStore.generateDecorations()
+          ),
+        });
+        this.view.dispatch(trx);
       }
-
-      addCommentBoxStore.add(key, [
-        {
-          value: "",
-          isSubmitDisabled: true,
-          commentLineReference: `Commenting on line ${lineData.number}`,
-          snippet: lineData.text,
-          startLine: lineData.number,
-          endLine: lineData.number,
-          mode: CommentBoxMode.ADD,
-        },
-      ]);
-
-      const trx = this.view.state.update({
-        effects: addCommentBoxCompartment.reconfigure(
-          addCommentBoxStore.generateDecorations()
-        ),
-      });
-      this.view.dispatch(trx);
     });
 
     widgetContainer.addEventListener("dragstart", (evt) => {
@@ -331,24 +318,26 @@ class AddCommentWidget extends WidgetType {
       if (lineData) {
         const pos = lineData.text ? lineData.to : lineData.to + 1;
 
-        addCommentBoxStore.add(pos, [
-          {
-            value: "",
-            isSubmitDisabled: true,
-            commentLineReference: `Commenting on lines ${startLine} to ${endLine}`,
-            snippet: multiLineCommentStore.getSnippet(),
-            startLine,
-            endLine,
-            mode: CommentBoxMode.ADD,
-          },
-        ]);
+        if (addCommentBoxStore.canAddCommentBox(pos)) {
+          addCommentBoxStore.add(pos, [
+            {
+              value: "",
+              isSubmitDisabled: true,
+              commentLineReference: `Commenting on lines ${startLine} to ${endLine}`,
+              snippet: multiLineCommentStore.getSnippet(),
+              startLine,
+              endLine,
+              mode: CommentBoxMode.ADD,
+            },
+          ]);
 
-        const trx = this.view.state.update({
-          effects: addCommentBoxCompartment.reconfigure(
-            addCommentBoxStore.generateDecorations()
-          ),
-        });
-        this.view.dispatch(trx);
+          const trx = this.view.state.update({
+            effects: addCommentBoxCompartment.reconfigure(
+              addCommentBoxStore.generateDecorations()
+            ),
+          });
+          this.view.dispatch(trx);
+        }
       }
     });
   }
