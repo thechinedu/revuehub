@@ -30,24 +30,62 @@ export const codeViewerStore = new Map<
   string | number
 >();
 
-export const addCommentBoxStore = {
-  store: new Map<number, CommentBoxStore>(),
+const uniqueKeyGenerator =
+  (initKey = 0) =>
+  () =>
+    ++initKey;
 
-  add(key: number, value: CommentBoxStore) {
+const generateKey = uniqueKeyGenerator();
+
+const extractInsertionPosFromKey = (key: string) => {
+  const [_, insertionPos] = key.split("_");
+  return +insertionPos;
+};
+
+export const addCommentBoxStore = {
+  store: new Map<string, CommentBoxStore>(),
+  lastKey: "",
+
+  add(insertionPos: number, value: CommentBoxStore) {
+    const key = `${generateKey()}_${insertionPos}`;
+    this.lastKey = key;
+
     if (this.store.has(key)) return;
 
     this.store.set(key, value);
   },
 
-  get(key: number) {
+  get(key: string) {
     return this.store.get(key);
   },
 
-  remove(key: number) {
+  hasInsertionPos(insertionPos: number) {
+    return Array.from(this.store.keys()).some((key) =>
+      key.endsWith(`_${insertionPos}`)
+    );
+  },
+
+  canAddCommentBox(insertionPos: number): boolean {
+    const insertionPosItems: CommentBoxStore[] = [];
+
+    Array.from(this.store.entries()).forEach(([key, value]) => {
+      if (extractInsertionPosFromKey(key) === insertionPos) {
+        insertionPosItems.push(value);
+      }
+    });
+
+    for (const item of insertionPosItems) {
+      if (item[0].mode === CommentBoxMode.ADD) return false;
+    }
+
+    return true;
+  },
+
+  remove(key: string) {
     this.store.delete(key);
   },
 
-  update(key: number, newStore: CommentBoxStore) {
+  update(key: string, newStore: CommentBoxStore) {
     if (!this.store.has(key)) return;
 
     const existingComments = this.store.get(key) as CommentBoxStore;
@@ -61,7 +99,7 @@ export const addCommentBoxStore = {
 
   generateDecorations() {
     return Array.from(this.store.keys()).map((key) =>
-      commentBoxDecorationSet(+key)
+      commentBoxDecorationSet(key)
     );
   },
 };
@@ -69,7 +107,7 @@ export const addCommentBoxStore = {
 class CommentBoxWidget extends WidgetType {
   view: EditorView | null;
 
-  constructor(private key: number) {
+  constructor(private key: string) {
     super();
 
     this.view = null;
@@ -113,7 +151,7 @@ class CommentBoxWidget extends WidgetType {
           end_line: commentBox.endLine,
           snippet: commentBox.snippet,
           level: "LINE",
-          insertion_pos: this.key,
+          insertion_pos: extractInsertionPosFromKey(this.key),
         };
 
         console.log({ commentRequestBody });
@@ -251,18 +289,20 @@ class CommentBoxWidget extends WidgetType {
   }
 }
 
-export const commentBoxDecorationSet = (pos: number) =>
+export const commentBoxDecorationSet = (key: string) =>
   StateField.define<DecorationSet>({
     create() {
       return Decoration.none;
     },
     update() {
       const commentBoxDecoration = Decoration.widget({
-        widget: new CommentBoxWidget(pos),
+        widget: new CommentBoxWidget(key),
         block: true,
       });
 
-      return Decoration.set([commentBoxDecoration.range(pos)]);
+      return Decoration.set([
+        commentBoxDecoration.range(extractInsertionPosFromKey(key)),
+      ]);
     },
 
     provide: (f) => EditorView.decorations.from(f),
