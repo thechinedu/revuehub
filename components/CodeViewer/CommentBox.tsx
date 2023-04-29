@@ -132,6 +132,6 @@ export const CommentBoxContainer = ({
 
 // @Next::TODO
 // Clicking cancel on the comment box should only dismiss the specific comment box and not the entire comment box container ✅
-// Add support for retrieving all comments
+// Add support for retrieving all comments ✅
 // Add support for updating comments (clicking cancel should only dismiss the comment box being edited)
 // Add support for deleting comments
