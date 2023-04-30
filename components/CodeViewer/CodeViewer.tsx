@@ -82,7 +82,13 @@ const CodeViewer = ({
 }: CodeViewerProps): JSX.Element => {
   const viewRef = useRef<HTMLDivElement | null>(null);
   const editorViewRef = useRef<EditorView | null>(null);
+  const [showComments, setShowComments] = useState(true);
   const [comments, setComments] = useState<Comment[]>([]);
+
+  const showFileContents = Boolean(doc.length);
+  console.log({ doc });
+
+  const handleChange = () => setShowComments(!showComments);
 
   useQuery(
     ["getAllComments", filePath],
@@ -118,7 +124,7 @@ const CodeViewer = ({
       changes: {
         from: 0,
         to: editorViewRef.current.state.doc.length,
-        insert: doc,
+        insert: doc.length ? doc : "no file selected",
       },
       effects: [
         filePath
@@ -156,9 +162,39 @@ const CodeViewer = ({
     editorViewRef.current.dispatch(transaction);
   }, [doc, filePath, repositoryID]);
 
+  useEffect(() => {
+    if (!editorViewRef.current) return;
+
+    if (showComments) {
+      return;
+    }
+    const transaction = editorViewRef.current.state.update({
+      effects: [addCommentBoxCompartment.reconfigure([])],
+    });
+    editorViewRef.current.dispatch(transaction);
+  }, [showComments]);
+
   return (
     <>
       {/* {<AddCommentBox mode={CommentBoxMode.ADD} value="Hello comment box" />} */}
+      {showFileContents && (
+        <div className={styles.menu}>
+          <p className={styles.filePath}>{filePath}</p>
+
+          <label>
+            <input
+              type="checkbox"
+              checked={showComments}
+              onChange={handleChange}
+            />{" "}
+            Show comments
+          </label>
+
+          <button className={styles.fileCommentBtn}>
+            Add file-level comment
+          </button>
+        </div>
+      )}
       <div ref={viewRef} className={`${styles.container} ${className}`} />
     </>
   );

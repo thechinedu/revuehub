@@ -210,23 +210,9 @@ const Repo: NextPage = () => {
             URL should be updated based on the currently active file (reloading page should load the last viewed file)
           */}
 
-          {showFileContents && (
-            <div className={styles.menu}>
-              <p className={styles.filePath}>{fileBlobInfo.filePath}</p>
-
-              <label>
-                <input type="checkbox" checked readOnly /> Show comments
-              </label>
-
-              <button className={styles.fileCommentBtn}>
-                Add file-level comment
-              </button>
-            </div>
-          )}
-
           {viewer === Viewer.CM && (
             <CodeViewer
-              doc={showFileContents ? fileBlobContents : "no file selected"}
+              doc={fileBlobContents}
               filePath={fileBlobInfo.filePath}
               repositoryID={repo?.id}
               className={
