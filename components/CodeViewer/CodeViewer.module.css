@@ -1,12 +1,16 @@
 .menu {
   align-items: center;
   border: 2px solid var(--black);
-  display: flex;
+  display: none;
   flex-wrap: wrap;
   font-size: var(--small);
   justify-content: space-between;
   margin-top: var(--spacer-2);
   padding: var(--spacer-1);
+}
+
+.menu.isShowing {
+  display: flex;
 }
 
 .menu .filePath {
