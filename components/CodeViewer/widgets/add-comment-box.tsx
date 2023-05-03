@@ -24,10 +24,10 @@ type CommentBoxStore = (CommentBoxProps & {
   endLine?: number;
 })[];
 
-// General store for all comment boxes for shared data
+// General store for shared data
 export const codeViewerStore = new Map<
-  "filePath" | "repositoryID",
-  string | number
+  "filePath" | "repositoryID" | "showCommentsElemRef",
+  string | number | HTMLInputElement
 >();
 
 const uniqueKeyGenerator =

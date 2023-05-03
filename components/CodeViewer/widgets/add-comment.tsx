@@ -14,6 +14,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import {
   addCommentBoxCompartment,
   addCommentBoxStore,
+  codeViewerStore,
   commentBoxDecorationSet,
 } from "./add-comment-box";
 import { getLineData, getLineElem } from "../helpers";
@@ -265,6 +266,13 @@ class AddCommentWidget extends WidgetType {
   attachListeners(widgetContainer: HTMLSpanElement) {
     widgetContainer.addEventListener("click", (evt) => {
       if (!this.view) return;
+
+      const showCommentsElemRef = codeViewerStore.get("showCommentsElemRef");
+
+      if (showCommentsElemRef) {
+        (showCommentsElemRef as HTMLInputElement).checked = true;
+      }
+
       const elem = evt.target as HTMLElement;
       const lineElem = getLineElem(elem);
       const lineData = getLineData(lineElem, this.view);

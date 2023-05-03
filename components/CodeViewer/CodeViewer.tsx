@@ -1,7 +1,7 @@
 import styles from "./CodeViewer.module.css";
 
 import { Comment, FetchAllCommentsResponse } from "@/types";
-import { get } from "@/utils";
+import { cn, get } from "@/utils";
 
 import { javascript } from "@codemirror/lang-javascript";
 import {
@@ -10,14 +10,14 @@ import {
   foldGutter,
   syntaxHighlighting,
 } from "@codemirror/language";
-import { EditorState, StateEffect } from "@codemirror/state";
-import { EditorView, lineNumbers } from "@codemirror/view";
+import { EditorState, StateEffect, StateField } from "@codemirror/state";
+import { DecorationSet, EditorView, lineNumbers } from "@codemirror/view";
 
 import { indentationMarkers } from "@replit/codemirror-indentation-markers";
 
 import { useQuery } from "@tanstack/react-query";
 
-import { useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 
 import {
   CommentBoxContainer,
@@ -82,13 +82,10 @@ const CodeViewer = ({
 }: CodeViewerProps): JSX.Element => {
   const viewRef = useRef<HTMLDivElement | null>(null);
   const editorViewRef = useRef<EditorView | null>(null);
-  const [showComments, setShowComments] = useState(true);
   const [comments, setComments] = useState<Comment[]>([]);
+  const showCommentsContainerRef = useRef<HTMLInputElement | null>(null);
 
   const showFileContents = Boolean(doc.length);
-  console.log({ doc });
-
-  const handleChange = () => setShowComments(!showComments);
 
   useQuery(
     ["getAllComments", filePath],
@@ -163,38 +160,58 @@ const CodeViewer = ({
   }, [doc, filePath, repositoryID]);
 
   useEffect(() => {
-    if (!editorViewRef.current) return;
+    console.log(showCommentsContainerRef.current, "DO I set this???");
+    if (!showCommentsContainerRef.current) return;
 
-    if (showComments) {
-      return;
-    }
-    const transaction = editorViewRef.current.state.update({
-      effects: [addCommentBoxCompartment.reconfigure([])],
-    });
-    editorViewRef.current.dispatch(transaction);
-  }, [showComments]);
+    codeViewerStore.set(
+      "showCommentsElemRef",
+      showCommentsContainerRef.current
+    );
+
+    showCommentsContainerRef.current.addEventListener(
+      "click",
+      (evt: MouseEvent) => {
+        console.log("show comments clicked", editorViewRef.current);
+        const isChecked = (evt.target as HTMLInputElement).checked;
+
+        if (!editorViewRef.current) return;
+
+        let commentBoxExtension: StateField<DecorationSet>[] = [];
+
+        if (isChecked) {
+          commentBoxExtension = addCommentBoxStore.generateDecorations();
+        }
+
+        console.log({ commentBoxExtension, isChecked });
+
+        const transaction = editorViewRef.current.state.update({
+          effects: [addCommentBoxCompartment.reconfigure(commentBoxExtension)],
+        });
+        editorViewRef.current.dispatch(transaction);
+      }
+    );
+  }, []);
 
   return (
     <>
       {/* {<AddCommentBox mode={CommentBoxMode.ADD} value="Hello comment box" />} */}
-      {showFileContents && (
-        <div className={styles.menu}>
-          <p className={styles.filePath}>{filePath}</p>
+      <div className={cn(styles, { menu: true, isShowing: showFileContents })}>
+        <p className={styles.filePath}>{filePath}</p>
 
-          <label>
-            <input
-              type="checkbox"
-              checked={showComments}
-              onChange={handleChange}
-            />{" "}
-            Show comments
-          </label>
+        <label>
+          <input
+            type="checkbox"
+            ref={showCommentsContainerRef}
+            defaultChecked
+          />{" "}
+          Show comments
+        </label>
 
-          <button className={styles.fileCommentBtn}>
-            Add file-level comment
-          </button>
-        </div>
-      )}
+        <button className={styles.fileCommentBtn}>
+          Add file-level comment
+        </button>
+      </div>
+
       <div ref={viewRef} className={`${styles.container} ${className}`} />
     </>
   );
