@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 1000",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -30,9 +30,6 @@
     "next": "13.2.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-syntax-highlighter": "^15.5.0",
-    "react-virtualized-auto-sizer": "^1.0.7",
-    "react-window": "^1.8.8",
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
@@ -45,9 +42,6 @@
     "@types/node-fetch": "^2.6.2",
     "@types/react": "18.0.33",
     "@types/react-dom": "18.0.11",
-    "@types/react-syntax-highlighter": "^15.5.6",
-    "@types/react-virtualized-auto-sizer": "^1.0.1",
-    "@types/react-window": "^1.8.5",
     "@types/zxcvbn": "^4.4.1",
     "cypress": "^12.9.0",
     "eslint": "8.36.0",

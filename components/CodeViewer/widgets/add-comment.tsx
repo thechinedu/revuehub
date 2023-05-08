@@ -271,6 +271,13 @@ class AddCommentWidget extends WidgetType {
 
       if (showCommentsElemRef) {
         (showCommentsElemRef as HTMLInputElement).checked = true;
+
+        const trx = this.view.state.update({
+          effects: addCommentBoxCompartment.reconfigure(
+            addCommentBoxStore.generateDecorations()
+          ),
+        });
+        this.view.dispatch(trx);
       }
 
       const elem = evt.target as HTMLElement;
