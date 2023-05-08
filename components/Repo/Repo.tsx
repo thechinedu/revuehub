@@ -28,14 +28,6 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { MouseEvent, useState } from "react";
-import {
-  PrismAsyncLight as SyntaxHighlighter,
-  createElement,
-} from "react-syntax-highlighter";
-import { ghcolors } from "react-syntax-highlighter/dist/cjs/styles/prism";
-import { FixedSizeList as List } from "react-window";
-
-import { getLanguageForExtension } from "@/utils";
 
 const fetchRepoByName = (owner: string, repo: string) =>
   get<FetchRepoResponse>(`/repositories/${owner}/${repo}`);
@@ -57,35 +49,6 @@ const fetchRepoBlobFileContents = (
   );
 };
 
-const Row =
-  ({ rows, stylesheet, useInlineStyles }: any) =>
-  ({ index, key, style }: any) =>
-    createElement({
-      node: rows[index],
-      stylesheet,
-      style,
-      useInlineStyles,
-      key,
-    });
-
-const fileContentsRenderer = ({ rows, stylesheet, useInlineStyles }: any) => {
-  return (
-    <List
-      height={rows.length * 20}
-      width={1000}
-      itemCount={rows.length}
-      itemSize={20}
-    >
-      {Row({ rows, stylesheet, useInlineStyles }) as any}
-    </List>
-  );
-};
-
-enum Viewer {
-  CM = "code-mirror",
-  SH = "syntax-highlighter",
-}
-
 const Repo: NextPage = () => {
   const router = useRouter();
   const path = router.asPath.slice(1);
@@ -98,7 +61,6 @@ const Repo: NextPage = () => {
     filePath: "",
   });
   const [fileBlobContents, setFileBlobContents] = useState("");
-  const [viewer, setViewer] = useState(Viewer.CM);
 
   const showFileContents = Boolean(fileBlobContents.length);
 
@@ -184,16 +146,6 @@ const Repo: NextPage = () => {
             Open file explorer
           </button>
 
-          <button
-            onClick={() => {
-              if (viewer === Viewer.CM) setViewer(Viewer.SH);
-              else setViewer(Viewer.CM);
-            }}
-            style={{ position: "absolute", top: 110, left: 280 }}
-          >
-            Switch viewer
-          </button>
-
           {/* TODOS:
             Add menu above file content display ✅
             Show file path bread crumb ✅
@@ -210,41 +162,16 @@ const Repo: NextPage = () => {
             URL should be updated based on the currently active file (reloading page should load the last viewed file)
           */}
 
-          {viewer === Viewer.CM && (
-            <CodeViewer
-              doc={fileBlobContents}
-              filePath={fileBlobInfo.filePath}
-              repositoryID={repo?.id}
-              className={
-                showFileContents
-                  ? styles.codeViewerWithMenu
-                  : styles.codeViewerWithoutMenu
-              }
-            />
-          )}
-
-          {viewer === Viewer.SH && (
-            <SyntaxHighlighter
-              language={getLanguageForExtension(fileBlobInfo.filePath)}
-              // language="javascript"
-              style={ghcolors}
-              // showLineNumbers={showFileContents}
-              showLineNumbers
-              customStyle={{
-                backgroundColor: "transparent",
-                border: "2px solid var(--black)",
-                borderTopWidth: showFileContents ? 0 : 2,
-                marginTop: showFileContents ? 0 : "var(--spacer-4)",
-              }}
-              codeTagProps={{ className: styles.codeContainer }}
-              renderer={fileContentsRenderer}
-              wrapLongLines
-              wrapLines
-            >
-              {showFileContents ? fileBlobContents : "no file selected"}
-              {/* {doc} */}
-            </SyntaxHighlighter>
-          )}
+          <CodeViewer
+            doc={fileBlobContents}
+            filePath={fileBlobInfo.filePath}
+            repositoryID={repo?.id}
+            className={
+              showFileContents
+                ? styles.codeViewerWithMenu
+                : styles.codeViewerWithoutMenu
+            }
+          />
         </main>
 
         {repo && repoContents && (
