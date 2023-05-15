@@ -82,10 +82,13 @@ const CodeViewer = ({
 }: CodeViewerProps): JSX.Element => {
   const viewRef = useRef<HTMLDivElement | null>(null);
   const editorViewRef = useRef<EditorView | null>(null);
-  const [comments, setComments] = useState<Comment[]>([]);
+  const [comments, setComments] = useState<CommentBoxProps[]>([]);
   const showCommentsContainerRef = useRef<HTMLInputElement | null>(null);
 
   const showFileContents = Boolean(doc.length);
+
+  codeViewerStore.set("comments", comments);
+  codeViewerStore.set("updateComments", setComments);
 
   useQuery(
     ["getAllComments", filePath],
@@ -93,7 +96,7 @@ const CodeViewer = ({
     {
       onSuccess: (comments) => {
         console.log(comments.data);
-        setComments(comments.data);
+        setComments(comments.data.map(commentToCommentBoxProperty));
       },
       retry: false,
       refetchOnMount: false,
@@ -115,7 +118,7 @@ const CodeViewer = ({
 
     addCommentBoxStore.reset();
 
-    const commentBoxExtension = generateCommentBoxDecorations(comments);
+    const commentBoxExtension = generateCommentBoxDecorations([]);
 
     const transaction = editorViewRef.current.state.update({
       changes: {
@@ -163,37 +166,37 @@ const CodeViewer = ({
     console.log(showCommentsContainerRef.current, "DO I set this???");
     if (!showCommentsContainerRef.current) return;
 
-    codeViewerStore.set(
-      "showCommentsElemRef",
-      showCommentsContainerRef.current
-    );
+    // codeViewerStore.set(
+    //   "showCommentsElemRef",
+    //   showCommentsContainerRef.current
+    // );
 
-    showCommentsContainerRef.current.addEventListener(
-      "click",
-      (evt: MouseEvent) => {
-        console.log("show comments clicked", editorViewRef.current);
-        const isChecked = (evt.target as HTMLInputElement).checked;
+    // showCommentsContainerRef.current.addEventListener(
+    //   "click",
+    //   (evt: MouseEvent) => {
+    //     console.log("show comments clicked", editorViewRef.current);
+    //     const isChecked = (evt.target as HTMLInputElement).checked;
 
-        if (!editorViewRef.current) return;
+    //     if (!editorViewRef.current) return;
 
-        let commentBoxExtension: StateField<DecorationSet>[] = [];
+    //     let commentBoxExtension: StateField<DecorationSet>[] = [];
 
-        if (isChecked) {
-          commentBoxExtension = addCommentBoxStore.generateDecorations();
-        }
+    //     if (isChecked) {
+    //       commentBoxExtension = addCommentBoxStore.generateDecorations();
+    //     }
 
-        console.log({ commentBoxExtension, isChecked });
+    //     console.log({ commentBoxExtension, isChecked });
 
-        const transaction = editorViewRef.current.state.update({
-          effects: [addCommentBoxCompartment.reconfigure(commentBoxExtension)],
-        });
-        editorViewRef.current.dispatch(transaction);
-      }
-    );
+    //     const transaction = editorViewRef.current.state.update({
+    //       effects: [addCommentBoxCompartment.reconfigure(commentBoxExtension)],
+    //     });
+    //     editorViewRef.current.dispatch(transaction);
+    //   }
+    // );
   }, []);
 
   return (
-    <>
+    <div className={styles.mainContainer}>
       {/* {<AddCommentBox mode={CommentBoxMode.ADD} value="Hello comment box" />} */}
       <div className={cn(styles, { menu: true, isShowing: showFileContents })}>
         <p className={styles.filePath}>{filePath}</p>
@@ -212,8 +215,22 @@ const CodeViewer = ({
         </button>
       </div>
 
-      <div ref={viewRef} className={`${styles.container} ${className}`} />
-    </>
+      <div
+        ref={viewRef}
+        className={`${styles.codeViewContainer} ${className}`}
+      />
+
+      <div
+        className={cn(styles, {
+          commentsContainer: true,
+          isShowing: showFileContents,
+        })}
+      >
+        {Boolean(comments.length) && (
+          <CommentBoxContainer comments={comments} />
+        )}
+      </div>
+    </div>
   );
 };
 

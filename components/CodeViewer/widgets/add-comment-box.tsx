@@ -26,8 +26,16 @@ type CommentBoxStore = (CommentBoxProps & {
 
 // General store for shared data
 export const codeViewerStore = new Map<
-  "filePath" | "repositoryID" | "showCommentsElemRef",
-  string | number | HTMLInputElement
+  | "filePath"
+  | "repositoryID"
+  | "showCommentsElemRef"
+  | "updateComments"
+  | "comments",
+  | string
+  | number
+  | HTMLInputElement
+  | ((comments: CommentBoxProps[]) => void)
+  | CommentBoxProps[]
 >();
 
 const uniqueKeyGenerator =
@@ -44,11 +52,9 @@ const extractInsertionPosFromKey = (key: string) => {
 
 export const addCommentBoxStore = {
   store: new Map<string, CommentBoxStore>(),
-  lastKey: "",
 
   add(insertionPos: number, value: CommentBoxStore) {
     const key = `${generateKey()}_${insertionPos}`;
-    this.lastKey = key;
 
     if (this.store.has(key)) return;
 
@@ -120,7 +126,7 @@ class CommentBoxWidget extends WidgetType {
 
     const container = document.createElement("div");
     const commentBox = renderToStaticMarkup(
-      <CommentBoxContainer comments={props} />
+      <CommentBoxContainer comments={props} mode={CommentBoxMode.ADD} />
     );
 
     container.classList.add("cm-comment-box");
@@ -162,6 +168,13 @@ class CommentBoxWidget extends WidgetType {
           // Update comment box store, set mode to read (read mode has a reply input box at the bottom)
           // Update view to show the comment box in read mode
           commentBox.mode = CommentBoxMode.READ;
+
+          const comments = codeViewerStore.get("comments") as CommentBoxProps[];
+          const setComments = codeViewerStore.get("updateComments") as (
+            comment: CommentBoxProps[]
+          ) => void;
+
+          setComments([...comments, commentBox]);
 
           const trx = this.view.state.update({
             effects: [
