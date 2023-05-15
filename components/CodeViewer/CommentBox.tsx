@@ -101,17 +101,24 @@ export const CommentBox = ({
 
 type CommentBoxContainerProps = {
   comments: CommentBoxProps[];
+  mode?: CommentBoxMode;
 };
 
 export const CommentBoxContainer = ({
   comments = [],
+  mode = CommentBoxMode.READ,
 }: CommentBoxContainerProps) => {
   const hideReplyBox = comments.find(
     (comment) => comment.mode === CommentBoxMode.ADD
   );
 
   return (
-    <div className={styles.commentBoxContainer}>
+    <div
+      className={cn(styles, {
+        commentBoxContainer: true,
+        readMode: mode === CommentBoxMode.READ,
+      })}
+    >
       {comments.map((comment, idx) => (
         <CommentBox key={idx} pos={idx} {...comment} />
       ))}

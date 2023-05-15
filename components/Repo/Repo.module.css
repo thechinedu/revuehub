@@ -39,16 +39,13 @@
   font-weight: 700;
 }
 
-.main {
-  margin-top: var(--spacer-4);
-}
-
 .fileExplorerBtn {
   composes: btn from "@/styles/blocks.module.css";
   align-items: center;
   box-shadow: 5px 5px var(--black);
   display: flex;
   font-size: var(--small);
+  margin-top: var(--spacer-1);
 
   @media (min-width: 1101px) {
     display: none;
