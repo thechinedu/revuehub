@@ -1,5 +1,9 @@
 .mainContainer {
   display: grid;
+  grid-template-columns: 1fr;
+}
+
+.mainContainer.showComments.showFileContents {
   grid-template-columns: 700px 1fr;
 }
 
@@ -59,6 +63,22 @@
   width: 16px;
 }
 
+.commentsContainer {
+  border: 2px solid var(--black);
+  border-top: 0;
+  border-left: 0;
+  display: none;
+  padding: var(--spacer-2);
+}
+
+.commentsContainer.isShowing {
+  display: block;
+}
+
+.noComments {
+  font-size: 0.875rem;
+}
+
 .commentBoxContainer {
   background-color: var(--powder);
   border: 2px solid var(--black);
@@ -69,8 +89,13 @@
 }
 
 .commentBoxContainer.readMode {
-  border: 0;
   border-bottom: 2px solid var(--black);
+  border-top: 2px solid var(--black);
+  margin-top: var(--spacer-2);
+}
+
+.commentBoxContainer.readMode:first-child {
+  margin-top: 0;
 }
 
 .replyCommentWrapper {
@@ -181,15 +206,4 @@
 .btn[disabled] {
   cursor: not-allowed;
   opacity: 0.5;
-}
-
-.commentsContainer {
-  border: 2px solid var(--black);
-  border-top: 0;
-  border-left: 0;
-  display: none;
-}
-
-.commentsContainer.isShowing {
-  display: block;
 }

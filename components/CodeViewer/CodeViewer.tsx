@@ -59,6 +59,7 @@ const commentToCommentBoxProperty = (comment: Comment): CommentBoxProps => {
     pos?: number | undefined;
    */
   return {
+    id: comment.id,
     value: comment.content,
     mode: CommentBoxMode.READ,
   };
@@ -83,6 +84,7 @@ const CodeViewer = ({
   const viewRef = useRef<HTMLDivElement | null>(null);
   const editorViewRef = useRef<EditorView | null>(null);
   const [comments, setComments] = useState<CommentBoxProps[]>([]);
+  const [showComments, setShowComments] = useState(true);
   const showCommentsContainerRef = useRef<HTMLInputElement | null>(null);
 
   const showFileContents = Boolean(doc.length);
@@ -196,7 +198,13 @@ const CodeViewer = ({
   }, []);
 
   return (
-    <div className={styles.mainContainer}>
+    <div
+      className={cn(styles, {
+        mainContainer: true,
+        showFileContents,
+        showComments,
+      })}
+    >
       {/* {<AddCommentBox mode={CommentBoxMode.ADD} value="Hello comment box" />} */}
       <div className={cn(styles, { menu: true, isShowing: showFileContents })}>
         <p className={styles.filePath}>{filePath}</p>
@@ -204,8 +212,10 @@ const CodeViewer = ({
         <label>
           <input
             type="checkbox"
-            ref={showCommentsContainerRef}
-            defaultChecked
+            checked={showComments}
+            onChange={(evt: ChangeEvent<HTMLInputElement>) => {
+              setShowComments(evt.target.checked);
+            }}
           />{" "}
           Show comments
         </label>
@@ -223,12 +233,17 @@ const CodeViewer = ({
       <div
         className={cn(styles, {
           commentsContainer: true,
-          isShowing: showFileContents,
+          isShowing: showFileContents && showComments,
         })}
       >
-        {Boolean(comments.length) && (
-          <CommentBoxContainer comments={comments} />
+        {comments.length === 0 && (
+          <p className={styles.noComments}>
+            There are no comments on this file
+          </p>
         )}
+        {comments.map((comment) => {
+          return <CommentBoxContainer key={comment.id} comments={[comment]} />;
+        })}
       </div>
     </div>
   );

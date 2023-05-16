@@ -177,13 +177,10 @@ class CommentBoxWidget extends WidgetType {
           setComments([...comments, commentBox]);
 
           const trx = this.view.state.update({
-            effects: [
-              addCommentBoxCompartment.reconfigure(
-                addCommentBoxStore.generateDecorations()
-              ),
-            ],
+            effects: [addCommentBoxCompartment.reconfigure([])],
           });
           this.view.dispatch(trx);
+          addCommentBoxStore.reset();
 
           // console.log({ jsonRes });
         } catch (err) {

@@ -12,6 +12,7 @@ export enum CommentBoxMode {
 }
 
 export type CommentBoxProps = {
+  id: number;
   value?: string;
   isSubmitDisabled?: boolean;
   commentLineReference?: string;
