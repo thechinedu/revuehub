@@ -62,6 +62,7 @@ const commentToCommentBoxProperty = (comment: Comment): CommentBoxProps => {
     id: comment.id,
     value: comment.content,
     mode: CommentBoxMode.READ,
+    snippet: comment.snippet,
   };
 };
 
@@ -164,39 +165,6 @@ const CodeViewer = ({
     editorViewRef.current.dispatch(transaction);
   }, [doc, filePath, repositoryID]);
 
-  useEffect(() => {
-    console.log(showCommentsContainerRef.current, "DO I set this???");
-    if (!showCommentsContainerRef.current) return;
-
-    // codeViewerStore.set(
-    //   "showCommentsElemRef",
-    //   showCommentsContainerRef.current
-    // );
-
-    // showCommentsContainerRef.current.addEventListener(
-    //   "click",
-    //   (evt: MouseEvent) => {
-    //     console.log("show comments clicked", editorViewRef.current);
-    //     const isChecked = (evt.target as HTMLInputElement).checked;
-
-    //     if (!editorViewRef.current) return;
-
-    //     let commentBoxExtension: StateField<DecorationSet>[] = [];
-
-    //     if (isChecked) {
-    //       commentBoxExtension = addCommentBoxStore.generateDecorations();
-    //     }
-
-    //     console.log({ commentBoxExtension, isChecked });
-
-    //     const transaction = editorViewRef.current.state.update({
-    //       effects: [addCommentBoxCompartment.reconfigure(commentBoxExtension)],
-    //     });
-    //     editorViewRef.current.dispatch(transaction);
-    //   }
-    // );
-  }, []);
-
   return (
     <div
       className={cn(styles, {
@@ -205,7 +173,6 @@ const CodeViewer = ({
         showComments,
       })}
     >
-      {/* {<AddCommentBox mode={CommentBoxMode.ADD} value="Hello comment box" />} */}
       <div className={cn(styles, { menu: true, isShowing: showFileContents })}>
         <p className={styles.filePath}>{filePath}</p>
 

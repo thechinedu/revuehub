@@ -18,11 +18,7 @@ import {
 import { multiLineCommentStore } from "./add-comment";
 import { lineHighlightCompartment } from "./line-highlight";
 
-type CommentBoxStore = (CommentBoxProps & {
-  snippet?: string;
-  startLine?: number;
-  endLine?: number;
-})[];
+type CommentBoxStore = CommentBoxProps[];
 
 // General store for shared data
 export const codeViewerStore = new Map<
