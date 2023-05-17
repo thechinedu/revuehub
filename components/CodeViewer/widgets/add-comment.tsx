@@ -288,6 +288,7 @@ class AddCommentWidget extends WidgetType {
       if (addCommentBoxStore.canAddCommentBox(pos)) {
         addCommentBoxStore.add(pos, [
           {
+            id: 0,
             value: "",
             isSubmitDisabled: true,
             commentLineReference: `Commenting on line ${lineData.number}`,
@@ -336,6 +337,7 @@ class AddCommentWidget extends WidgetType {
         if (addCommentBoxStore.canAddCommentBox(pos)) {
           addCommentBoxStore.add(pos, [
             {
+              id: 0,
               value: "",
               isSubmitDisabled: true,
               commentLineReference: `Commenting on lines ${startLine} to ${endLine}`,
