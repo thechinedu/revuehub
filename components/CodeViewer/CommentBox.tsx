@@ -3,7 +3,16 @@ import styles from "./CodeViewer.module.css";
 import { PenIcon, TrashIcon } from "@/components/Icons";
 import { cn } from "@/utils";
 
+import { javascript } from "@codemirror/lang-javascript";
+import {
+  defaultHighlightStyle,
+  syntaxHighlighting,
+} from "@codemirror/language";
+import { EditorView, lineNumbers } from "@codemirror/view";
+import { EditorState } from "@codemirror/state";
+
 import Image from "next/image";
+import { useEffect, useRef } from "react";
 
 export enum CommentBoxMode {
   ADD,
@@ -19,6 +28,9 @@ export type CommentBoxProps = {
   mode?: CommentBoxMode;
   pos?: number;
   username?: string;
+  snippet?: string;
+  startLine?: number;
+  endLine?: number;
 };
 
 export const CommentBox = ({
@@ -109,6 +121,29 @@ export const CommentBoxContainer = ({
   comments = [],
   mode = CommentBoxMode.READ,
 }: CommentBoxContainerProps) => {
+  const viewRef = useRef<HTMLDivElement | null>(null);
+  const editorViewRef = useRef<EditorView | null>(null);
+  const mainComment = comments[0];
+
+  useEffect(() => {
+    if (!editorViewRef.current) {
+      editorViewRef.current = new EditorView({
+        state: EditorState.create({
+          doc: mainComment.snippet || "",
+          extensions: [
+            EditorView.editable.of(false),
+            lineNumbers({
+              formatNumber: (n) => `${n - 1 + (mainComment?.startLine || 1)} `,
+            }),
+            javascript(),
+            syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
+          ],
+        }),
+        parent: viewRef.current as HTMLDivElement,
+      });
+    }
+  }, []);
+
   const hideReplyBox = comments.find(
     (comment) => comment.mode === CommentBoxMode.ADD
   );
@@ -120,6 +155,8 @@ export const CommentBoxContainer = ({
         readMode: mode === CommentBoxMode.READ,
       })}
     >
+      <div ref={viewRef} className={styles.codeViewer} />
+
       {comments.map((comment, idx) => (
         <CommentBox key={idx} pos={idx} {...comment} />
       ))}

@@ -91,6 +91,7 @@ export type Comment = {
   status: "PENDING" | "PUBLISHED";
   username: string;
   profile_image_url: string;
+  snippet: string;
 };
 export type FetchAllCommentsResponse = Response<Comment[]>;
 
