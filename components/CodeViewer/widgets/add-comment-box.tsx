@@ -39,7 +39,7 @@ const uniqueKeyGenerator =
   () =>
     ++initKey;
 
-const generateKey = uniqueKeyGenerator();
+export const generateKey = uniqueKeyGenerator();
 
 const extractInsertionPosFromKey = (key: string) => {
   const [_, insertionPos] = key.split("_");
@@ -141,6 +141,7 @@ class CommentBoxWidget extends WidgetType {
       const formElem = evt.target as HTMLFormElement;
       const pos = formElem.dataset.elemPos as string;
       const store = addCommentBoxStore.get(this.key);
+      const insertionPos = extractInsertionPosFromKey(this.key);
 
       if (store && store[+pos]) {
         const commentBox = store[+pos];
@@ -153,24 +154,29 @@ class CommentBoxWidget extends WidgetType {
           end_line: commentBox.endLine,
           snippet: commentBox.snippet,
           level: "LINE",
-          insertion_pos: extractInsertionPosFromKey(this.key),
+          insertion_pos: insertionPos,
         };
 
         console.log({ commentRequestBody });
 
         try {
-          // const jsonRes = await post("/comments", commentRequestBody);
+          await post("/comments", commentRequestBody);
           // Successfully added comment
           // Update comment box store, set mode to read (read mode has a reply input box at the bottom)
           // Update view to show the comment box in read mode
           commentBox.mode = CommentBoxMode.READ;
+          commentBox.insertionPos = insertionPos;
 
           const comments = codeViewerStore.get("comments") as CommentBoxProps[];
           const setComments = codeViewerStore.get("updateComments") as (
             comment: CommentBoxProps[]
           ) => void;
 
-          setComments([...comments, commentBox]);
+          setComments(
+            [...comments, commentBox].sort(
+              (a, b) => (a.insertionPos as number) - (b.insertionPos as number)
+            )
+          );
 
           const trx = this.view.state.update({
             effects: [addCommentBoxCompartment.reconfigure([])],

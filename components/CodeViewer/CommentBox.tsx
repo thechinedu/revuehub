@@ -1,7 +1,8 @@
 import styles from "./CodeViewer.module.css";
 
 import { PenIcon, TrashIcon } from "@/components/Icons";
-import { cn } from "@/utils";
+import { Comment, CommentRequest, CreateCommentResponse } from "@/types";
+import { cn, post } from "@/utils";
 
 import { javascript } from "@codemirror/lang-javascript";
 import {
@@ -12,7 +13,9 @@ import { EditorView, lineNumbers } from "@codemirror/view";
 import { EditorState } from "@codemirror/state";
 
 import Image from "next/image";
-import { useEffect, useRef } from "react";
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
+
+import { commentToCommentBoxProperty } from "./CodeViewer";
 
 export enum CommentBoxMode {
   ADD,
@@ -31,16 +34,74 @@ export type CommentBoxProps = {
   snippet?: string;
   startLine?: number;
   endLine?: number;
+  repositoryID?: number;
+  filePath?: string;
+  parentCommentID?: number;
+  level?: Comment["level"];
+  insertionPos?: number;
+  replies?: CommentBoxProps[];
+  onSave?: (comment: CommentBoxProps, pos: number) => void;
+  onCancel?: (pos: number) => void;
 };
 
+const saveCommentReply = (commentReqBody: CommentRequest) =>
+  post<CommentRequest, CreateCommentResponse>("/comments", commentReqBody);
+
 export const CommentBox = ({
-  value = "",
-  isSubmitDisabled = true,
+  value: readonlyValue = "",
+  isSubmitDisabled: readonlyIsSubmitDisabled = true,
   commentLineReference = "",
   mode = CommentBoxMode.ADD,
   pos,
   username,
+  repositoryID,
+  filePath,
+  parentCommentID: parent_comment_id,
+  level,
+  snippet,
+  startLine,
+  endLine,
+  insertionPos,
+  onSave,
+  onCancel,
 }: CommentBoxProps): JSX.Element => {
+  const [commentBoxProperties, setCommentBoxProperties] = useState({
+    value: readonlyValue,
+    isSubmitDisabled: readonlyIsSubmitDisabled,
+  });
+  const { value, isSubmitDisabled } = commentBoxProperties;
+
+  const handleSubmit = async (evt: FormEvent) => {
+    evt.preventDefault();
+
+    try {
+      const commentRes = await saveCommentReply({
+        content: value,
+        repository_id: repositoryID as number,
+        file_path: filePath as string,
+        level: level as unknown as CommentRequest["level"],
+        parent_comment_id,
+        snippet,
+        start_line: startLine,
+        end_line: endLine,
+        insertion_pos: insertionPos,
+      });
+      const comment = commentToCommentBoxProperty(commentRes.data);
+
+      onSave?.(comment, pos as number);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleChange = (evt: ChangeEvent<HTMLTextAreaElement>) => {
+    const { value } = evt.target;
+    setCommentBoxProperties({
+      value,
+      isSubmitDisabled: value.trim().length === 0,
+    });
+  };
+
   return (
     <div
       className={cn(styles, {
@@ -80,11 +141,12 @@ export const CommentBox = ({
       {mode !== CommentBoxMode.READ && (
         <>
           <p>{commentLineReference}</p>
-          <form data-elem-pos={pos}>
+          <form data-elem-pos={pos} onSubmit={handleSubmit}>
             <textarea
               placeholder="Write a comment"
-              defaultValue={value}
+              value={value}
               data-elem-pos={pos}
+              onChange={handleChange}
               autoFocus
             />
 
@@ -101,6 +163,7 @@ export const CommentBox = ({
                 type="button"
                 data-action="reset"
                 data-elem-pos={pos}
+                onClick={() => onCancel?.(pos as number)}
               >
                 Cancel
               </button>
@@ -115,12 +178,17 @@ export const CommentBox = ({
 type CommentBoxContainerProps = {
   comments: CommentBoxProps[];
   mode?: CommentBoxMode;
+  repositoryID?: number;
+  filePath?: string;
 };
 
 export const CommentBoxContainer = ({
-  comments = [],
+  comments: readonlyComments = [],
   mode = CommentBoxMode.READ,
+  filePath,
+  repositoryID,
 }: CommentBoxContainerProps) => {
+  const [comments, setComments] = useState<CommentBoxProps[]>(readonlyComments);
   const viewRef = useRef<HTMLDivElement | null>(null);
   const editorViewRef = useRef<EditorView | null>(null);
   const mainComment = comments[0];
@@ -144,6 +212,35 @@ export const CommentBoxContainer = ({
     }
   }, []);
 
+  useEffect(() => {
+    setComments(readonlyComments);
+  }, [readonlyComments]);
+
+  const handleReply = () => {
+    const newComment: CommentBoxProps = {
+      ...mainComment,
+      isSubmitDisabled: true,
+      commentLineReference: "",
+      value: "",
+      mode: CommentBoxMode.ADD,
+    };
+
+    setComments([...comments, newComment]);
+  };
+
+  const handleSaveReply = (comment: CommentBoxProps, pos: number) => {
+    const newComments = [...comments];
+    newComments[pos] = comment;
+
+    setComments(newComments);
+  };
+
+  const handleCancelReply = (pos: number) => {
+    const newComments = comments.filter((_, idx) => idx !== pos);
+
+    setComments(newComments);
+  };
+
   const hideReplyBox = comments.find(
     (comment) => comment.mode === CommentBoxMode.ADD
   );
@@ -158,7 +255,16 @@ export const CommentBoxContainer = ({
       <div ref={viewRef} className={styles.codeViewer} />
 
       {comments.map((comment, idx) => (
-        <CommentBox key={idx} pos={idx} {...comment} />
+        <CommentBox
+          key={idx}
+          pos={idx}
+          parentCommentID={mainComment.id}
+          repositoryID={repositoryID}
+          filePath={filePath}
+          onSave={handleSaveReply}
+          onCancel={handleCancelReply}
+          {...comment}
+        />
       ))}
 
       <div className={styles.replyCommentWrapper}>
@@ -167,6 +273,7 @@ export const CommentBoxContainer = ({
             type="text"
             placeholder="Reply..."
             className={styles.replyComment}
+            onClick={handleReply}
           />
         )}
         {/* <CommentBox /> */}
