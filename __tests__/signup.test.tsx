@@ -71,7 +71,6 @@ describe("Signup flow", () => {
       expect(
         screen.getByRole("alert", {
           name: /username can only contain/i,
-          exact: false,
         })
       ).toBeInTheDocument();
 
@@ -81,7 +80,6 @@ describe("Signup flow", () => {
       expect(
         screen.queryByRole("alert", {
           name: /username can only contain/i,
-          exact: false,
         })
       ).not.toBeInTheDocument();
     });
@@ -93,7 +91,6 @@ describe("Signup flow", () => {
       expect(
         screen.getByRole("alert", {
           name: /password should be/i,
-          exact: false,
         })
       ).toBeInTheDocument();
 
@@ -103,7 +100,6 @@ describe("Signup flow", () => {
       expect(
         screen.queryByRole("alert", {
           name: /password should be/i,
-          exact: false,
         })
       ).not.toBeInTheDocument();
     });

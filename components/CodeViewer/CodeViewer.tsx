@@ -50,30 +50,22 @@ type CodeViewerProps = {
   repositoryID?: number;
 };
 
-const commentToCommentBoxProperty = (comment: Comment): CommentBoxProps => {
-  /**
-   * value?: string | undefined;
-    isSubmitDisabled?: boolean | undefined;
-    commentLineReference?: string | undefined;
-    mode?: CommentBoxMode | undefined;
-    pos?: number | undefined;
-   */
+export const commentToCommentBoxProperty = (
+  comment: Comment
+): CommentBoxProps => {
   return {
     id: comment.id,
     value: comment.content,
     mode: CommentBoxMode.READ,
     snippet: comment.snippet,
+    startLine: comment.start_line,
+    endLine: comment.end_line,
+    level: comment.level,
+    insertionPos: comment.insertion_pos,
+    replies: comment.replies?.length
+      ? comment.replies.map(commentToCommentBoxProperty)
+      : [],
   };
-};
-
-const generateCommentBoxDecorations = (comments: Comment[]) => {
-  for (const comment of comments) {
-    addCommentBoxStore.add(comment.insertion_pos, [
-      commentToCommentBoxProperty(comment),
-    ]);
-  }
-
-  return addCommentBoxStore.generateDecorations();
 };
 
 const CodeViewer = ({
@@ -121,8 +113,6 @@ const CodeViewer = ({
 
     addCommentBoxStore.reset();
 
-    const commentBoxExtension = generateCommentBoxDecorations([]);
-
     const transaction = editorViewRef.current.state.update({
       changes: {
         from: 0,
@@ -143,12 +133,12 @@ const CodeViewer = ({
               foldGutter(),
               indentationMarkers(),
               addCommentCompartment.of([]),
-              addCommentBoxCompartment.of(commentBoxExtension),
+              addCommentBoxCompartment.of([]),
               lineHighlightCompartment.of([]),
             ])
           : StateEffect.reconfigure.of([EditorView.editable.of(false)]),
         addCommentCompartment.reconfigure([]),
-        addCommentBoxCompartment.reconfigure(commentBoxExtension),
+        addCommentBoxCompartment.reconfigure([]),
         lineHighlightCompartment.reconfigure([]),
       ],
     });
@@ -208,9 +198,14 @@ const CodeViewer = ({
             There are no comments on this file
           </p>
         )}
-        {comments.map((comment) => {
-          return <CommentBoxContainer key={comment.id} comments={[comment]} />;
-        })}
+        {comments.map((comment) => (
+          <CommentBoxContainer
+            key={comment.id}
+            comments={[comment, ...(comment.replies || [])]}
+            repositoryID={repositoryID}
+            filePath={filePath}
+          />
+        ))}
       </div>
     </div>
   );

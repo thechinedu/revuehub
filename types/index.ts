@@ -83,17 +83,33 @@ export type FetchFileBlobResponse =
   | FetchFileBlobContentSuccessResponse
   | FetchFileBlobContentErrorResponse;
 
+export type CommentRequest = {
+  content: string;
+  file_path: string;
+  repository_id: number;
+  start_line?: number;
+  end_line?: number;
+  snippet?: string;
+  level: "LINE" | "FILE" | "PROJECT";
+  insertion_pos?: number;
+  parent_comment_id?: number;
+};
 export type Comment = {
   id: number;
   content: string;
   created_at: string;
   insertion_pos: number;
   status: "PENDING" | "PUBLISHED";
+  level: "LINE" | "FILE" | "PROJECT";
   username: string;
   profile_image_url: string;
   snippet: string;
+  start_line: number;
+  end_line: number;
+  replies: Comment[];
 };
 export type FetchAllCommentsResponse = Response<Comment[]>;
+export type CreateCommentResponse = Response<Comment>;
 
 export const GITHUB_AUTH_ENDPOINT = process.env
   .NEXT_PUBLIC_GITHUB_AUTH_ENDPOINT as string;

@@ -16,6 +16,7 @@ import {
   addCommentBoxStore,
   codeViewerStore,
   commentBoxDecorationSet,
+  generateKey,
 } from "./add-comment-box";
 import { getLineData, getLineElem } from "../helpers";
 import { lineDecorationSet, lineHighlightCompartment } from "./line-highlight";
@@ -288,7 +289,7 @@ class AddCommentWidget extends WidgetType {
       if (addCommentBoxStore.canAddCommentBox(pos)) {
         addCommentBoxStore.add(pos, [
           {
-            id: 0,
+            id: generateKey(),
             value: "",
             isSubmitDisabled: true,
             commentLineReference: `Commenting on line ${lineData.number}`,
@@ -337,7 +338,7 @@ class AddCommentWidget extends WidgetType {
         if (addCommentBoxStore.canAddCommentBox(pos)) {
           addCommentBoxStore.add(pos, [
             {
-              id: 0,
+              id: generateKey(),
               value: "",
               isSubmitDisabled: true,
               commentLineReference: `Commenting on lines ${startLine} to ${endLine}`,
