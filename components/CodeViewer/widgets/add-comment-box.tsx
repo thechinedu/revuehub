@@ -1,3 +1,4 @@
+import { CommentRequest, CreateCommentResponse } from "@/types";
 import { post } from "@/utils";
 
 import { Compartment, StateField } from "@codemirror/state";
@@ -9,6 +10,7 @@ import {
 } from "@codemirror/view";
 
 import { renderToStaticMarkup } from "react-dom/server";
+import { commentToCommentBoxProperty } from "../CodeViewer";
 
 import {
   CommentBoxProps,
@@ -147,25 +149,22 @@ class CommentBoxWidget extends WidgetType {
         const commentBox = store[+pos];
 
         const commentRequestBody = {
-          content: commentBox.value,
-          file_path: codeViewerStore.get("filePath"),
-          repository_id: codeViewerStore.get("repositoryID"),
+          content: commentBox.value as string,
+          file_path: codeViewerStore.get("filePath") as string,
+          repository_id: codeViewerStore.get("repositoryID") as number,
           start_line: commentBox.startLine,
           end_line: commentBox.endLine,
           snippet: commentBox.snippet,
-          level: "LINE",
+          level: "LINE" as CommentRequest["level"],
           insertion_pos: insertionPos,
         };
 
-        console.log({ commentRequestBody });
-
         try {
-          await post("/comments", commentRequestBody);
-          // Successfully added comment
-          // Update comment box store, set mode to read (read mode has a reply input box at the bottom)
-          // Update view to show the comment box in read mode
-          commentBox.mode = CommentBoxMode.READ;
-          commentBox.insertionPos = insertionPos;
+          const res = await post<CommentRequest, CreateCommentResponse>(
+            "/comments",
+            commentRequestBody
+          );
+          const newComment = commentToCommentBoxProperty(res.data);
 
           const comments = codeViewerStore.get("comments") as CommentBoxProps[];
           const setComments = codeViewerStore.get("updateComments") as (
@@ -173,7 +172,7 @@ class CommentBoxWidget extends WidgetType {
           ) => void;
 
           setComments(
-            [...comments, commentBox].sort(
+            [...comments, newComment].sort(
               (a, b) => (a.insertionPos as number) - (b.insertionPos as number)
             )
           );
@@ -183,8 +182,6 @@ class CommentBoxWidget extends WidgetType {
           });
           this.view.dispatch(trx);
           addCommentBoxStore.reset();
-
-          // console.log({ jsonRes });
         } catch (err) {
           console.log(err);
         }

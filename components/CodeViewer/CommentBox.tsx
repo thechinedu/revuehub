@@ -17,7 +17,6 @@ import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 
 import { commentToCommentBoxProperty } from "./CodeViewer";
 import { destroy, patch } from "@/utils/request";
-import { sub } from "date-fns";
 
 export enum CommentBoxMode {
   ADD,
@@ -42,7 +41,7 @@ export type CommentBoxProps = {
   level?: Comment["level"];
   insertionPos?: number;
   replies?: CommentBoxProps[];
-  onSave?: (comment: CommentBoxProps, pos: number) => void; // TODO: switch pos for id
+  onSave?: (comment: CommentBoxProps, pos: number) => void;
   onCancel?: (id: number) => void;
   onEdit?: (id: number) => void;
   onDelete?: (id: number) => void;
@@ -154,8 +153,13 @@ export const CommentBox = ({
   };
 
   const handleDelete = () => {
-    // TODO: add confirmation modal
     try {
+      const shouldDelete = confirm(
+        "Are you sure you want to delete this comment?"
+      );
+
+      if (shouldDelete === false) return;
+
       deleteComment(id);
       onDelete?.(id);
     } catch (err) {
@@ -340,6 +344,8 @@ export const CommentBoxContainer = ({
     (comment) => comment.mode === CommentBoxMode.ADD
   );
 
+  if (comments.length === 0) return null;
+
   return (
     <div
       className={cn(styles, {
@@ -351,7 +357,7 @@ export const CommentBoxContainer = ({
 
       {comments.map((comment, idx) => (
         <CommentBox
-          key={idx}
+          key={comment.id}
           pos={idx}
           parentCommentID={mainComment.id}
           repositoryID={repositoryID}
@@ -373,14 +379,7 @@ export const CommentBoxContainer = ({
             onClick={handleReply}
           />
         )}
-        {/* <CommentBox /> */}
       </div>
     </div>
   );
 };
-
-// @Next::TODO
-// Clicking cancel on the comment box should only dismiss the specific comment box and not the entire comment box container ✅
-// Add support for retrieving all comments ✅
-// Add support for updating comments (clicking cancel should only dismiss the comment box being edited)
-// Add support for deleting comments
