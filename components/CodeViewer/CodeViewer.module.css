@@ -144,6 +144,9 @@
 }
 
 .commentBox.readMode .actions button {
+  border-radius: 4px;
+  padding: var(--spacer-1);
+  padding-bottom: var(--spacer-1\/2);
   transition-duration: 0.4s;
 }
 

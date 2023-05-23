@@ -47,11 +47,60 @@ export const post = async <T = unknown, U = unknown>(
 
     if (res.status === 204) return Promise.resolve(null as U);
 
-    if (res.status < 400) return Promise.resolve(await res.json());
-
-    return Promise.reject(await res.json());
+    return handleResponse<U>(res);
   } catch (err) {
     return Promise.reject(err); // TODO: integrate with error monitoring service
+  }
+};
+
+export const patch = async <T = unknown, U = unknown>(
+  path: string,
+  body: T
+): Promise<U> => {
+  const url = getUrl(path);
+
+  try {
+    const res = await fetch(url, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      credentials: "include",
+    });
+
+    if (res.status === 401) {
+      return refreshAuthTokenAndCompleteRequest(path, patch, body) as U;
+    }
+
+    if (res.status === 204) return Promise.resolve(null as U);
+
+    return handleResponse<U>(res);
+  } catch (err) {
+    return Promise.reject(err); // TODO: integrate with error monitoring service
+  }
+};
+
+export const destroy = async <T = unknown>(path: string): Promise<T> => {
+  const url = getUrl(path);
+
+  try {
+    const res = await fetch(url, {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+      },
+      credentials: "include",
+    });
+
+    if (res.status === 401) {
+      return refreshAuthTokenAndCompleteRequest(path, get) as T;
+    }
+
+    return handleResponse<T>(res);
+  } catch (err) {
+    return Promise.reject(err);
   }
 };
 

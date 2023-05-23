@@ -16,6 +16,8 @@ import Image from "next/image";
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 
 import { commentToCommentBoxProperty } from "./CodeViewer";
+import { destroy, patch } from "@/utils/request";
+import { sub } from "date-fns";
 
 export enum CommentBoxMode {
   ADD,
@@ -40,18 +42,28 @@ export type CommentBoxProps = {
   level?: Comment["level"];
   insertionPos?: number;
   replies?: CommentBoxProps[];
-  onSave?: (comment: CommentBoxProps, pos: number) => void;
-  onCancel?: (pos: number) => void;
+  onSave?: (comment: CommentBoxProps, pos: number) => void; // TODO: switch pos for id
+  onCancel?: (id: number) => void;
+  onEdit?: (id: number) => void;
+  onDelete?: (id: number) => void;
 };
 
 const saveCommentReply = (commentReqBody: CommentRequest) =>
   post<CommentRequest, CreateCommentResponse>("/comments", commentReqBody);
 
+const updateComment = (commentID: number, content: string) =>
+  patch<{ content: string }, CreateCommentResponse>(`/comments/${commentID}`, {
+    content,
+  });
+
+const deleteComment = (commentID: number) => destroy(`/comments/${commentID}`);
+
 export const CommentBox = ({
+  id,
   value: readonlyValue = "",
   isSubmitDisabled: readonlyIsSubmitDisabled = true,
   commentLineReference = "",
-  mode = CommentBoxMode.ADD,
+  mode: readonlyMode = CommentBoxMode.ADD,
   pos,
   username,
   repositoryID,
@@ -64,28 +76,56 @@ export const CommentBox = ({
   insertionPos,
   onSave,
   onCancel,
+  onEdit,
+  onDelete,
 }: CommentBoxProps): JSX.Element => {
   const [commentBoxProperties, setCommentBoxProperties] = useState({
     value: readonlyValue,
     isSubmitDisabled: readonlyIsSubmitDisabled,
+    mode: readonlyMode,
   });
-  const { value, isSubmitDisabled } = commentBoxProperties;
+  const { value, isSubmitDisabled, mode } = commentBoxProperties;
+
+  useEffect(() => {
+    setCommentBoxProperties({
+      ...commentBoxProperties,
+      mode: readonlyMode,
+    });
+  }, [readonlyMode]);
+
+  const handleCreate = () => {
+    return saveCommentReply({
+      content: value,
+      repository_id: repositoryID as number,
+      file_path: filePath as string,
+      level: level as unknown as CommentRequest["level"],
+      parent_comment_id,
+      snippet,
+      start_line: startLine,
+      end_line: endLine,
+      insertion_pos: insertionPos,
+    });
+  };
+
+  const handleUpdate = () => {
+    return updateComment(id, value);
+  };
 
   const handleSubmit = async (evt: FormEvent) => {
     evt.preventDefault();
 
+    const submitOperationForMode: Record<
+      CommentBoxMode.ADD | CommentBoxMode.EDIT,
+      () => Promise<CreateCommentResponse>
+    > = {
+      [CommentBoxMode.ADD]: handleCreate,
+      [CommentBoxMode.EDIT]: handleUpdate,
+    };
+
     try {
-      const commentRes = await saveCommentReply({
-        content: value,
-        repository_id: repositoryID as number,
-        file_path: filePath as string,
-        level: level as unknown as CommentRequest["level"],
-        parent_comment_id,
-        snippet,
-        start_line: startLine,
-        end_line: endLine,
-        insertion_pos: insertionPos,
-      });
+      const commentRes = await submitOperationForMode[
+        mode as CommentBoxMode.ADD | CommentBoxMode.EDIT
+      ]();
       const comment = commentToCommentBoxProperty(commentRes.data);
 
       onSave?.(comment, pos as number);
@@ -97,9 +137,30 @@ export const CommentBox = ({
   const handleChange = (evt: ChangeEvent<HTMLTextAreaElement>) => {
     const { value } = evt.target;
     setCommentBoxProperties({
+      ...commentBoxProperties,
       value,
       isSubmitDisabled: value.trim().length === 0,
     });
+  };
+
+  const handleEdit = () => {
+    setCommentBoxProperties({
+      ...commentBoxProperties,
+      isSubmitDisabled: false,
+      mode: CommentBoxMode.EDIT,
+    });
+
+    onEdit?.(id);
+  };
+
+  const handleDelete = () => {
+    // TODO: add confirmation modal
+    try {
+      deleteComment(id);
+      onDelete?.(id);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -121,10 +182,10 @@ export const CommentBox = ({
             <p className={styles.username}>{username}</p>
 
             <div className={styles.actions}>
-              <button className={styles.iconWrapper}>
+              <button className={styles.iconWrapper} onClick={handleEdit}>
                 <PenIcon className={styles.icon} />
               </button>
-              <button className={styles.iconWrapper}>
+              <button className={styles.iconWrapper} onClick={handleDelete}>
                 <TrashIcon
                   className={cn(styles, {
                     icon: true,
@@ -156,14 +217,16 @@ export const CommentBox = ({
                 className={styles.btn}
                 disabled={isSubmitDisabled}
               >
-                Add review comment
+                {mode === CommentBoxMode.ADD
+                  ? "Add review comment"
+                  : "Update comment"}
               </button>
               <button
                 className={styles.btn}
                 type="button"
                 data-action="reset"
                 data-elem-pos={pos}
-                onClick={() => onCancel?.(pos as number)}
+                onClick={() => onCancel?.(id)}
               >
                 Cancel
               </button>
@@ -219,6 +282,7 @@ export const CommentBoxContainer = ({
   const handleReply = () => {
     const newComment: CommentBoxProps = {
       ...mainComment,
+      id: 0,
       isSubmitDisabled: true,
       commentLineReference: "",
       value: "",
@@ -228,16 +292,47 @@ export const CommentBoxContainer = ({
     setComments([...comments, newComment]);
   };
 
-  const handleSaveReply = (comment: CommentBoxProps, pos: number) => {
+  const handleSave = (comment: CommentBoxProps, pos: number) => {
     const newComments = [...comments];
     newComments[pos] = comment;
 
     setComments(newComments);
   };
 
-  const handleCancelReply = (pos: number) => {
-    const newComments = comments.filter((_, idx) => idx !== pos);
+  const handleCancel = (id: number) => {
+    const newComments = [];
 
+    for (const [idx, comment] of comments.entries()) {
+      if (comment.mode === CommentBoxMode.EDIT && comment.id === id) {
+        comment.mode = CommentBoxMode.READ;
+        newComments.push(comment);
+        continue;
+      }
+
+      if (comment.mode === CommentBoxMode.ADD) {
+        continue;
+      }
+
+      newComments.push(comment);
+    }
+
+    setComments(newComments);
+  };
+
+  const handleEdit = (id: number) => {
+    const newComments = comments.map((comment) => {
+      if (comment.id === id) {
+        comment.mode = CommentBoxMode.EDIT;
+      }
+
+      return comment;
+    });
+
+    setComments(newComments);
+  };
+
+  const handleDelete = (id: number) => {
+    const newComments = comments.filter((comment) => comment.id !== id);
     setComments(newComments);
   };
 
@@ -261,8 +356,10 @@ export const CommentBoxContainer = ({
           parentCommentID={mainComment.id}
           repositoryID={repositoryID}
           filePath={filePath}
-          onSave={handleSaveReply}
-          onCancel={handleCancelReply}
+          onSave={handleSave}
+          onCancel={handleCancel}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
           {...comment}
         />
       ))}
