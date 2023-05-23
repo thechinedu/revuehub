@@ -75,9 +75,7 @@ const Repo: NextPage = () => {
       },
       enabled: Boolean(fileBlobInfo.fileBlobId && repo?.id),
       retry: false,
-      refetchOnMount: false,
       refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
     }
   );
 
@@ -90,9 +88,7 @@ const Repo: NextPage = () => {
       },
       enabled: router.isReady,
       retry: false,
-      refetchOnMount: false,
       refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
     }
   );
 
@@ -102,9 +98,7 @@ const Repo: NextPage = () => {
     },
     enabled: Boolean(repo?.id),
     retry: false,
-    refetchOnMount: false,
     refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
   });
 
   const handleToggleFileTree =
