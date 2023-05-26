@@ -1,0 +1,23 @@
+.container {
+  position: relative;
+}
+
+.label {
+  font-size: var(--small);
+  font-weight: 700;
+  position: absolute;
+  top: -18px;
+}
+
+.input {
+  background: var(--powder);
+  border: 2px solid var(--black);
+  color: var(--black);
+  font-weight: 700;
+  padding: var(--spacer-1) var(--spacer-2);
+  width: 100%;
+}
+
+.results p {
+  font-size: var(--small);
+}

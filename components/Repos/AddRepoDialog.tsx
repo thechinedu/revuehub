@@ -1,6 +1,7 @@
 import styles from "./AddRepoDialog.module.css";
 
 import { CloseIcon } from "@/components/Icons";
+import UserSearch from "@/components/UserSearch";
 
 import { post } from "@/utils";
 
@@ -96,24 +97,11 @@ export const AddRepoDialog = ({
                 />
               </div>
 
-              <div className={styles.group}>
-                <label htmlFor="reviewer" className={styles.label}>
-                  Search and add reviewers:
-                </label>
-                <input
-                  type="text"
-                  placeholder="Search by username or email"
-                  id="reviewer"
-                  className={styles.input}
-                />
-
-                <div className={styles.reviewers}>
-                  <p>
-                    No reviewers selected yet. Reviewers can also be added after
-                    importing your repository
-                  </p>
-                </div>
-              </div>
+              <UserSearch
+                emptyMessage=" No reviewers selected yet. Reviewers can also be added after importing
+          your repository"
+                className={styles.group}
+              />
 
               <div className={styles.actions}>
                 <button

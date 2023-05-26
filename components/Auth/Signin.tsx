@@ -94,7 +94,11 @@ export const Signin = (): JSX.Element => {
 
           <form className={styles.form} onSubmit={handleSubmit}>
             <div className={styles.group}>
-              <label htmlFor="email-username">Email or username:</label>
+              <label htmlFor="email-username">
+                Email{" "}
+                {/*or username. TODO: Add support for signin via username/password combo */}
+                :
+              </label>
               <AccountIcon className={styles.icon} />
               <input
                 type="text"
