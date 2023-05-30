@@ -65,7 +65,8 @@
 .result {
   cursor: pointer;
   display: flex;
-  gap: var(--spacer-1);
+  flex-wrap: wrap;
+  column-gap: var(--spacer-1);
   padding: var(--spacer-2);
 
   &:hover {
@@ -78,5 +79,9 @@
 
   & p {
     font-size: var(--small);
+  }
+
+  & .inviteMessage {
+    flex-basis: 100%;
   }
 }
