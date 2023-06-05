@@ -4,7 +4,8 @@ import CodeViewer from "@/components/CodeViewer";
 import Container from "@/components/Container";
 import FileTree from "@/components/FileTree";
 import { FolderTreeIcon } from "@/components/Icons";
-import { Navbar, SubNav } from "@/components/Navbar";
+import { Navbar } from "@/components/Navbar";
+import RepoSubNav from "@/components/RepoSubNav";
 
 import {
   FetchFileBlobContentSuccessResponse,
@@ -24,7 +25,6 @@ import { useQuery } from "@tanstack/react-query";
 import { NextPage } from "next";
 import Error from "next/error";
 import Head from "next/head";
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { MouseEvent, useState } from "react";
@@ -129,13 +129,8 @@ const Repo: NextPage = () => {
         onClick={handleToggleFileTree("close")}
       >
         <Navbar />
-        <SubNav className={styles.subNav}>
-          <Link href="#">Feedback</Link>
-          <Link href="/dashboard" className={styles.active}>
-            Code
-          </Link>
-          <Link href="#">Repo Settings</Link>
-        </SubNav>
+
+        <RepoSubNav owner={owner} repoName={repoName} />
 
         <main className={styles.main}>
           <button
