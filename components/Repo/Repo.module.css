@@ -10,35 +10,6 @@
   }
 }
 
-/* TODO: Move subNav styles to SubNav component css module file */
-.subNav {
-  display: flex;
-  gap: var(--spacer-2);
-  margin-top: var(--spacer-3);
-  max-width: 100%;
-  overflow: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.subNav::-webkit-scrollbar {
-  display: none;
-}
-
-.subNav a {
-  padding-bottom: var(--spacer-1);
-  transition-duration: 0.1s;
-}
-
-.subNav a:hover:not(.active) {
-  border-bottom: 2px dashed var(--black);
-}
-
-.subNav .active {
-  border-bottom: 2px solid var(--black);
-  font-weight: 700;
-}
-
 .fileExplorerBtn {
   composes: btn from "@/styles/blocks.module.css";
   align-items: center;
