@@ -130,7 +130,7 @@ const Repo: NextPage = () => {
       >
         <Navbar />
 
-        <RepoSubNav owner={owner} repoName={repoName} />
+        <RepoSubNav owner={owner} repoName={repoName} active="code" />
 
         <main className={styles.main}>
           <button

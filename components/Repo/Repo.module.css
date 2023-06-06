@@ -29,11 +29,6 @@
   width: 20px;
 }
 
-.menu label {
-  align-items: center;
-  display: flex;
-}
-
 .codeContainer {
   font-family: "Fira Code", ui-monospace, monospace;
   font-size: 0.875rem;

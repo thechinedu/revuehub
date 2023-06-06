@@ -1,0 +1,23 @@
+/* specificity doubled in order to override base container styles */
+.container.container {
+  @media (min-width: 1101px) {
+    margin-left: 250px;
+    width: calc(100% - 350px);
+  }
+}
+
+.main {
+  margin-top: var(--spacer-4);
+}
+
+.settingsOptions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacer-4);
+  margin-top: var(--spacer-4);
+
+  & a {
+    border-bottom: 1px solid var(--subtle-gray);
+    padding-bottom: var(--spacer-3);
+  }
+}
