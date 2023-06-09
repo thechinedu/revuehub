@@ -1,5 +1,6 @@
 export { Account as AccountIcon } from "./Account";
 export { AngleDown as AngleDownIcon } from "./AngleDown";
+export { AngleLeft as AngleLeftIcon } from "./AngleLeft";
 export { AngleRight as AngleRightIcon } from "./AngleRight";
 export { At as AtIcon } from "./At";
 export { Bookmark as BookmarkIcon } from "./Bookmark";
