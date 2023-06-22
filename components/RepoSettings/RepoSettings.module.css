@@ -139,6 +139,7 @@
   background-color: var(--white);
   border: 2px solid var(--black);
   border-radius: 8px;
+  margin-left: var(--spacer-2);
   max-width: 500px;
   padding: var(--spacer-4);
   position: relative;

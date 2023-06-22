@@ -7,8 +7,10 @@ import RepoSubNav from "@/components/RepoSubNav";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { General } from "./General";
+import { NextPage } from "next";
 
-const RepoSettings = () => {
+const RepoSettings: NextPage = () => {
   const router = useRouter();
   const path = router.asPath.slice(1);
   const [owner, repoName] = path.split("/");
@@ -30,6 +32,8 @@ const RepoSettings = () => {
             <Link href={`/${path}/general`}>General</Link>
             <Link href={`/${path}/reviewers`}>Manage reviewers</Link>
           </div>
+
+          <General />
         </main>
       </Container>
     </>

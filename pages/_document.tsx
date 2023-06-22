@@ -25,7 +25,8 @@ review and conversation tools that enable easy and seamless collaboration betwee
           rel="stylesheet"
         />
       </Head>
-      <body>
+      {/* Radix-ui injects styles that cause the page to shift when a dialog box is rendered. This ensures that the injected style is overwritten */}
+      <body style={{ marginRight: "0 !important" }}>
         <Main />
         <NextScript />
       </body>
