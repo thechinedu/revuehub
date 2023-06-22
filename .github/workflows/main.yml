@@ -2,9 +2,9 @@ name: RevueHub CI Workflow
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build:
@@ -12,9 +12,9 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x]
-    
-    # Temporarily disabled. e2e tests fail on github actions. 
+        node-version: [18.x]
+
+    # Temporarily disabled. e2e tests fail on github actions.
     # services:
     #   redis:
     #     image: redis
@@ -38,31 +38,31 @@ jobs:
     #       - 5432:5432
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-      with:
-        path: revuehub
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          path: revuehub
 
-    - name: Checkout revueHub-api repository
-      uses: actions/checkout@v3
-      with:
-        repository: thechinedu/revuehub-api
-        path: revuehub-api
+      - name: Checkout revueHub-api repository
+        uses: actions/checkout@v3
+        with:
+          repository: thechinedu/revuehub-api
+          path: revuehub-api
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
 
-    - name: Install, build, lint and test
-      working-directory: ./revuehub
-      env:
-        NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
-      run: |
-        yarn install
-        yarn build
-        yarn lint
-        yarn test
+      - name: Install, build, lint and test
+        working-directory: ./revuehub
+        env:
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+        run: |
+          yarn install
+          yarn build
+          yarn lint
+          yarn test
     # Temporarily disabled. Enable after auth integration is complete. Manual checks will be done for now
     # - name: Run Lighthouse CI (Performance, accessibility, best practises and SEO testing)
     #   env:
@@ -74,6 +74,7 @@ jobs:
     # Cypress doesn't provide a way to inspect the network requests on test failures
     # One potential approach would be to intercept all network requests, allow it continue but log the results of
     # the network call. For now, e2e tests will be run locally only
+
 #     - name: Install and build for RevueHub API repository
 #       working-directory: ./revuehub-api
 #       env:
